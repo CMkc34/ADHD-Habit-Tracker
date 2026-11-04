@@ -691,7 +691,16 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 - Routinen-Formular und -Karte zeigen den trainierten Wert (#4).
 - Motivations-Pop-up (#15): „+1 Kraft-XP“, „Kraft Stufe 4!“, „+1 🎟“.
 - Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (Kai / Mira), keine Pflanzen-Texte mehr.
-- Alles selbst gezeichnet (`Canvas`, Papier-/Sticker-Stil), Bewegung folgt „Animationen entfernen“.
+- Alles selbst gezeichnet (`Canvas`), Bewegung folgt „Animationen entfernen“.
+- Kämpfer (#6) in **Pixel-Art** (Wunsch vom 2026-11-04) statt Papier-/Sticker-Stil, eigenes Design:
+  - Sprites als Zeichen-Raster in `FighterSprites`, zusammengesetzt von `FighterPixels` (reines
+    Kotlin, getestet), gemalt von `FighterAvatar`. Feste Palette, Tinte als Umriss, hell wie dunkel.
+  - Posen `FighterPose`: Kampfhaltung (leichtes Wippen), **Ki laden** (Aura + Ki-Ball) und
+    **Ki-Strahl** (Spezialangriff, #14). Dazu `KiBlast` als fliegendes Geschoss für die Arena.
+  - Müde: sitzt im Schneidersitz, Augen zu, „z“. Rang 12: goldene Aura, goldenes Ki.
+  - Ausrüstung sitzt auf festen Ankern (Hände, Handgelenke, Füße sind im Raster markiert). Ids in
+    `FighterItems` (`core.fighter`), Preise und Ränge bleiben in #7.
+  - Trainingsplatz (#8) und Gegner (#13) sollten im selben Pixel-Stil gezeichnet werden.
 
 ### 9.10 Issues
 | # | Inhalt |
