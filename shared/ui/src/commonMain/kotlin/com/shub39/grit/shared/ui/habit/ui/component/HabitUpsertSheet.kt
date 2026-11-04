@@ -70,6 +70,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.RoutineColor
 import com.shub39.grit.core.habits.style.RoutineIcon
@@ -127,15 +128,20 @@ private val routineStyleSaver =
         restore = { RoutineStyle.fromKeys(it.substringBefore("|"), it.substringAfter("|")) },
     )
 
+/**
+ * Sheet to add or edit a habit. fork: [onUpsertHabit] also gets the chosen colour and icon, and the
+ * trained stat, `null` while the stat chips are untouched (#4).
+ */
 @Composable
 expect fun HabitUpsertSheet(
     habit: Habit,
     onDismissRequest: () -> Unit,
-    onUpsertHabit: (Habit, RoutineStyle) -> Unit,
+    onUpsertHabit: (Habit, RoutineStyle, FighterStat?) -> Unit,
     is24Hr: Boolean,
     modifier: Modifier = Modifier,
     isEditSheet: Boolean = false,
     style: RoutineStyle = RoutineStyle.DEFAULT,
+    stat: FighterStat = FighterStat.DEFAULT,
 )
 
 @Composable
@@ -144,12 +150,13 @@ fun HabitUpsertSheetContent(
     newHabit: Habit,
     updateHabit: (Habit) -> Unit,
     onDismissRequest: () -> Unit,
-    onUpsertHabit: (Habit, RoutineStyle) -> Unit,
+    onUpsertHabit: (Habit, RoutineStyle, FighterStat?) -> Unit,
     is24Hr: Boolean,
     isEditSheet: Boolean = false,
     notificationPermission: Boolean,
     onRequestPermission: () -> Unit,
     style: RoutineStyle = RoutineStyle.DEFAULT,
+    stat: FighterStat = FighterStat.DEFAULT,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -157,6 +164,9 @@ fun HabitUpsertSheetContent(
     var timePickerDialog by rememberSaveable { mutableStateOf(false) }
     var currentStyle by rememberSaveable(stateSaver = routineStyleSaver) { mutableStateOf(style) }
     var stylePicker by rememberSaveable { mutableStateOf(false) }
+    // fork (#4): key of the stat picked in this sheet, null while the chips are untouched
+    var chosenStatKey by rememberSaveable { mutableStateOf<String?>(null) }
+    val chosenStat = chosenStatKey?.let { FighterStat.fromKey(it) }
 
     var currentHabitType by remember {
         mutableStateOf(if (newHabit.isMeasurable) HabitType.MEASURE_ABLE else HabitType.YES_NO)
@@ -303,6 +313,24 @@ fun HabitUpsertSheetContent(
                             }
                         },
                         isError = descTextFieldState.text.length > DESCRIPTION_STRING_LIMIT,
+                    )
+                }
+            }
+
+            // fork (#4): the stat this routine trains
+            item {
+                Card(
+                    shape = detachedItemShape(),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                ) {
+                    RoutineStatPicker(
+                        selected = chosenStat ?: stat,
+                        onSelect = { chosenStatKey = it.key },
+                        showXpHint = isEditSheet && chosenStat != null && chosenStat != stat,
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
                     )
                 }
             }
@@ -520,6 +548,7 @@ fun HabitUpsertSheetContent(
                                 targetUnit = targetUnitState.text.toString(),
                             ),
                             currentStyle,
+                            chosenStat,
                         )
                         onDismissRequest()
                     },
@@ -614,12 +643,13 @@ private fun UpsertSheetPreview(theme: Theme) {
                 ),
             updateHabit = {},
             onDismissRequest = {},
-            onUpsertHabit = { _, _ -> },
+            onUpsertHabit = { _, _, _ -> },
             is24Hr = true,
             isEditSheet = true,
             notificationPermission = true,
             onRequestPermission = {},
             style = RoutineStyle(RoutineColor.INDIGO, RoutineIcon.BOOK),
+            stat = FighterStat.FOCUS,
         )
     }
 }

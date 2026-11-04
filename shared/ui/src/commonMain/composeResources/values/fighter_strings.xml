@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Fighter avatar (phase 6): rank and stat names. Ranks follow core.fighter.FighterRank.number.
+  Fighter avatar (phase 6): rank and stat names, stat hints for the routine form (#4).
+  Ranks follow core.fighter.FighterRank.number.
   The fork's own file, the upstream strings.xml stays untouched.
 -->
 <resources>
@@ -21,4 +22,13 @@
     <string name="fighter_stat_speed">Speed</string>
     <string name="fighter_stat_stamina">Stamina</string>
     <string name="fighter_stat_focus">Focus</string>
+
+    <!-- routine form and card (#4) -->
+    <string name="fighter_stat_strength_hint">hits harder</string>
+    <string name="fighter_stat_speed_hint">strikes first, dodges</string>
+    <string name="fighter_stat_stamina_hint">more HP</string>
+    <string name="fighter_stat_focus_hint">critical hits, special move</string>
+    <string name="routine_stat_title">Trains</string>
+    <string name="routine_stat_moves_xp">Past check-ins count towards the new stat</string>
+    <string name="routine_stat_description">Trains %1$s</string>
 </resources>

@@ -48,6 +48,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.shub39.grit.core.fighter.statOf
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.styleOf
 import com.shub39.grit.core.now
@@ -263,6 +264,7 @@ private fun HabitsListContent(
                     RoutineCard(
                         habitWithAnalytics = habitWithAnalytics,
                         style = state.routineStyles.styleOf(habitWithAnalytics.habit.id),
+                        stat = state.routineStats.statOf(habitWithAnalytics.habit.id),
                         completed = completed,
                         onInsertStatus = { habit, date, value ->
                             if (habitWithAnalytics.habit.isMeasurable) {
@@ -317,7 +319,9 @@ private fun HabitsListContent(
                     reminder = false,
                 ),
             onDismissRequest = { onAction(HabitsAction.DismissAddHabitDialog) },
-            onUpsertHabit = { habit, style -> onAction(HabitsAction.AddHabit(habit, style)) },
+            onUpsertHabit = { habit, style, stat ->
+                onAction(HabitsAction.AddHabit(habit, style, stat))
+            },
             is24Hr = state.is24Hr,
         )
     }
