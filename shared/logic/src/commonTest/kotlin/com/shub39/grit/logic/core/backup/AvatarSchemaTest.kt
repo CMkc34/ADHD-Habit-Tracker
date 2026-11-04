@@ -17,10 +17,12 @@
 package com.shub39.grit.logic.core.backup
 
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.Purchase
+import com.shub39.grit.core.avatar.Shop
+import com.shub39.grit.core.fighter.FighterLook
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.Json
@@ -49,7 +51,7 @@ class AvatarSchemaTest {
                 seenStage = 5,
                 decorations = setOf("deco_pond"),
                 userName = "Lena",
-                species = AvatarSpecies.CHERRY,
+                look = FighterLook.MIRA,
             )
 
         val exported = Json.encodeToString(schema(data.toAvatarSchema()))
@@ -67,7 +69,25 @@ class AvatarSchemaTest {
 
         assertEquals(setOf("acc_bird"), avatar?.accessories)
         assertEquals(emptySet(), avatar?.decorations)
-        assertEquals(AvatarSpecies.SPROUT, avatar?.species)
+        assertEquals(FighterLook.KAI, avatar?.look)
+    }
+
+    @Test
+    fun `plant backup imports with its look and keeps the plant purchases`() {
+        val old =
+            """{"habits":[],"habitStatus":[],"avatar":{"name":"","species":"cherry","seenStage":4,""" +
+                """"purchases":[{"itemId":"plant_watering_can","date":"2026-10-20","price":25}],""" +
+                """"accessories":["plant_watering_can"]}}"""
+
+        val avatar = json.decodeFromString<ExportSchema>(old).avatar!!.toAvatarData()
+
+        assertEquals(FighterLook.MIRA, avatar.look)
+        assertEquals(4, avatar.seenStage)
+        // kept for older versions, but not owned while the item is not in the catalog
+        assertEquals(listOf("plant_watering_can"), avatar.purchases.map { it.itemId })
+        assertFalse("plant_watering_can" in Shop.owned(avatar.purchases))
+        // exported again under the old field name and id
+        assertEquals("cherry", avatar.toAvatarSchema().species)
     }
 
     @Test

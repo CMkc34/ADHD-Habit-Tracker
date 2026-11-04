@@ -16,9 +16,9 @@
  */
 package com.shub39.grit.core.motivation
 
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -28,8 +28,8 @@ import kotlinx.datetime.LocalDate
 class DailyGreetingTest {
     private val today = LocalDate(2026, 11, 1)
 
-    private fun plant(activeDays: Int, mood: PlantMood = PlantMood.HAPPY) =
-        PlantState(activeDays, PlantStage.forActiveDays(activeDays), mood)
+    private fun fighter(activeDays: Int, mood: FighterMood = FighterMood.READY) =
+        FighterState(activeDays, FighterRank.forActiveDays(activeDays), mood)
 
     @Test
     fun `due when never shown`() {
@@ -53,11 +53,14 @@ class DailyGreetingTest {
     }
 
     @Test
-    fun `kind follows routines and plant`() {
-        assertEquals(GreetingKind.WELCOME, DailyGreeting.kindOf(false, plant(40)))
-        assertEquals(GreetingKind.FIRST_DAY, DailyGreeting.kindOf(true, plant(0, PlantMood.TIRED)))
-        assertEquals(GreetingKind.TIRED, DailyGreeting.kindOf(true, plant(12, PlantMood.TIRED)))
-        assertEquals(GreetingKind.GROWING, DailyGreeting.kindOf(true, plant(12)))
+    fun `kind follows routines and fighter`() {
+        assertEquals(GreetingKind.WELCOME, DailyGreeting.kindOf(false, fighter(40)))
+        assertEquals(
+            GreetingKind.FIRST_DAY,
+            DailyGreeting.kindOf(true, fighter(0, FighterMood.TIRED)),
+        )
+        assertEquals(GreetingKind.TIRED, DailyGreeting.kindOf(true, fighter(12, FighterMood.TIRED)))
+        assertEquals(GreetingKind.GROWING, DailyGreeting.kindOf(true, fighter(12)))
     }
 
     @Test

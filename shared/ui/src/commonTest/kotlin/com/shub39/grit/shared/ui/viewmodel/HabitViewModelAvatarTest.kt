@@ -19,7 +19,8 @@ package com.shub39.grit.shared.ui.viewmodel
 import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.activity.DayStatus
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.PlantStage
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.shared.ui.fakes.FakeActivityRepo
 import com.shub39.grit.shared.ui.fakes.FakeAlarmScheduler
 import com.shub39.grit.shared.ui.fakes.FakeAnalytics
@@ -84,14 +85,14 @@ class HabitViewModelAvatarTest {
         )
 
     @Test
-    fun `state shows the plant`() =
+    fun `state shows the fighter`() =
         runTest(dispatcher) {
             val viewModel = viewModel()
             backgroundScope.launch { viewModel.state.collect {} }
 
             activityRepo.report.value = activeDays(8)
 
-            assertEquals(PlantStage.SEEDLING, viewModel.state.value.avatar?.plant?.stage)
+            assertEquals(FighterRank.SPARRING_PARTNER, viewModel.state.value.avatar?.fighter?.rank)
         }
 
     @Test
@@ -106,18 +107,37 @@ class HabitViewModelAvatarTest {
         }
 
     @Test
-    fun `a new stage is announced until it is dismissed`() =
+    fun `a new rank is announced until it is dismissed`() =
         runTest(dispatcher) {
-            avatarRepo.data.value = AvatarData(seenStage = PlantStage.GERM.number)
+            avatarRepo.data.value = AvatarData(seenStage = FighterRank.TRAINEE.number)
             activityRepo.report.value = activeDays(7)
             val viewModel = viewModel()
             backgroundScope.launch { viewModel.state.collect {} }
 
-            assertEquals(PlantStage.SEEDLING, viewModel.state.value.avatar?.newStage)
+            assertEquals(FighterRank.SPARRING_PARTNER, viewModel.state.value.avatar?.newRank)
 
-            viewModel.onAction(HabitsAction.DismissNewStage)
+            viewModel.onAction(HabitsAction.DismissNewRank)
 
-            assertNull(viewModel.state.value.avatar?.newStage)
+            assertNull(viewModel.state.value.avatar?.newRank)
+        }
+
+    @Test
+    fun `new stat levels are announced until they are dismissed`() =
+        runTest(dispatcher) {
+            avatarRepo.data.value =
+                AvatarData(seenStatLevels = FighterStat.entries.associateWith { 1 })
+            avatarRepo.xp.value = mapOf(FighterStat.STRENGTH to 15)
+            val viewModel = viewModel()
+            backgroundScope.launch { viewModel.state.collect {} }
+
+            assertEquals(
+                mapOf(FighterStat.STRENGTH to 3),
+                viewModel.state.value.avatar?.newStatLevels,
+            )
+
+            viewModel.onAction(HabitsAction.DismissNewStatLevels)
+
+            assertEquals(emptyMap(), viewModel.state.value.avatar?.newStatLevels)
         }
 
     @Test

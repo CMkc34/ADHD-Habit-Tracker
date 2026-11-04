@@ -17,7 +17,7 @@
 package com.shub39.grit.shared.ui.setting
 
 import androidx.compose.ui.graphics.Color
-import com.shub39.grit.core.avatar.AvatarSpecies
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.theme.AppTheme
 import com.shub39.grit.core.theme.Fonts
 import com.shub39.grit.core.theme.PaletteStyle
@@ -58,8 +58,8 @@ sealed interface SettingsAction {
     /** fork (#139): change how the plant calls the user; empty removes the name */
     data class ChangeUserName(val name: String) : SettingsAction
 
-    /** fork (#140): switch the plant; stage, water and purchases stay */
-    data class ChangeAvatarSpecies(val species: AvatarSpecies) : SettingsAction
+    /** fork (#140): switch the fighter's look; rank, stats, water and purchases stay */
+    data class ChangeFighterLook(val look: FighterLook) : SettingsAction
 
     data object OnSettingsOpened : SettingsAction
 

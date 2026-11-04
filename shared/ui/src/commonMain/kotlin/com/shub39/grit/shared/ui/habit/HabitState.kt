@@ -54,7 +54,8 @@ import kotlinx.datetime.DayOfWeek
  * @property dailyGreeting Greeting on the first app start of a day, `null` when hidden.
  * @property nameSetup The plant asks for the user's name on the very first start (#139).
  * @property activity Activity streak and energy across all habits, `null` until loaded.
- * @property avatar The plant avatar on the avatar page, `null` until loaded.
+ * @property avatar The fighter on the avatar page with rank, stats and notices, `null` until
+ *   loaded.
  * @property routineStyles Colour and icon by habit id; habits without an entry use
  *   [RoutineStyle.DEFAULT].
  * @property routineStats Trained stat by habit id; habits without an entry train

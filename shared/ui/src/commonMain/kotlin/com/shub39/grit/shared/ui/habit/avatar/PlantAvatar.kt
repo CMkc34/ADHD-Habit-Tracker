@@ -48,11 +48,9 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.shub39.grit.core.avatar.AvatarSpecies
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.avatar.ShopItemKind
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import kotlin.math.PI
 import kotlin.math.abs
@@ -115,7 +113,7 @@ fun PlantAvatar(
     potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
     accessories: Set<String> = emptySet(),
     animate: Boolean = true,
-    species: AvatarSpecies = AvatarSpecies.SPROUT,
+    species: FighterLook = FighterLook.KAI,
 ) {
     val sway = if (animate) rememberSway() else 0f
     val time = if (animate) rememberMeadowTime() else 0f
@@ -149,7 +147,7 @@ internal fun DrawScope.drawPlantAvatar(
     sway: Float,
     time: Float = 0f,
     moving: Boolean = false,
-    species: AvatarSpecies = AvatarSpecies.SPROUT,
+    species: FighterLook = FighterLook.KAI,
 ) {
     val tired = mood == PlantMood.TIRED
     val plant =
@@ -277,9 +275,9 @@ private class PlantPainter(
     private val accessories: Set<String>,
     private val time: Float = 0f,
     private val moving: Boolean = false,
-    private val species: AvatarSpecies = AvatarSpecies.SPROUT,
+    private val species: FighterLook = FighterLook.KAI,
 ) {
-    private val cherry = species == AvatarSpecies.CHERRY
+    private val cherry = species == FighterLook.MIRA
     private val inPot = stage <= PlantStage.SAPLING
     private val isTree = stage >= PlantStage.SAPLING
     private val tree = treeShapeOf(stage)
@@ -1108,11 +1106,11 @@ private fun PlantAccessoriesPreview() {
 @Preview(widthDp = 400, heightDp = 300)
 @Composable
 private fun CherryStagesPreview() {
-    PlantGrid(mood = PlantMood.HAPPY, species = AvatarSpecies.CHERRY)
+    PlantGrid(mood = PlantMood.HAPPY, species = FighterLook.MIRA)
 }
 
 @Composable
-private fun PlantGrid(mood: PlantMood, species: AvatarSpecies = AvatarSpecies.SPROUT) {
+private fun PlantGrid(mood: PlantMood, species: FighterLook = FighterLook.KAI) {
     Column {
         PlantStage.entries.chunked(4).forEach { row ->
             Row {

@@ -21,10 +21,11 @@ import com.shub39.grit.core.activity.ActivityRepo
 import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.activity.FreezeNotice
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.PurchaseCheck
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.now
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -64,8 +65,12 @@ private class FakeActivityRepo(
 
 class AvatarRepositoryTest {
 
-    private fun repository(activeDays: Int, store: FakeAvatarStore = FakeAvatarStore()) =
-        AvatarRepository(FakeActivityRepo(activeDays, store), store)
+    private fun repository(
+        activeDays: Int,
+        store: FakeAvatarStore = FakeAvatarStore(),
+        habits: FakeHabitRepo = FakeHabitRepo(),
+        stats: FakeRoutineStatStore = FakeRoutineStatStore(),
+    ) = AvatarRepository(FakeActivityRepo(activeDays, store), store, habits, stats)
 
     @Test
     fun `buying takes the energy and puts the item on`() = runTest {
@@ -81,10 +86,10 @@ class AvatarRepositoryTest {
     }
 
     @Test
-    fun `items above the stage or the balance cannot be bought`() = runTest {
+    fun `items above the rank or the balance cannot be bought`() = runTest {
         val repository = repository(activeDays = 10)
 
-        assertEquals(PurchaseCheck.STAGE_TOO_LOW, repository.buy("acc_bird"))
+        assertEquals(PurchaseCheck.RANK_TOO_LOW, repository.buy("acc_bird"))
         assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, repository.buy("acc_watering_can"))
         assertEquals(emptyList(), repository.getAvatarState().first().data.purchases)
     }
@@ -138,18 +143,92 @@ class AvatarRepositoryTest {
     }
 
     @Test
-    fun `the first look remembers the stage, later stages are new`() = runTest {
+    fun `the first look remembers the rank, later ranks are new`() = runTest {
         val store = FakeAvatarStore()
         val repository = repository(activeDays = 8, store = store)
 
-        assertNull(repository.getAvatarState().first().newStage)
-        assertEquals(PlantStage.SEEDLING.number, store.data.value.seenStage)
+        assertNull(repository.getAvatarState().first().newRank)
+        assertEquals(FighterRank.SPARRING_PARTNER.number, store.data.value.seenStage)
 
-        store.data.value = store.data.value.copy(seenStage = PlantStage.GERM.number)
-        assertEquals(PlantStage.SEEDLING, repository.getAvatarState().first().newStage)
+        store.data.value = store.data.value.copy(seenStage = FighterRank.TRAINEE.number)
+        assertEquals(FighterRank.SPARRING_PARTNER, repository.getAvatarState().first().newRank)
 
-        repository.markStageSeen(PlantStage.SEEDLING)
-        assertNull(repository.getAvatarState().first().newStage)
+        repository.markRankSeen(FighterRank.SPARRING_PARTNER)
+        assertNull(repository.getAvatarState().first().newRank)
+    }
+
+    @Test
+    fun `the plant stage the user saw becomes the rank, without a notice`() = runTest {
+        // 25 active days: plant stage 5 (plantlet), now rank 5 (contender)
+        val store = FakeAvatarStore(AvatarData(seenStage = 5))
+        val state = repository(activeDays = 25, store = store).getAvatarState().first()
+
+        assertEquals(FighterRank.CONTENDER, state.fighter.rank)
+        assertEquals(5, state.fighter.rank.number)
+        assertNull(state.newRank)
+    }
+
+    @Test
+    fun `xp comes from the check-ins of each routine's stat`() = runTest {
+        val today = LocalDate.now()
+        val habits = FakeHabitRepo(listOf(routine(1), routine(2)))
+        val stats = FakeRoutineStatStore(mapOf(1L to FighterStat.STRENGTH))
+        (0 until 6).forEach { habits.checkIn(1, today.minus(it, DateTimeUnit.DAY)) }
+        habits.checkIn(2, today)
+
+        val fighter =
+            repository(activeDays = 6, habits = habits, stats = stats)
+                .getAvatarState()
+                .first()
+                .fighter
+
+        assertEquals(6, fighter.xp(FighterStat.STRENGTH))
+        assertEquals(2, fighter.level(FighterStat.STRENGTH))
+        assertEquals(1, fighter.xp(FighterStat.STAMINA))
+    }
+
+    @Test
+    fun `no level-up notices on the first run after the update`() = runTest {
+        val today = LocalDate.now()
+        val store = FakeAvatarStore(AvatarData(seenStage = 3))
+        val habits = FakeHabitRepo(listOf(routine(1)))
+        (0 until 20).forEach { habits.checkIn(1, today.minus(it, DateTimeUnit.DAY)) }
+        val repository = repository(activeDays = 20, store = store, habits = habits)
+
+        // 20 stamina XP from before the update: level 3, stored without a notice
+        assertEquals(emptyMap(), repository.getAvatarState().first().newStatLevels)
+        assertEquals(3, store.data.value.seenStatLevels[FighterStat.STAMINA])
+        assertEquals(1, store.data.value.seenStatLevels[FighterStat.FOCUS])
+
+        // 10 more check-ins reach level 4, which is announced until it is marked seen
+        (20 until 30).forEach { habits.checkIn(1, today.minus(it, DateTimeUnit.DAY)) }
+        val state = repository.getAvatarState().first()
+        assertEquals(mapOf(FighterStat.STAMINA to 4), state.newStatLevels)
+
+        repository.markStatLevelsSeen(state.statLevels)
+        assertEquals(emptyMap(), repository.getAvatarState().first().newStatLevels)
+    }
+
+    @Test
+    fun `water spent on items that left the catalog comes back`() = runTest {
+        val today = LocalDate.now()
+        val store =
+            FakeAvatarStore(
+                AvatarData(
+                    purchases =
+                        listOf(
+                            Purchase("pot_blue", today, 10),
+                            Purchase("plant_only_item", today, 15),
+                        )
+                )
+            )
+
+        val state = repository(activeDays = 30, store = store).getAvatarState().first()
+
+        assertEquals(30 - 10, state.energy)
+        assertEquals(setOf(ShopCatalog.DEFAULT_POT_COLOR, "pot_blue"), state.owned)
+        // still stored, so nothing is lost when a backup goes back to an older version
+        assertEquals(2, store.data.value.purchases.size)
     }
 
     @Test

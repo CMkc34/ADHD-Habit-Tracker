@@ -23,9 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.AvatarSpecies
-import com.shub39.grit.core.avatar.PlantStage
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.components.GritBottomSheet
+import com.shub39.grit.shared.ui.habit.avatar.PlantStage
 import com.shub39.grit.shared.ui.habit.avatar.SpeciesChoice
 import com.shub39.grit.shared.ui.habit.avatar.SpeciesChoiceColors
 import grit.shared.ui.generated.resources.Res
@@ -41,7 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 fun AvatarSpeciesSheet(
     avatar: AvatarData,
     stage: PlantStage,
-    onSelect: (AvatarSpecies) -> Unit,
+    onSelect: (FighterLook) -> Unit,
     onDismiss: () -> Unit,
 ) {
     GritBottomSheet(onDismissRequest = onDismiss) {
@@ -50,7 +50,7 @@ fun AvatarSpeciesSheet(
             style = MaterialTheme.typography.titleLarge,
         )
         SpeciesChoice(
-            selected = avatar.species,
+            selected = avatar.look,
             onSelect = onSelect,
             colors =
                 SpeciesChoiceColors(

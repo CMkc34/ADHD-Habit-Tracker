@@ -16,6 +16,9 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -26,16 +29,16 @@ class ShopPreviewTest {
     private val bird = ShopCatalog.byId("acc_bird")!!
     private val blue = ShopCatalog.byId("pot_blue")!!
 
-    private fun state(stage: PlantStage, energy: Int, data: AvatarData = AvatarData()) =
-        AvatarState(PlantState(stage.minActiveDays, stage, PlantMood.HAPPY), energy, data)
+    private fun state(rank: FighterRank, energy: Int, data: AvatarData = AvatarData()) =
+        AvatarState(FighterState(rank.minActiveDays, rank, FighterMood.READY), energy, data)
 
     @Test
-    fun `a buyable item is shown on the current plant`() {
-        val preview = state(PlantStage.TREE, 50).preview(bird)
+    fun `a buyable item is shown on the current fighter`() {
+        val preview = state(FighterRank.CHAMPION, 50).preview(bird)
 
         assertTrue(preview.canBuy)
-        assertFalse(preview.isFutureStage)
-        assertEquals(PlantStage.TREE, preview.stage)
+        assertFalse(preview.isFutureRank)
+        assertEquals(FighterRank.CHAMPION, preview.rank)
         assertEquals(emptySet(), preview.without.accessories)
         assertEquals(setOf("acc_bird"), preview.with.accessories)
         assertEquals(0, preview.missingEnergy)
@@ -43,7 +46,7 @@ class ShopPreviewTest {
 
     @Test
     fun `missing water is counted and buying is not possible`() {
-        val preview = state(PlantStage.SEED, 4).preview(blue)
+        val preview = state(FighterRank.ROOKIE, 4).preview(blue)
 
         assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, preview.check)
         assertFalse(preview.canBuy)
@@ -53,12 +56,12 @@ class ShopPreviewTest {
     }
 
     @Test
-    fun `a locked item is shown at the stage it needs`() {
-        val preview = state(PlantStage.SEEDLING, 100).preview(bird)
+    fun `a locked item is shown at the rank it needs`() {
+        val preview = state(FighterRank.SPARRING_PARTNER, 100).preview(bird)
 
-        assertEquals(PurchaseCheck.STAGE_TOO_LOW, preview.check)
-        assertTrue(preview.isFutureStage)
+        assertEquals(PurchaseCheck.RANK_TOO_LOW, preview.check)
+        assertTrue(preview.isFutureRank)
         assertFalse(preview.canBuy)
-        assertEquals(PlantStage.YOUNG_TREE, preview.stage)
+        assertEquals(FighterRank.VETERAN, preview.rank)
     }
 }

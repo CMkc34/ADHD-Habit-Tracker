@@ -50,7 +50,8 @@ import com.shub39.grit.shared.ui.components.endItemShape
 import com.shub39.grit.shared.ui.components.leadingItemShape
 import com.shub39.grit.shared.ui.components.listItemColors
 import com.shub39.grit.shared.ui.components.middleItemShape
-import com.shub39.grit.shared.ui.habit.avatar.defaultPlantName
+import com.shub39.grit.shared.ui.habit.avatar.defaultFighterName
+import com.shub39.grit.shared.ui.habit.avatar.plantStage
 import com.shub39.grit.shared.ui.setting.SettingsAction
 import com.shub39.grit.shared.ui.setting.SettingsState
 import com.shub39.grit.shared.ui.setting.ui.component.AvatarSpeciesSheet
@@ -220,7 +221,7 @@ fun RootPage(
                                     text =
                                         stringResource(
                                             Res.string.avatar_species_setting_hint,
-                                            defaultPlantName(state.avatar.species),
+                                            defaultFighterName(state.avatar.look),
                                         )
                                 )
                             },
@@ -412,8 +413,8 @@ fun RootPage(
             if (showAvatarSpecies) {
                 AvatarSpeciesSheet(
                     avatar = state.avatar,
-                    stage = state.avatarStage,
-                    onSelect = { onAction(SettingsAction.ChangeAvatarSpecies(it)) },
+                    stage = state.avatarRank.plantStage,
+                    onSelect = { onAction(SettingsAction.ChangeFighterLook(it)) },
                     onDismiss = { showAvatarSpecies = false },
                 )
             }

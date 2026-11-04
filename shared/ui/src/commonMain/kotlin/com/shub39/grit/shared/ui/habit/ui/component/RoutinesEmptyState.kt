@@ -32,15 +32,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
-import com.shub39.grit.shared.ui.habit.avatar.defaultPlantName
-import com.shub39.grit.shared.ui.habit.avatar.plantName
+import com.shub39.grit.shared.ui.habit.avatar.PlantMood
+import com.shub39.grit.shared.ui.habit.avatar.PlantStage
+import com.shub39.grit.shared.ui.habit.avatar.defaultFighterName
+import com.shub39.grit.shared.ui.habit.avatar.fighterName
+import com.shub39.grit.shared.ui.habit.avatar.plantStage
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.greeting_empty_button
@@ -58,7 +59,7 @@ fun RoutinesEmptyState(
     onAddRoutine: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val name = avatar?.let { plantName(it.data) } ?: defaultPlantName(AvatarSpecies.SPROUT)
+    val name = avatar?.let { fighterName(it.data) } ?: defaultFighterName(FighterLook.KAI)
 
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp),
@@ -66,11 +67,11 @@ fun RoutinesEmptyState(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         PlantAvatar(
-            stage = avatar?.plant?.stage ?: PlantStage.SEED,
+            stage = avatar?.fighter?.rank?.plantStage ?: PlantStage.SEED,
             mood = PlantMood.TIRED,
             potColor = avatar?.data?.potColor ?: ShopCatalog.DEFAULT_POT_COLOR,
             accessories = avatar?.data?.accessories.orEmpty(),
-            species = avatar?.data?.species ?: AvatarSpecies.SPROUT,
+            species = avatar?.data?.look ?: FighterLook.KAI,
             modifier = Modifier.size(150.dp),
         )
         Text(

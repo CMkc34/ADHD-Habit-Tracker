@@ -35,18 +35,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.components.GritDialog
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.avatar_cancel
-import grit.shared.ui.generated.resources.avatar_default_name
-import grit.shared.ui.generated.resources.avatar_default_name_cherry
 import grit.shared.ui.generated.resources.avatar_new_stage_ok
 import grit.shared.ui.generated.resources.avatar_new_stage_text
 import grit.shared.ui.generated.resources.avatar_new_stage_title
@@ -89,19 +87,11 @@ private fun PlantStage.nameRes(): StringResource =
 
 @Composable fun stageName(stage: PlantStage): String = stringResource(stage.nameRes())
 
-/** The name a plant of [species] has until the user names it: "Sprout" or "Kirsche" (#140). */
-@Composable
-fun defaultPlantName(species: AvatarSpecies): String =
-    stringResource(
-        when (species) {
-            AvatarSpecies.SPROUT -> Res.string.avatar_default_name
-            AvatarSpecies.CHERRY -> Res.string.avatar_default_name_cherry
-        }
-    )
+/** The name a fighter with [look] has until the user names it: "Kai" or "Mira". */
+fun defaultFighterName(look: FighterLook): String = look.defaultName
 
-/** The stored name, or the species' default name while the user has not named the plant. */
-@Composable
-fun plantName(data: AvatarData): String = data.name.ifBlank { defaultPlantName(data.species) }
+/** The stored name, or the look's default name while the user has not named the fighter. */
+fun fighterName(data: AvatarData): String = data.name.ifBlank { defaultFighterName(data.look) }
 
 /** Asks for a new name; an empty name brings back the default. */
 @Composable
@@ -109,7 +99,7 @@ fun RenameAvatarDialog(
     currentName: String,
     onSave: (String) -> Unit,
     onDismiss: () -> Unit,
-    species: AvatarSpecies = AvatarSpecies.SPROUT,
+    species: FighterLook = FighterLook.KAI,
 ) {
     var name by remember { mutableStateOf(currentName) }
 
@@ -122,7 +112,7 @@ fun RenameAvatarDialog(
             value = name,
             onValueChange = { name = it.take(MAX_NAME_LENGTH) },
             singleLine = true,
-            placeholder = { Text(defaultPlantName(species)) },
+            placeholder = { Text(defaultFighterName(species)) },
             supportingText = {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
@@ -146,10 +136,10 @@ fun NewStageDialog(avatar: AvatarState, stage: PlantStage, onDismiss: () -> Unit
     GritDialog(onDismissRequest = onDismiss) {
         PlantAvatar(
             stage = stage,
-            mood = avatar.plant.mood,
+            mood = avatar.fighter.mood.plantMood,
             potColor = avatar.data.potColor,
             accessories = avatar.data.accessories,
-            species = avatar.data.species,
+            species = avatar.data.look,
             modifier = Modifier.widthIn(max = 160.dp).fillMaxWidth(),
         )
         Text(
@@ -161,7 +151,7 @@ fun NewStageDialog(avatar: AvatarState, stage: PlantStage, onDismiss: () -> Unit
             text =
                 stringResource(
                     Res.string.avatar_new_stage_text,
-                    plantName(avatar.data),
+                    fighterName(avatar.data),
                     stage.number,
                     stageName(stage),
                 ),
@@ -174,7 +164,8 @@ fun NewStageDialog(avatar: AvatarState, stage: PlantStage, onDismiss: () -> Unit
 
 private val previewAvatar =
     AvatarState(
-        plant = PlantState(activeDays = 25, stage = PlantStage.PLANTLET, mood = PlantMood.HAPPY),
+        fighter =
+            FighterState(activeDays = 25, rank = FighterRank.CONTENDER, mood = FighterMood.READY),
         energy = 12,
         data =
             AvatarData(

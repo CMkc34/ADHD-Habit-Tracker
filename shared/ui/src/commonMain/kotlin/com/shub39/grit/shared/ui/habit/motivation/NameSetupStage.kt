@@ -45,13 +45,13 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.shub39.grit.core.avatar.AvatarSpecies
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.UserName
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
+import com.shub39.grit.shared.ui.habit.avatar.PlantMood
+import com.shub39.grit.shared.ui.habit.avatar.PlantStage
 import com.shub39.grit.shared.ui.habit.avatar.SpeciesChoice
 import com.shub39.grit.shared.ui.habit.avatar.SpeciesChoiceColors
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
@@ -97,13 +97,13 @@ fun NameSetupHost() {
  */
 @Composable
 fun NameSetupStage(
-    onFinish: (String, AvatarSpecies) -> Unit,
+    onFinish: (String, FighterLook) -> Unit,
     modifier: Modifier = Modifier,
     startWithSpecies: Boolean = false,
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     var choosing by rememberSaveable { mutableStateOf(startWithSpecies) }
-    var species by rememberSaveable { mutableStateOf(AvatarSpecies.SPROUT) }
+    var species by rememberSaveable { mutableStateOf(FighterLook.KAI) }
 
     CelebrationStage(
         colors = CheckInStageColors,
@@ -216,8 +216,8 @@ fun NameSetupStage(
 @Composable
 private fun SpeciesStep(
     userName: String,
-    species: AvatarSpecies,
-    onSelect: (AvatarSpecies) -> Unit,
+    species: FighterLook,
+    onSelect: (FighterLook) -> Unit,
     onStart: () -> Unit,
 ) {
     Text(

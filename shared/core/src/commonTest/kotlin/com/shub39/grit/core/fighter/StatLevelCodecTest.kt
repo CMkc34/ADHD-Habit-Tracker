@@ -14,29 +14,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.shub39.grit.core.avatar
+package com.shub39.grit.core.fighter
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
-class AvatarSpeciesTest {
+class StatLevelCodecTest {
 
     @Test
-    fun `ids map back to their species`() {
-        AvatarSpecies.entries.forEach { assertEquals(it, AvatarSpecies.fromId(it.id)) }
+    fun `entries have the documented form`() {
+        assertEquals("strength|4", StatLevelCodec.encode(FighterStat.STRENGTH, 4))
     }
 
     @Test
-    fun `missing or unknown ids give sprout`() {
-        assertEquals(AvatarSpecies.SPROUT, AvatarSpecies.fromId(null))
-        assertEquals(AvatarSpecies.SPROUT, AvatarSpecies.fromId("cactus"))
+    fun `levels round-trip`() {
+        val levels = mapOf(FighterStat.STRENGTH to 4, FighterStat.FOCUS to 1)
+
+        assertEquals(levels, StatLevelCodec.decodeAll(StatLevelCodec.encodeAll(levels)))
     }
 
     @Test
-    fun `a restored backup brings back the chosen species`() {
-        val cherry = AvatarData(species = AvatarSpecies.CHERRY)
-
-        assertEquals(AvatarSpecies.CHERRY, AvatarData().mergedWith(cherry).species)
-        assertEquals(AvatarSpecies.CHERRY, cherry.mergedWith(AvatarData()).species)
+    fun `broken entries and unknown stats are dropped`() {
+        assertNull(StatLevelCodec.decode("strength"))
+        assertNull(StatLevelCodec.decode("strength|x"))
+        assertNull(StatLevelCodec.decode("luck|3"))
+        assertEquals(
+            mapOf(FighterStat.SPEED to 3),
+            StatLevelCodec.decodeAll(setOf("speed|2", "speed|3", "luck|9", "")),
+        )
     }
 }

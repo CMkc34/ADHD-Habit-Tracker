@@ -50,15 +50,15 @@ import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.activity.ActivityPlanner
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.PurchaseCheck
 import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.avatar.ShopItem
 import com.shub39.grit.core.avatar.ShopItemKind
 import com.shub39.grit.core.avatar.preview
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.components.GritDialog
 import com.shub39.grit.shared.ui.habit.ui.component.WaterText
@@ -257,9 +257,9 @@ private fun ShopRow(
                             Text(stringResource(Res.string.shop_put_on))
                         }
                 }
-            PurchaseCheck.STAGE_TOO_LOW ->
+            PurchaseCheck.RANK_TOO_LOW ->
                 Text(
-                    text = "🔒 " + stringResource(Res.string.shop_from_stage, item.minStage.number),
+                    text = "🔒 " + stringResource(Res.string.shop_from_stage, item.minRank.number),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -316,13 +316,13 @@ fun BuyItemDialog(
 
     GritDialog(onDismissRequest = onDismiss) {
         MeadowScene(
-            stage = preview.stage,
-            mood = avatar.plant.mood,
+            stage = preview.rank.plantStage,
+            mood = avatar.fighter.mood.plantMood,
             potColor = shown.potColor,
             accessories = shown.accessories,
             decorations = shown.decorations,
-            weather = avatar.plant.weather,
-            species = avatar.data.species,
+            weather = avatar.fighter.weather,
+            species = avatar.data.look,
             modifier = Modifier.fillMaxWidth(),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -361,14 +361,14 @@ fun BuyItemDialog(
                     )
                 }
             }
-            PurchaseCheck.STAGE_TOO_LOW ->
+            PurchaseCheck.RANK_TOO_LOW ->
                 Text(
                     text =
                         "🔒 " +
                             stringResource(
                                 Res.string.shop_preview_stage,
-                                preview.stage.number,
-                                avatar.plant.stage.number,
+                                preview.rank.number,
+                                avatar.fighter.rank.number,
                             ),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -403,7 +403,8 @@ fun BuyItemDialog(
 
 private val previewAvatar =
     AvatarState(
-        plant = PlantState(activeDays = 32, stage = PlantStage.YOUNG_PLANT, mood = PlantMood.HAPPY),
+        fighter =
+            FighterState(activeDays = 32, rank = FighterRank.FIGHTER, mood = FighterMood.READY),
         energy = 30,
         data =
             AvatarData(

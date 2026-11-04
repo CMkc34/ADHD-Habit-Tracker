@@ -52,12 +52,10 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.shub39.grit.core.avatar.AvatarSpecies
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.avatar.ShopItemKind
 import com.shub39.grit.core.avatar.Weather
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import kotlin.math.PI
 import kotlin.math.abs
@@ -119,7 +117,7 @@ fun MeadowScene(
     sceneHeight: Float = plantScale,
     skyTop: Float = 0f,
     shape: Shape = RoundedCornerShape(20.dp),
-    species: AvatarSpecies = AvatarSpecies.SPROUT,
+    species: FighterLook = FighterLook.KAI,
 ) {
     val height = maxOf(sceneHeight, plantScale)
     val sway = if (animate) rememberSway() else 0f
