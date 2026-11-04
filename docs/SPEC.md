@@ -6,6 +6,11 @@ Habits (Phase 1); danach Energie & Aktiv-Serie (Phase 2, Abschnitt 4), Statistik
 Avatar (Phase 4, Abschnitt 7) und eine aufgeräumte Oberfläche mit Avatar-Reiter und farbigen
 Routinen (Phase 5, Abschnitt 8; Roadmap in Abschnitt 5).
 
+**Neues Projektziel (ab Phase 6, abgestimmt am 2026-11-04, Repo `CMkc34/ADHD-Habit-Tracker`):**
+Grit wird zum **Habit-Tracker mit Mini-Spiel**. Die Pflanze wird durch einen **Kämpfer** ersetzt, den
+man mit seinen Routinen trainiert und mit dem man in einer **rundenbasierten Arena** gegen
+CPU-Gegner antritt (Abschnitt 9, Epic #1).
+
 Basis-Stand: Upstream `master` @ `3e203449` (Release 6.2.2).
 
 ---
@@ -300,6 +305,10 @@ Belohnt wird die **Nutzung der App**, nicht die Serie einzelner Routinen.
 | 3 | Statistiken | Meilenstein „Phase 3“, Epic #10, Abschnitt 6 |
 | 4 | Avatar (wachsende Pflanze) | Meilenstein „Phase 4“, Epic #15, Abschnitt 7 |
 | 5 | Avatar-Reiter, Routinen mit Farbe und Icon, Aufgaben entfernen | Epic #76, Abschnitt 8 |
+| 6 | Kämpfer & Arena (Habit-Tracker + Mini-Spiel) | neues Repo, Epic #1, Label `phase-6`, Abschnitt 9 |
+
+Hinweis: Issue-Nummern in den Abschnitten 3–8 beziehen sich auf das alte Repo `grit-motivation`,
+ab Abschnitt 9 auf `ADHD-Habit-Tracker`.
 
 Reihenfolge und Abhängigkeiten:
 
@@ -582,7 +591,133 @@ Standardname „Kirsche“).
 
 ---
 
-## 9. Offene Fragen
+## 9. Phase 6 – Kämpfer & Arena
+
+Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Tracker`).
+
+### 9.1 Grundidee
+- Die App wird ein **Habit-Tracker mit Mini-Spiel**. Der Avatar ist kein Pflänzchen mehr, sondern
+  ein **Kämpfer**, der mit den täglichen Routinen trainiert wird.
+- Mit dem Kämpfer spielt man in der **Arena**: rundenbasierte Kämpfe gegen eine Leiter von 10
+  CPU-Gegnern.
+- **Nur Gewohnheiten machen stärker.** Wasser kauft ausschließlich Aussehen, Siege geben keine Werte.
+- Alles aus Phase 1–5 bleibt (Routinen, Pop-ups, Wasser, Aktiv-Serie, Freezes, Statistiken, Backup).
+  Pflanze, Wiese und Deko werden durch Kämpfer, Outfits und Trainingsplatz ersetzt.
+- Ton: verspielt, warm, nie beschämend. Verlieren kostet nur das Ticket.
+
+### 9.2 Rang (#2)
+- `FighterRank` (`core.fighter`): 12 Ränge mit denselben Schwellen wie `PlantStage`
+  (0, 3, 7, 14, 21, 30, 45, 60, 90, 150, 240, 365 aktive Tage).
+- Namen: Neuling, Schüler, Sparringspartner, Raufbold, Herausforderer, Kämpfer, Anwärter, Veteran,
+  Champion, Meister, Großmeister, Legende.
+- Gürtel je Rang: weiß, gelb, orange, grün, blau, lila, braun, rot, schwarz, schwarz + 1 bzw. 2
+  Goldstreifen, gold.
+- Nie Rückstufung. Bei gerissener Serie ist der Kämpfer **müde** (`FighterMood.TIRED`).
+
+### 9.3 Werte und Training (#2, #3, #4)
+- Vier Werte (`FighterStat`): **Kraft** (Schaden), **Tempo** (Zugreihenfolge, Ausweichen),
+  **Ausdauer** (HP), **Fokus** (kritische Treffer, Spezialangriff).
+- Jede Routine trainiert genau einen Wert, Standard Ausdauer. Gespeichert im Preferences-DataStore
+  (`routine_stats`, Einträge `habitId|statKey`), Backup-Feld `routineStats`.
+- **XP wird berechnet:** +1 je Routine und Datum, an dem sie erledigt ist (messbare ab Zielwert, wie
+  `DailyBonus`). Die ganze Historie zählt.
+- Folgen der Berechnung (bewusst hingenommen):
+  - Wechselt eine Routine den Wert, wandert ihre XP mit.
+  - Gelöschte Routinen zählen nicht mehr.
+- Stufenkurve (`StatCurve`): Stufe L ab XP ≥ 5·(L−1)·L/2, also 0, 5, 15, 30, 50 …
+
+### 9.4 Kampf (#10)
+- Werte im Kampf:
+  - HP = 40 + 6·Rang + 8·Ausdauer-Stufe
+  - Angriff = 4 + 2·Kraft-Stufe
+  - Tempo und Fokus = jeweilige Stufe
+- Aktionen:
+  - **Schlag:** Angriff × 0,85–1,15, mindestens 1.
+  - **Block:** Schaden bis zum nächsten eigenen Zug halbiert, +1 Ladung.
+  - **Spezial:** braucht 3 Ladungen, 2 × Angriff, nicht ausweich- oder blockbar.
+- Regeln:
+  - Ladung +1 pro eigenem Zug, +1 extra bei Fokus ≥ Gegner. Maximal 3.
+  - Wer schneller ist, beginnt; bei Gleichstand der Spieler.
+  - Ausweichen: 3 % je Tempo-Vorsprung, höchstens 25 %.
+  - Krit: 5 % + 2 % je Fokus-Stufe, höchstens 30 %, Schaden ×1,5.
+  - Nach 30 Runden gewinnt der höhere HP-Anteil; Gleichstand = Unentschieden.
+- CPU: Spezial, sobald bereit; unter 30 % HP mit 25 % Block; sonst Schlag.
+- Reine Funktion `Battle` in `core.arena`, Zufall injizierbar, alle Zahlen in `ArenaRules`.
+
+### 9.5 Gegner-Leiter (#11, #13)
+- 10 Gegner als Alltagsfeinde eines ADHS-Gehirns, lustig statt bedrohlich: Schlummertaste,
+  Sofa-Kobold, Doomscroll-Wicht, Wäscheberg, Posteingangs-Hydra, Ablenkungsschwarm, Zeitdieb,
+  Deadline-Golem, Überforderungs-Oger, Aufschiebe-Drache.
+- Gegner n+1 öffnet sich nach dem ersten Sieg gegen n; Revanchen sind erlaubt.
+- Balance per Test: Ein typischer Kämpfer (Rang n+1, alle Stufen n+1) gewinnt 55–75 % von 1000
+  Kämpfen gegen Gegner n.
+
+### 9.6 Tickets und Belohnung (#11, #17)
+- Je Routine, die **für heute** erledigt ist, 1 Ticket, höchstens **3 pro Tag**.
+- Verfügbar = verdient − heute begonnene Kämpfe, nie negativ.
+- Nicht genutzte Tickets verfallen um Mitternacht und werden nicht gespeichert.
+- Ein Kampf kostet das Ticket beim Start; Verlassen zählt als Niederlage.
+- Optional (#17): erster Sieg gegen Gegner n gibt einmalig 5·n 💧. `ActivityPlanner` bucht das als
+  berechnete Einnahme, der Kontostand bleibt berechnet.
+
+### 9.7 Shop (#7)
+- Bestehende Shop-Mechanik (Preise, Mindestrang, Saison, Vorschau) bleibt. Neue Arten:
+  - **Outfit** (genau eins)
+  - **Ausrüstung** (beliebig viele)
+  - **Trainingsplatz-Teile** (fester Platz)
+- Rein kosmetisch. Katalog und Preise stehen in #7 und nur in `ShopCatalog`.
+
+### 9.8 Datenhaltung und Umstieg (#5, #12)
+- Keine Änderung am Room-Schema. Neue Schlüssel in der bestehenden Preferences-Datei:
+  - `routine_stats`
+  - `avatar_seen_stat_levels`
+  - `arena_fights` (`datum|gegnerId|ergebnis`)
+- Backup: optionale Felder `routineStats` und `arena`; ältere Backups bleiben importierbar, Import
+  führt zusammen.
+- Umstieg:
+  - Rang = bisherige Pflanzenstufe (`avatar_seen_stage` bleibt), keine Hinweise beim ersten Start.
+  - `avatar_species`: `sprout` → Kai, `cherry` → Mira.
+  - Gekaufte Pflanzen-Teile werden ignoriert, das Wasser ist wieder da.
+
+### 9.9 UI
+- Leiste: **Routinen | Kämpfer | Arena | Einstellungen** (#9, #14).
+- Kämpfer-Reiter (#9):
+  - Trainingsplatz (ersetzt die Wiese, Wetter bleibt, #8), Kämpfer in der Mitte (#6).
+  - Leiste mit Wasser, Namensschild mit Rang und Fortschritt, Shop-Knopf.
+  - Darunter die vier Werte mit Stufe, XP-Balken und den trainierenden Routinen.
+  - Hinweise bei neuem Rang und neuer Stufe.
+- Arena-Reiter (#14): Tickets, Leiter, Vergleich vor dem Kampf, Kampfbildschirm mit HP, Ladungen und
+  drei Aktionen.
+- Routinen-Formular und -Karte zeigen den trainierten Wert (#4).
+- Motivations-Pop-up (#15): „+1 Kraft-XP“, „Kraft Stufe 4!“, „+1 🎟“.
+- Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (Kai / Mira), keine Pflanzen-Texte mehr.
+- Alles selbst gezeichnet (`Canvas`, Papier-/Sticker-Stil), Bewegung folgt „Animationen entfernen“.
+
+### 9.10 Issues
+| # | Inhalt |
+|---|---|
+| #1 | Epic Phase 6 |
+| #2 | Domain: Ränge, Werte, XP |
+| #3 | Wert pro Routine speichern + Backup |
+| #4 | Formular und Karte: Wert wählen und zeigen |
+| #5 | Kämpfer-Zustand statt Pflanze, Umstieg |
+| #6 | Kämpfer zeichnen |
+| #7 | Shop: neuer kosmetischer Katalog |
+| #8 | Trainingsplatz-Szene |
+| #9 | Kämpfer-Reiter mit Werten und Hinweisen |
+| #10 | Domain: Kampf-Engine |
+| #11 | Domain: Gegner-Leiter, Balance, Tickets |
+| #12 | Arena speichern + Backup |
+| #13 | Gegner zeichnen |
+| #14 | Arena-Reiter und Kampfbildschirm |
+| #15 | Pop-up: XP, Stufe, Ticket |
+| #16 | Einrichtung und Texte |
+| #17 | Optional: Wasser für erste Siege |
+| #18 | Abnahme auf dem Gerät |
+
+---
+
+## 10. Offene Fragen
 
 - ~~Soll das Pop-up per Einstellung abschaltbar sein?~~ Umgesetzt in #9 (siehe 3.3).
 - ~~Pop-up beim Abhaken eines vergangenen Tages ohne laufende Serie?~~ Entschieden: kein Pop-up bei
