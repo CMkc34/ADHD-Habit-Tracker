@@ -96,12 +96,14 @@ object FighterPalette {
     private fun argb(rgb: Long): Int = (0xFF000000 or rgb).toInt()
 
     val skins: List<Int> =
-        listOf(0xF8D6BC, 0xF2C7A5, 0xE0A47A, 0xD99A6C, 0xB97A52, 0x8C5A3C, 0x6B4230, 0x4A2E22)
-            .map { argb(it.toLong()) }
+        listOf(0xF8D6BC, 0xF2C7A5, 0xE0A47A, 0xD99A6C, 0xB97A52, 0x8C5A3C, 0x6B4230, 0x4A2E22).map {
+            argb(it.toLong())
+        }
 
     val hairs: List<Int> =
-        listOf(0x2A2238, 0x4A3020, 0x8A5A3A, 0xE07A3A, 0xF2D27A, 0xF2F0F7, 0x5B86D6, 0xE06C9F)
-            .map { argb(it.toLong()) }
+        listOf(0x2A2238, 0x4A3020, 0x8A5A3A, 0xE07A3A, 0xF2D27A, 0xF2F0F7, 0x5B86D6, 0xE06C9F).map {
+            argb(it.toLong())
+        }
 
     /** The main outfit colour: top, hoodie, suit or jacket. */
     val mains: List<Int> =
@@ -120,8 +122,9 @@ object FighterPalette {
 
     /** The accent: scarf, trims, headband or goggles. */
     val accents: List<Int> =
-        listOf(0xC84B3A, 0x4FD1B0, 0xF28C28, 0xFFC93C, 0x58D7F0, 0xB06CFF, 0xF4F1EA, 0xE06C9F)
-            .map { argb(it.toLong()) }
+        listOf(0xC84B3A, 0x4FD1B0, 0xF28C28, 0xFFC93C, 0x58D7F0, 0xB06CFF, 0xF4F1EA, 0xE06C9F).map {
+            argb(it.toLong())
+        }
 }
 
 private fun List<Int>.wrapped(index: Int): Int = this[index.mod(size)]

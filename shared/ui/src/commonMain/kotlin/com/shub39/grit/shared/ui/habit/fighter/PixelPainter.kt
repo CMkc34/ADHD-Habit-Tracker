@@ -45,8 +45,8 @@ internal class Paint(val color: Int, val group: String = color.toString())
 /**
  * Rasterises simple shapes (ellipses, polygons, capsules) into a pixel canvas and turns them into
  * pixel art: every region is shaded in three tones with the light from the top left, parts are
- * separated by dark inner lines, and the whole figure gets an ink outline. [face] pixels are put
- * on before the outline, [effect] pixels (ki, sleepy "z") after it.
+ * separated by dark inner lines, and the whole figure gets an ink outline. [face] pixels are put on
+ * before the outline, [effect] pixels (ki, sleepy "z") after it.
  */
 internal class PixelPainter(val size: Int) {
     private val region = IntArray(size * size) { -1 }
@@ -76,39 +76,43 @@ internal class PixelPainter(val size: Int) {
         }
     }
 
-    fun ellipse(c: Pt, rx: Float, ry: Float, paint: Paint) = fill(paint) { x, y ->
-        val dx = (x - c.x) / rx
-        val dy = (y - c.y) / ry
-        dx * dx + dy * dy <= 1f
-    }
+    fun ellipse(c: Pt, rx: Float, ry: Float, paint: Paint) =
+        fill(paint) { x, y ->
+            val dx = (x - c.x) / rx
+            val dy = (y - c.y) / ry
+            dx * dx + dy * dy <= 1f
+        }
 
     fun circle(c: Pt, r: Float, paint: Paint) = ellipse(c, r, r, paint)
 
-    fun poly(points: List<Pt>, paint: Paint) = fill(paint) { x, y ->
-        var inside = false
-        var j = points.lastIndex
-        for (i in points.indices) {
-            val a = points[i]
-            val b = points[j]
-            if ((a.y > y) != (b.y > y) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) {
-                inside = !inside
+    fun poly(points: List<Pt>, paint: Paint) =
+        fill(paint) { x, y ->
+            var inside = false
+            var j = points.lastIndex
+            for (i in points.indices) {
+                val a = points[i]
+                val b = points[j]
+                if ((a.y > y) != (b.y > y) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) {
+                    inside = !inside
+                }
+                j = i
             }
-            j = i
+            inside
         }
-        inside
-    }
 
     /** A thick line from [a] to [b], [ra] wide at the start and [rb] at the end. */
-    fun capsule(a: Pt, b: Pt, ra: Float, paint: Paint, rb: Float = ra) = fill(paint) { x, y ->
-        val dx = b.x - a.x
-        val dy = b.y - a.y
-        val len = dx * dx + dy * dy
-        val t = if (len == 0f) 0f else (((x - a.x) * dx + (y - a.y) * dy) / len).coerceIn(0f, 1f)
-        val qx = a.x + t * dx - x
-        val qy = a.y + t * dy - y
-        val r = ra + (rb - ra) * t
-        qx * qx + qy * qy <= r * r
-    }
+    fun capsule(a: Pt, b: Pt, ra: Float, paint: Paint, rb: Float = ra) =
+        fill(paint) { x, y ->
+            val dx = b.x - a.x
+            val dy = b.y - a.y
+            val len = dx * dx + dy * dy
+            val t =
+                if (len == 0f) 0f else (((x - a.x) * dx + (y - a.y) * dy) / len).coerceIn(0f, 1f)
+            val qx = a.x + t * dx - x
+            val qy = a.y + t * dy - y
+            val r = ra + (rb - ra) * t
+            qx * qx + qy * qy <= r * r
+        }
 
     /** Hand-placed pixels: every character of [rows] other than `.` is looked up in [colors]. */
     fun face(x: Int, y: Int, rows: List<String>, colors: Map<Char, Int>) =
