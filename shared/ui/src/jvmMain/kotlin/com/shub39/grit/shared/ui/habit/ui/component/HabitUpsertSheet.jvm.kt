@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.RoutineStyle
 import com.shub39.grit.shared.ui.components.genericSaver
@@ -30,11 +31,12 @@ import com.shub39.grit.shared.ui.components.genericSaver
 actual fun HabitUpsertSheet(
     habit: Habit,
     onDismissRequest: () -> Unit,
-    onUpsertHabit: (Habit, RoutineStyle) -> Unit,
+    onUpsertHabit: (Habit, RoutineStyle, FighterStat?) -> Unit,
     is24Hr: Boolean,
     modifier: Modifier,
     isEditSheet: Boolean,
     style: RoutineStyle,
+    stat: FighterStat,
 ) {
     var newHabit by rememberSaveable(stateSaver = genericSaver<Habit>()) { mutableStateOf(habit) }
 
@@ -49,5 +51,6 @@ actual fun HabitUpsertSheet(
         onRequestPermission = {},
         modifier = modifier,
         style = style,
+        stat = stat,
     )
 }

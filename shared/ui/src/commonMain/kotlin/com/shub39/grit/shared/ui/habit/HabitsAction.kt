@@ -18,6 +18,7 @@ package com.shub39.grit.shared.ui.habit
 
 import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.habits.Habit
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.style.RoutineStyle
 import kotlinx.datetime.LocalDate
 
@@ -43,9 +44,15 @@ sealed interface HabitsAction {
     /** set [habit]'s id to view analytics for */
     data class PrepareAnalytics(val habit: Habit?) : HabitsAction
 
-    /** fork: [style] is saved under the id the new habit gets */
-    data class AddHabit(val habit: Habit, val style: RoutineStyle = RoutineStyle.DEFAULT) :
-        HabitsAction
+    /**
+     * fork: [style] and [stat] are saved under the id the new habit gets; a `null` [stat] stores
+     * nothing, so the routine trains the default stat (#4)
+     */
+    data class AddHabit(
+        val habit: Habit,
+        val style: RoutineStyle = RoutineStyle.DEFAULT,
+        val stat: FighterStat? = null,
+    ) : HabitsAction
 
     data class DeleteHabit(val habit: Habit) : HabitsAction
 
@@ -103,4 +110,7 @@ sealed interface HabitsAction {
 
     /** give the habit with [habitId] a colour and an icon */
     data class SetRoutineStyle(val habitId: Long, val style: RoutineStyle) : HabitsAction
+
+    /** let the habit with [habitId] train [stat]; its past XP moves along (#4) */
+    data class SetRoutineStat(val habitId: Long, val stat: FighterStat) : HabitsAction
 }

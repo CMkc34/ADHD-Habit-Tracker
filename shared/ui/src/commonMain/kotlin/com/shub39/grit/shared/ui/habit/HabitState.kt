@@ -22,6 +22,7 @@ import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.habits.HabitWithAnalytics
 import com.shub39.grit.core.habits.OverallAnalytics
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.style.RoutineStyle
 import com.shub39.grit.core.stats.ForkStats
 import com.shub39.grit.shared.ui.habit.motivation.BonusPopupState
@@ -56,6 +57,8 @@ import kotlinx.datetime.DayOfWeek
  * @property avatar The plant avatar on the avatar page, `null` until loaded.
  * @property routineStyles Colour and icon by habit id; habits without an entry use
  *   [RoutineStyle.DEFAULT].
+ * @property routineStats Trained stat by habit id; habits without an entry train
+ *   [FighterStat.DEFAULT] (#4).
  */
 @Stable
 @Immutable
@@ -74,6 +77,7 @@ data class HabitState(
     val stats: ForkStats = ForkStats(),
     val avatar: AvatarState? = null,
     val routineStyles: Map<Long, RoutineStyle> = emptyMap(),
+    val routineStats: Map<Long, FighterStat> = emptyMap(),
 
     // datastore
     val compactHabitView: Boolean = false,

@@ -87,6 +87,7 @@ class HabitViewModel(
     private var statsJob: Job? = null
     private var avatarJob: Job? = null
     private var routineStylesJob: Job? = null
+    private var routineStatsJob: Job? = null
 
     // id of the last motivation quote, so the next popup shows a different one
     private var lastQuoteId: String? = null
@@ -107,6 +108,7 @@ class HabitViewModel(
                 observeStats()
                 observeAvatar()
                 observeRoutineStyles()
+                observeRoutineStats()
 
                 rescheduleAllHabits()
             }
@@ -167,6 +169,7 @@ class HabitViewModel(
                     )
                     val newId = upsertHabit(action.habit)
                     routineStyleStore.setStyle(newId, action.style)
+                    action.stat?.let { routineStatStore.setStat(newId, it) }
                 }
 
                 is DeleteHabit -> {
@@ -310,6 +313,10 @@ class HabitViewModel(
                     routineStyleStore.setStyle(action.habitId, action.style)
                 }
 
+                is HabitsAction.SetRoutineStat -> {
+                    routineStatStore.setStat(action.habitId, action.stat)
+                }
+
                 is HabitsAction.InsertMeasuredStatus -> {
                     insertHabitStatus(action.habit, action.date, action.value)
                 }
@@ -384,6 +391,15 @@ class HabitViewModel(
             routineStyleStore
                 .getStyles()
                 .onEach { styles -> _state.update { it.copy(routineStyles = styles) } }
+                .launchIn(viewModelScope)
+    }
+
+    private fun observeRoutineStats() {
+        routineStatsJob?.cancel()
+        routineStatsJob =
+            routineStatStore
+                .getStats()
+                .onEach { stats -> _state.update { it.copy(routineStats = stats) } }
                 .launchIn(viewModelScope)
     }
 

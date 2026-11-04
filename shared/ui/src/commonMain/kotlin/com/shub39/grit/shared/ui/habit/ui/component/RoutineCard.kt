@@ -57,6 +57,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.HabitStatus
 import com.shub39.grit.core.habits.HabitWithAnalytics
@@ -72,6 +73,8 @@ import com.shub39.grit.core.now
 import com.shub39.grit.core.theme.AppTheme
 import com.shub39.grit.core.theme.Theme
 import com.shub39.grit.core.toFormattedString
+import com.shub39.grit.shared.ui.habit.fighter.icon
+import com.shub39.grit.shared.ui.habit.fighter.label
 import com.shub39.grit.shared.ui.habit.style.color
 import com.shub39.grit.shared.ui.habit.style.contentColor
 import com.shub39.grit.shared.ui.theme.GritTheme
@@ -80,12 +83,14 @@ import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.analytics
 import grit.shared.ui.generated.resources.check
 import grit.shared.ui.generated.resources.heat
+import grit.shared.ui.generated.resources.routine_stat_description
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.minus
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 private const val DAYS_PER_ROW = 7
@@ -95,7 +100,8 @@ private const val TODAY_TINT = 0.18f
  * Routine card of the habits list (fork, #81): header with name, flame with the streak and the
  * statistics button (name in capitals); below a divider the icon tile on the left and the last 14
  * days as 2 × 7 boxes on the right (oldest top left, today bottom right). Tapping the card checks
- * off today, tapping a box that day. The compact view shows only the header with a small tile.
+ * off today, tapping a box that day. The compact view shows only the header with a small tile. A
+ * small icon in front of the flame shows the [stat] the routine trains (#4).
  */
 @Composable
 fun RoutineCard(
@@ -111,6 +117,7 @@ fun RoutineCard(
     is24Hr: Boolean,
     shape: Shape,
     modifier: Modifier = Modifier,
+    stat: FighterStat = FighterStat.DEFAULT,
     today: LocalDate = LocalDate.now(),
 ) {
     val habit = habitWithAnalytics.habit
@@ -185,6 +192,13 @@ fun RoutineCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
                 ) {
+                    Icon(
+                        imageVector = vectorResource(stat.icon()),
+                        contentDescription =
+                            stringResource(Res.string.routine_stat_description, stat.label()),
+                        tint = colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(end = 4.dp).size(18.dp),
+                    )
                     Icon(
                         imageVector = vectorResource(Res.drawable.heat),
                         contentDescription = null,
@@ -380,6 +394,7 @@ private fun RoutineCardPreviews(theme: Theme) {
                         ),
                     style = RoutineStyle.DEFAULT,
                     completed = true,
+                    stat = FighterStat.STRENGTH,
                     onInsertStatus = { _, _, _ -> },
                     onPrepareAnalytics = {},
                     onNavigateToAnalytics = {},
@@ -400,6 +415,7 @@ private fun RoutineCardPreviews(theme: Theme) {
                         ),
                     style = RoutineStyle(RoutineColor.INDIGO, RoutineIcon.BOOK),
                     completed = false,
+                    stat = FighterStat.FOCUS,
                     onInsertStatus = { _, _, _ -> },
                     onPrepareAnalytics = {},
                     onNavigateToAnalytics = {},
