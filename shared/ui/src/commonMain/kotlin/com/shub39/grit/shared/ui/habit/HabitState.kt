@@ -20,9 +20,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.avatar.AvatarState
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.HabitWithAnalytics
 import com.shub39.grit.core.habits.OverallAnalytics
-import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.style.RoutineStyle
 import com.shub39.grit.core.stats.ForkStats
 import com.shub39.grit.shared.ui.habit.motivation.BonusPopupState

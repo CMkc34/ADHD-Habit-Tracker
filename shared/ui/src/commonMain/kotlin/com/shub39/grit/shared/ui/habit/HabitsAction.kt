@@ -17,8 +17,8 @@
 package com.shub39.grit.shared.ui.habit
 
 import com.shub39.grit.core.avatar.AvatarSpecies
-import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.RoutineStyle
 import kotlinx.datetime.LocalDate
 
