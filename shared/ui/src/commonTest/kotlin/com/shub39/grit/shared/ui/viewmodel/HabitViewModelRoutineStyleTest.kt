@@ -16,6 +16,7 @@
  */
 package com.shub39.grit.shared.ui.viewmodel
 
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.RoutineColor
 import com.shub39.grit.core.habits.style.RoutineIcon
@@ -26,6 +27,7 @@ import com.shub39.grit.shared.ui.fakes.FakeAnalytics
 import com.shub39.grit.shared.ui.fakes.FakeAvatarRepo
 import com.shub39.grit.shared.ui.fakes.FakeHabitRepo
 import com.shub39.grit.shared.ui.fakes.FakeMotivationSettings
+import com.shub39.grit.shared.ui.fakes.FakeRoutineStatStore
 import com.shub39.grit.shared.ui.fakes.FakeRoutineStyleStore
 import com.shub39.grit.shared.ui.fakes.FakeSettingsDatastore
 import com.shub39.grit.shared.ui.habit.HabitsAction
@@ -48,6 +50,7 @@ class HabitViewModelRoutineStyleTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val activityRepo = FakeActivityRepo()
     private val styleStore = FakeRoutineStyleStore()
+    private val statStore = FakeRoutineStatStore()
     private val habit =
         Habit(
             id = 1,
@@ -79,6 +82,7 @@ class HabitViewModelRoutineStyleTest {
             activityRepo,
             FakeAvatarRepo(activityRepo),
             styleStore,
+            statStore,
         )
 
     @Test
@@ -104,6 +108,18 @@ class HabitViewModelRoutineStyleTest {
             viewModel.onAction(HabitsAction.DeleteHabit(habit))
 
             assertEquals(emptyMap(), viewModel.state.value.routineStyles)
+        }
+
+    @Test
+    fun `deleting a routine removes its trained stat`() =
+        runTest(dispatcher) {
+            statStore.stats.value = mapOf(habit.id to FighterStat.FOCUS, 2L to FighterStat.SPEED)
+            val viewModel = viewModel()
+            backgroundScope.launch { viewModel.state.collect {} }
+
+            viewModel.onAction(HabitsAction.DeleteHabit(habit))
+
+            assertEquals(mapOf(2L to FighterStat.SPEED), statStore.stats.value)
         }
 
     @Test

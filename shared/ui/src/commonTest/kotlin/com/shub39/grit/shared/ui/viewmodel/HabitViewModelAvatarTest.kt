@@ -26,6 +26,7 @@ import com.shub39.grit.shared.ui.fakes.FakeAnalytics
 import com.shub39.grit.shared.ui.fakes.FakeAvatarRepo
 import com.shub39.grit.shared.ui.fakes.FakeHabitRepo
 import com.shub39.grit.shared.ui.fakes.FakeMotivationSettings
+import com.shub39.grit.shared.ui.fakes.FakeRoutineStatStore
 import com.shub39.grit.shared.ui.fakes.FakeRoutineStyleStore
 import com.shub39.grit.shared.ui.fakes.FakeSettingsDatastore
 import com.shub39.grit.shared.ui.habit.HabitsAction
@@ -70,6 +71,7 @@ class HabitViewModelAvatarTest {
             activityRepo,
             avatarRepo,
             FakeRoutineStyleStore(),
+            FakeRoutineStatStore(),
         )
 
     /** A report with [count] active days in a row, ending with a running streak. */
