@@ -52,9 +52,9 @@ import kotlin.math.min
  * The fighter avatar (#6): one of the [FighterCharacter]s in pixel art, in the [colors] the user
  * picked at the start, with ki-energy moves. The [rank] shows through the belt and a few upgrades
  * (wrist wraps, headband, emblem, golden aura). A bought [outfit] replaces the main colour, [gear]
- * are the worn items; both are ids from [FighterItems]. A
- * [FighterMood.TIRED] fighter sits and dozes, otherwise the fighter takes the [pose]. The idle
- * motion follows the system's animation setting and stops completely when [animate] is false.
+ * are the worn items; both are ids from [FighterItems]. A [FighterMood.TIRED] fighter sits and
+ * dozes, otherwise the fighter takes the [pose]. The idle motion follows the system's animation
+ * setting and stops completely when [animate] is false.
  */
 @Composable
 fun FighterAvatar(
@@ -79,8 +79,9 @@ fun FighterAvatar(
         val f = frame?.value ?: 0
         val image =
             frames[f]
-                ?: FighterPixels.render(character, rank, mood, colors, pose, gear, f, outfit)
-                    .also { frames[f] = it }
+                ?: FighterPixels.render(character, rank, mood, colors, pose, gear, f, outfit).also {
+                    frames[f] = it
+                }
         drawPixels(image)
     }
 }
