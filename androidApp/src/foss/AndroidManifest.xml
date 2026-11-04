@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fork privacy rules for the foss flavor (offline app, no data leaves the phone):
+    - No internet access, even if a library would request it.
+    - No Google cloud backup of the app data. Users keep their own JSON export.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+
+    <application
+        android:allowBackup="false"
+        tools:replace="android:allowBackup" />
+
+</manifest>

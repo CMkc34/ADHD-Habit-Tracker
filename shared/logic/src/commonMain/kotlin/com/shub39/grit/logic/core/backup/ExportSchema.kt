@@ -1,0 +1,83 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.shub39.grit.logic.core.backup
+
+import com.shub39.grit.logic.habits.database.HabitDatabase
+import kotlinx.serialization.Serializable
+
+/** Schema version of the removed task database, kept for backup compatibility. */
+const val LEGACY_TASKS_SCHEMA_VERSION = 6
+
+@Serializable
+data class ExportSchema(
+    // fork: tasks were removed; these fields stay so older backups can still be read
+    val tasksSchemaVersion: Int = LEGACY_TASKS_SCHEMA_VERSION,
+    val habitsSchemaVersion: Int = HabitDatabase.SCHEMA_VERSION,
+    val habits: List<HabitSchema>,
+    val habitStatus: List<HabitStatusSchema>,
+    val tasks: List<TaskSchema> = emptyList(),
+    val categories: List<CategorySchema> = emptyList(),
+    val subTasks: List<SubTaskSchema> = emptyList(),
+    // fork: missing in older backups and in backups from the original app
+    val activity: ActivitySchema? = null,
+    val avatar: AvatarSchema? = null,
+    val routineStyles: List<RoutineStyleSchema>? = null,
+)
+
+@Serializable
+data class HabitSchema(
+    val id: Long = 0,
+    val title: String,
+    val description: String,
+    val index: Int,
+    val time: Long,
+    val days: String,
+    val reminder: Boolean,
+    val targetValue: Double = 0.0,
+    val targetUnit: String = "",
+)
+
+@Serializable
+data class HabitStatusSchema(
+    val id: Long = 0,
+    val habitId: Long,
+    val date: Long,
+    val value: Double = 1.0,
+)
+
+@Serializable
+data class TaskSchema(
+    val id: Long = 0,
+    val categoryId: Long,
+    val title: String,
+    val status: Boolean = false,
+    val index: Int = 0,
+    val reminder: Long? = null,
+)
+
+@Serializable
+data class CategorySchema(val id: Long = 0, val name: String, val index: Int = 0, val color: String)
+
+@Serializable
+data class SubTaskSchema(
+    val id: Long = 0,
+    val taskId: Long,
+    val title: String,
+    val index: Int,
+    val status: Boolean = false,
+    val reminder: Long? = null,
+)

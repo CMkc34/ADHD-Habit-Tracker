@@ -1,0 +1,22 @@
+name: Aufgabe
+description: Eine klar abgegrenzte Teilaufgabe (ein Branch, ein PR)
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Ziel
+      description: Was soll nach dieser Aufgabe anders sein?
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Umsetzung / betroffene Dateien
+  - type: textarea
+    id: done
+    attributes:
+      label: Akzeptanzkriterien
+      value: |
+        - [ ]
+    validations:
+      required: true

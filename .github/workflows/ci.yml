@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  workflow_dispatch: { }
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Spotless check
+        run: ./gradlew spotlessCheck --continue
+
+      - name: Unit tests (shared, JVM)
+        run: ./gradlew :shared:core:jvmTest :shared:logic:jvmTest :shared:ui:jvmTest
+
+      - name: Build FOSS debug APK
+        run: ./gradlew :androidApp:assembleFossDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: grit-foss-debug
+          path: androidApp/build/outputs/apk/foss/debug/*.apk
+          retention-days: 14
+
+      - name: Build FOSS release APK (unsigned, R8)
+        run: ./gradlew :androidApp:assembleFossRelease
+
+      - name: Privacy check (no internet, no personal data, no cloud backup)
+        run: |
+          APK=$(find androidApp/build/outputs/apk/foss/release -name "*.apk" -print -quit)
+          AAPT2=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)aapt2
+          echo "APK: $APK"
+          echo "--- Permissions in the final APK ---"
+          "$AAPT2" dump permissions "$APK" | tee permissions.txt
+          FORBIDDEN='INTERNET|CONTACTS|LOCATION|STORAGE|MEDIA_|CAMERA|RECORD_AUDIO|PHONE|CALL_LOG|SMS|CALENDAR|ACCOUNTS|BODY_SENSORS|ACTIVITY_RECOGNITION|QUERY_ALL_PACKAGES|NEARBY_WIFI|BLUETOOTH'
+          if grep -E "uses-permission.*($FORBIDDEN)" permissions.txt; then
+            echo "::error::Forbidden permission found in the release APK"
+            exit 1
+          fi
+          "$AAPT2" dump xmltree --file AndroidManifest.xml "$APK" > manifest.txt
+          grep -E "package=|allowBackup" manifest.txt
+          if ! grep -qE "allowBackup.*=(false|0x0)" manifest.txt; then
+            echo "::error::Cloud backup (allowBackup) is enabled"
+            exit 1
+          fi
+          echo "Privacy check passed"
+
+      - name: Upload release APK (unsigned)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sprout-foss-release-unsigned
+          path: androidApp/build/outputs/apk/foss/release/*.apk
+          retention-days: 14

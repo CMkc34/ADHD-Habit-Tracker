@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sprout logo "Haken-Spross": a check mark that sprouts two leaves (#97). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M2.95,14.66 L8.63,19.98 L17.15,9.69"
+        android:strokeWidth="3.9"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M17.15,9.69 C16.79,5.79 18.92,3.31 22.47,2.6 C22.82,6.5 20.69,8.98 17.15,9.69Z" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M17.15,9.69 C15.02,6.85 12.53,5.79 10.05,6.15 C10.76,8.63 13.6,10.05 17.15,9.69Z" />
+</vector>

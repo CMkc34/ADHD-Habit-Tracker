@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Activity streak and energy (phase 2): header line on the habits page, the energy page, the
+  freeze notice and the energy line in the motivation popup.
+  Since #112 the energy is shown as "water" (💧); the keys stay energy_*.
+  Since #119 every 💧 is drawn as the water coin (WaterText), so keep it as the marker.
+  Fork-specific, kept out of the upstream strings.xml. German texts in values-de.
+-->
+<resources>
+    <!-- Header line on the habits page: %1$d = activity streak, %2$d = energy -->
+    <plurals name="energy_header_line">
+        <item quantity="one">🔥 %1$d day active · 💧 %2$d</item>
+        <item quantity="other">🔥 %1$d days active · 💧 %2$d</item>
+    </plurals>
+    <string name="energy_header_desc">Open water page</string>
+
+    <!-- Energy page -->
+    <string name="energy_title">Water</string>
+    <string name="energy_balance">Your water</string>
+    <string name="energy_current_streak">Activity streak</string>
+    <string name="energy_longest_streak">Longest streak</string>
+    <plurals name="energy_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="energy_last_days">Last 30 days</string>
+    <string name="energy_legend_active">Active</string>
+    <string name="energy_legend_frozen">Frozen</string>
+    <string name="energy_legend_missed">Missed</string>
+    <string name="energy_legend_open">Today, still open</string>
+    <string name="energy_legend_before_start">Before start</string>
+
+    <!-- Rules: %1$d = energy per active day, freeze cost, max frozen days in a row -->
+    <string name="energy_rules_title">How it works</string>
+    <string name="energy_rule_active">A day counts as active as soon as you check in anything – any routine, any date, also via widget or reminder.</string>
+    <string name="energy_rule_energy">Every active day gives you +%1$d 💧, with no upper limit.</string>
+    <!-- %1$d = bonus energy, %2$d = routines needed on one day -->
+    <string name="energy_rule_bonus">Check off %2$d or more routines on one day and you get +%1$d 💧 bonus. Taking a check back below %2$d takes the bonus back too.</string>
+    <string name="energy_rule_freeze">Missed a day? A freeze costs %1$d 💧 per day and saves your streak automatically, for up to %2$d days in a row.</string>
+    <string name="energy_rule_frozen_day">A frozen day keeps your streak alive but does not count towards it.</string>
+    <string name="energy_rule_break">If your streak breaks anyway, you keep your water.</string>
+    <string name="energy_rule_auto_freeze">Turn off “Use freezes automatically” to save water for the shop.</string>
+    <!-- Switch for automatic freezes -->
+    <string name="energy_auto_freeze_title">Use freezes automatically</string>
+    <string name="energy_auto_freeze_on">Missed days are saved with water when there is enough.</string>
+    <string name="energy_auto_freeze_off">Off: a missed day breaks the streak and your water stays for the shop. Earlier freezes stay.</string>
+    <!-- Freeze notice when the app opens: %1$d = activity streak, %2$d = energy spent, %3$d = energy left -->
+    <string name="freeze_notice_title">❄️ Streak saved</string>
+    <plurals name="freeze_notice_text">
+        <item quantity="one">Your activity streak of %1$d day was saved (−%2$d 💧, %3$d 💧 left).</item>
+        <item quantity="other">Your activity streak of %1$d days was saved (−%2$d 💧, %3$d 💧 left).</item>
+    </plurals>
+    <!-- %1$d = number of missed days that were frozen -->
+    <plurals name="freeze_notice_days">
+        <item quantity="one">A freeze bridged %1$d missed day.</item>
+        <item quantity="other">Freezes bridged %1$d missed days.</item>
+    </plurals>
+
+    <!-- Motivation popup, first check-in of the day: %1$d = activity streak -->
+    <plurals name="energy_popup_line">
+        <item quantity="one">+1 💧 · %1$d day active</item>
+        <item quantity="other">+1 💧 · %1$d days active</item>
+    </plurals>
+
+    <!-- Bonus pop-up after the check-in that earns the daily bonus: reason: %1$d = routines needed; balance: %1$d = water now -->
+    <string name="bonus_popup_header">Daily bonus</string>
+    <string name="bonus_popup_reason">%1$d routines in one day!</string>
+    <string name="bonus_popup_text">Extra water for your plant.</string>
+    <string name="bonus_popup_balance">You now have 💧 %1$d</string>
+</resources>

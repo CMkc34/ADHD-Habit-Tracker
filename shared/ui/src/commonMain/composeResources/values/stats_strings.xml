@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Statistics (phase 3): energy page and overall analytics.
+  The fork's own file, the upstream strings.xml stays untouched.
+-->
+<resources>
+    <!-- Energy page -->
+    <string name="stats_active_days_per_month">Active days per month</string>
+    <string name="stats_energy_per_month">Water per month</string>
+    <string name="stats_energy_earned">💧 earned</string>
+    <string name="stats_energy_spent">❄️ spent on freezes</string>
+
+    <!-- Overall analytics -->
+    <string name="stats_month_review">This month</string>
+    <plurals name="stats_change_points">
+        <item quantity="one">%1$s %2$d percentage point</item>
+        <item quantity="other">%1$s %2$d percentage points</item>
+    </plurals>
+    <string name="stats_previous_month">Previous month: %1$s</string>
+    <string name="stats_no_planned_days">Nothing planned this month yet</string>
+    <string name="stats_streak_overview">Streaks</string>
+    <string name="stats_checks_per_week">Check-ins per week</string>
+
+    <!-- Comebacks: new streaks after a break -->
+    <string name="stats_comebacks">Comebacks</string>
+    <plurals name="stats_comebacks_habit">
+        <item quantity="one">You got back on track %1$d time.</item>
+        <item quantity="other">You got back on track %1$d times.</item>
+    </plurals>
+    <plurals name="stats_comebacks_total">
+        <item quantity="one">Across all habits you got back on track %1$d time.</item>
+        <item quantity="other">Across all habits you got back on track %1$d times.</item>
+    </plurals>
+    <string name="stats_comebacks_none">No restart needed so far.</string>
+
+    <!-- Short month names for the charts -->
+    <string name="stats_month_1">Jan</string>
+    <string name="stats_month_2">Feb</string>
+    <string name="stats_month_3">Mar</string>
+    <string name="stats_month_4">Apr</string>
+    <string name="stats_month_5">May</string>
+    <string name="stats_month_6">Jun</string>
+    <string name="stats_month_7">Jul</string>
+    <string name="stats_month_8">Aug</string>
+    <string name="stats_month_9">Sep</string>
+    <string name="stats_month_10">Oct</string>
+    <string name="stats_month_11">Nov</string>
+    <string name="stats_month_12">Dec</string>
+</resources>

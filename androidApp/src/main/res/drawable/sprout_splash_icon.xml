@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sprout logo "Haken-Spross" in the paper cut look (#125): a cream paper disc on two greens with
+     a green check mark that sprouts two leaves; shadows are two offset translucent copies. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FF4FAE58" android:pathData="M54,18a36,36 0,1 1,0 72a36,36 0,1 1,0 -72z" />
+    <path android:fillColor="#FF5BB963" android:pathData="M18,54a36,36 0,0 1,72 0z" />
+    <!-- Cream paper disc -->
+    <group android:translateX="0.75" android:translateY="1.65">
+        <path android:fillColor="#241B2A1C" android:pathData="M54,27a27,27 0,1 1,0 54a27,27 0,1 1,0 -54z" />
+    </group>
+    <group android:translateX="1.35" android:translateY="3.00">
+        <path android:fillColor="#1F1B2A1C" android:pathData="M54,27a27,27 0,1 1,0 54a27,27 0,1 1,0 -54z" />
+    </group>
+    <path android:fillColor="#FFFFF8E7" android:pathData="M54,27a27,27 0,1 1,0 54a27,27 0,1 1,0 -54z" />
+    <!-- Green check mark -->
+    <group android:translateX="0.65" android:translateY="1.43">
+        <path android:pathData="M33.6,60 L46.4,72 L65.6,48.8" android:strokeWidth="8.8" android:strokeColor="#241B2A1C" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+    <group android:translateX="1.17" android:translateY="2.60">
+        <path android:pathData="M33.6,60 L46.4,72 L65.6,48.8" android:strokeWidth="9.8" android:strokeColor="#1F1B2A1C" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+    <path
+        android:pathData="M33.6,60 L46.4,72 L65.6,48.8"
+        android:strokeWidth="8.8"
+        android:strokeColor="#FF3F9A4A"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Light green leaf with its vein -->
+    <group android:translateX="0.50" android:translateY="1.10">
+        <path android:fillColor="#241B2A1C" android:pathData="M65.6,48.8 C60.8,42.4 55.2,40 49.6,40.8 C51.2,46.4 57.6,49.6 65.6,48.8Z" />
+    </group>
+    <group android:translateX="0.90" android:translateY="2.00">
+        <path android:fillColor="#1F1B2A1C" android:pathData="M65.6,48.8 C60.8,42.4 55.2,40 49.6,40.8 C51.2,46.4 57.6,49.6 65.6,48.8Z" />
+    </group>
+    <path android:fillColor="#FFB9EBA0" android:pathData="M65.6,48.8 C60.8,42.4 55.2,40 49.6,40.8 C51.2,46.4 57.6,49.6 65.6,48.8Z" />
+    <path android:pathData="M65,48.4 C60,44.2 55,42.4 51.6,42.4" android:strokeWidth="1.1" android:strokeColor="#FF8FD27A" android:strokeLineCap="round" />
+    <!-- Yellow leaf with its vein -->
+    <group android:translateX="0.50" android:translateY="1.10">
+        <path android:fillColor="#241B2A1C" android:pathData="M65.6,48.8 C64.8,40 69.6,34.4 77.6,32.8 C78.4,41.6 73.6,47.2 65.6,48.8Z" />
+    </group>
+    <group android:translateX="0.90" android:translateY="2.00">
+        <path android:fillColor="#1F1B2A1C" android:pathData="M65.6,48.8 C64.8,40 69.6,34.4 77.6,32.8 C78.4,41.6 73.6,47.2 65.6,48.8Z" />
+    </group>
+    <path android:fillColor="#FFFFD45C" android:pathData="M65.6,48.8 C64.8,40 69.6,34.4 77.6,32.8 C78.4,41.6 73.6,47.2 65.6,48.8Z" />
+    <path android:pathData="M66.2,47.4 C68.4,42 71.6,37.6 76,34.4" android:strokeWidth="1.1" android:strokeColor="#FFF2B935" android:strokeLineCap="round" />
+</vector>

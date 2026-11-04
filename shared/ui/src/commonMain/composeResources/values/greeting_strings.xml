@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Daily greeting by the plant on the first app start of a day (fork). The plant speaks as "I". -->
+<resources>
+    <string name="greeting_header_welcome">Welcome</string>
+    <string name="greeting_header_morning">Good morning</string>
+    <string name="greeting_header_day">Hello</string>
+    <string name="greeting_header_evening">Good evening</string>
+    <!-- %1$s = plant name -->
+    <string name="greeting_welcome_title">Hi, I am %1$s!</string>
+    <string name="greeting_welcome_text">Every routine you check off gives me water. That way I grow with you into a big tree.</string>
+    <string name="greeting_first_day_title">Great to have you here!</string>
+    <string name="greeting_first_day_text">Check off your first routine today and I get my first water.</string>
+    <string name="greeting_tired_title">I am a little tired</string>
+    <string name="greeting_tired_text">Check off a routine today and I will wake up again.</string>
+    <plurals name="greeting_growing_title">
+        <item quantity="one">%1$d day in a row!</item>
+        <item quantity="other">%1$d days in a row!</item>
+    </plurals>
+    <!-- %1$d = active days still missing, %2$d = number of the next stage -->
+    <plurals name="greeting_growing_next">
+        <item quantity="one">%1$d more active day and I grow to stage %2$d.</item>
+        <item quantity="other">%1$d more active days and I grow to stage %2$d.</item>
+    </plurals>
+    <string name="greeting_growing_last">I am a mighty tree. Thanks for sticking with it!</string>
+    <!-- 💧 is drawn as the water coin -->
+    <string name="greeting_water">You have %1$d 💧</string>
+    <string name="greeting_start">Let’s go</string>
+    <string name="greeting_setting">Daily greeting</string>
+    <string name="greeting_setting_desc">Your plant greets you on the first app start of each day</string>
+    <!-- empty routine page -->
+    <string name="greeting_empty_title">%1$s is waiting for you</string>
+    <string name="greeting_empty_text">Add a routine and %1$s wakes up.</string>
+    <string name="greeting_empty_button">Add routine</string>
+
+    <!-- First start setup and the user's name (#139); %1$s = user name -->
+    <string name="greeting_header_morning_named">Good morning, %1$s</string>
+    <string name="greeting_header_day_named">Hello, %1$s</string>
+    <string name="greeting_header_evening_named">Good evening, %1$s</string>
+    <!-- %1$s = user name, %2$s = plant name -->
+    <string name="greeting_welcome_title_named">Hi %1$s, I am %2$s!</string>
+    <string name="setup_name_title">What should I call you?</string>
+    <!-- %1$s = plant name -->
+    <string name="setup_name_text">Hi, nice to have you here! With your name I can greet you in person.</string>
+    <string name="setup_name_label">Your name</string>
+    <string name="setup_name_hint">Only stored on your phone.</string>
+    <string name="setup_name_next">Continue</string>
+    <string name="setup_name_skip">Skip</string>
+    <string name="user_name_setting">Your name</string>
+    <string name="user_name_setting_empty">No name yet, tap to add one</string>
+    <string name="user_name_hint">Leave empty to be greeted without a name</string>
+    <string name="setup_species_header">Nice to meet you!</string>
+    <string name="setup_species_header_named">Nice to meet you, %1$s!</string>
+    <string name="setup_species_title">Who should grow with you?</string>
+    <string name="setup_species_later">You can switch later in the settings.</string>
+    <string name="setup_species_start">Let’s go</string>
+</resources>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Motivation quotes for the check-in popup. Name = quote id from QuoteCatalog (shared:core).
+  %1$d = active days in a row (optional). STARTER is always exactly 1 day, all other tiers >= 2.
+  Tone: "you", sarcasm STARTER ~3, BUILDING/ESTABLISHED ~4, LEGEND ~5 out of 10, never shaming.
+  Loosely adapted from the German texts in values-de, not translated word for word.
+-->
+<resources>
+    <!-- Dialog -->
+    <string name="motivation_header_motivating">Nice one!</string>
+    <string name="motivation_header_sarcastic">Well, look at that…</string>
+    <string name="motivation_header_motivating_named">Nice one, %1$s!</string>
+    <string name="motivation_header_sarcastic_named">Well, look at that, %1$s…</string>
+    <string name="motivation_tap_to_continue">Tap to continue</string>
+    <!-- below the streak number: %1$s = routine name -->
+    <plurals name="motivation_streak_unit">
+        <item quantity="one">day in a row · %1$s</item>
+        <item quantity="other">days in a row · %1$s</item>
+    </plurals>
+
+    <!-- Settings -->
+    <string name="motivation_setting">Motivation popup</string>
+    <string name="motivation_setting_desc">Show a short message with your streak after each check-in</string>
+
+    <string name="quote_fallback">Done! Keep it up.</string>
+
+    <!-- STARTER (1 day) -->
+    <string name="quote_starter_motivating_1">Day one, done. Every streak starts exactly like this.</string>
+    <string name="quote_starter_motivating_2">First check is in. Tomorrow gets easier.</string>
+    <string name="quote_starter_motivating_3">Starting is the hardest part – and you just did it.</string>
+    <string name="quote_starter_motivating_4">One day, one check, one good start.</string>
+    <string name="quote_starter_sarcastic_1">One day. Not a legend yet, but hey, you showed up.</string>
+    <string name="quote_starter_sarcastic_2">Day one. The bar is now officially above zero.</string>
+    <string name="quote_starter_sarcastic_3">Look at that, the checkbox actually works.</string>
+    <string name="quote_starter_sarcastic_4">Day one done. Future you gives a cautious nod.</string>
+
+    <!-- BUILDING (2–4 days) -->
+    <string name="quote_building_motivating_1">%1$d days in a row – something is growing here.</string>
+    <string name="quote_building_motivating_2">%1$d days straight. You’re building something.</string>
+    <string name="quote_building_motivating_3">Already %1$d days in. Keep exactly this going.</string>
+    <string name="quote_building_motivating_4">%1$d days! Small steps, real impact.</string>
+    <string name="quote_building_sarcastic_1">%1$d days? Almost as if you had a plan.</string>
+    <string name="quote_building_sarcastic_2">%1$d days straight. Hard to call that luck anymore.</string>
+    <string name="quote_building_sarcastic_3">%1$d days. The habit noticed you mean it – it’s just still a bit skeptical.</string>
+    <string name="quote_building_sarcastic_4">Day %1$d. Not bad for someone who said “we’ll see”.</string>
+
+    <!-- ESTABLISHED (5–13 days) -->
+    <string name="quote_established_motivating_1">%1$d days! That’s not a mood anymore, that’s a habit.</string>
+    <string name="quote_established_motivating_2">%1$d days in a row – your persistence is paying off.</string>
+    <string name="quote_established_motivating_3">%1$d days. You’ve proven you can do this.</string>
+    <string name="quote_established_motivating_4">%1$d days straight. That’s real progress.</string>
+    <string name="quote_established_sarcastic_1">%1$d days straight. Who are you and what did you do with the old version?</string>
+    <string name="quote_established_sarcastic_2">%1$d days. Careful, you might turn into a role model.</string>
+    <string name="quote_established_sarcastic_3">%1$d days straight. Your excuse department is running out of work.</string>
+    <string name="quote_established_sarcastic_4">%1$d days. Your calendar is starting to wonder if you’re okay.</string>
+
+    <!-- LEGEND (14+ days) -->
+    <string name="quote_legend_motivating_1">%1$d days. Honestly: respect.</string>
+    <string name="quote_legend_motivating_2">%1$d days! This is part of who you are now.</string>
+    <string name="quote_legend_motivating_3">%1$d days straight. You can be genuinely proud of that.</string>
+    <string name="quote_legend_motivating_4">%1$d days. You’re living proof that sticking with it works.</string>
+    <string name="quote_legend_sarcastic_1">%1$d days. Your reliability is getting a little spooky.</string>
+    <string name="quote_legend_sarcastic_2">%1$d days. At some point you’ll have to tell us who replaced you.</string>
+    <string name="quote_legend_sarcastic_3">%1$d days. Your other habits are getting jealous.</string>
+    <string name="quote_legend_sarcastic_4">%1$d days straight. Okay, we get it. Feel free to brag anyway.</string>
+</resources>

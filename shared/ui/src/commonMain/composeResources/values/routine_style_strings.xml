@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Colours and icons of routines (phase 5). Fork-only file, the original strings.xml stays untouched.
+-->
+<resources>
+    <string name="routine_style_title">Colour and icon</string>
+    <string name="routine_style_color">Colour</string>
+    <string name="routine_style_icon">Icon</string>
+    <string name="routine_style_done">Done</string>
+
+    <string name="routine_color_red">Red</string>
+    <string name="routine_color_raspberry">Raspberry</string>
+    <string name="routine_color_pink">Pink</string>
+    <string name="routine_color_purple">Purple</string>
+    <string name="routine_color_violet">Violet</string>
+    <string name="routine_color_indigo">Indigo</string>
+    <string name="routine_color_blue">Blue</string>
+    <string name="routine_color_sky_blue">Sky blue</string>
+    <string name="routine_color_turquoise">Turquoise</string>
+    <string name="routine_color_petrol">Petrol</string>
+    <string name="routine_color_mint">Mint</string>
+    <string name="routine_color_green">Green</string>
+    <string name="routine_color_light_green">Light green</string>
+    <string name="routine_color_lime">Lime</string>
+    <string name="routine_color_yellow">Yellow</string>
+    <string name="routine_color_amber">Amber</string>
+    <string name="routine_color_orange">Orange</string>
+    <string name="routine_color_coral">Coral</string>
+    <string name="routine_color_rust">Rust</string>
+    <string name="routine_color_brown">Brown</string>
+    <string name="routine_color_sand">Sand</string>
+    <string name="routine_color_grey">Grey</string>
+    <string name="routine_color_slate">Slate</string>
+    <string name="routine_color_anthracite">Anthracite</string>
+
+    <string name="routine_icon_bolt">Lightning bolt</string>
+    <string name="routine_icon_water">Water drop</string>
+    <string name="routine_icon_dumbbell">Dumbbell</string>
+    <string name="routine_icon_run">Running</string>
+    <string name="routine_icon_bike">Bicycle</string>
+    <string name="routine_icon_swim">Swimming</string>
+    <string name="routine_icon_meditation">Meditation</string>
+    <string name="routine_icon_sleep">Moon and sleep</string>
+    <string name="routine_icon_morning">Sun and morning</string>
+    <string name="routine_icon_alarm">Alarm clock</string>
+    <string name="routine_icon_book">Book</string>
+    <string name="routine_icon_write">Pen and writing</string>
+    <string name="routine_icon_learn">Learning</string>
+    <string name="routine_icon_music">Music</string>
+    <string name="routine_icon_paint">Paintbrush</string>
+    <string name="routine_icon_cook">Cooking</string>
+    <string name="routine_icon_apple">Apple</string>
+    <string name="routine_icon_coffee">Coffee and tea</string>
+    <string name="routine_icon_pill">Pill</string>
+    <string name="routine_icon_tooth">Tooth</string>
+    <string name="routine_icon_shower">Shower</string>
+    <string name="routine_icon_clean">Cleaning</string>
+    <string name="routine_icon_flower">Flower and plants</string>
+    <string name="routine_icon_leaf">Leaf</string>
+    <string name="routine_icon_heart">Heart</string>
+    <string name="routine_icon_brain">Brain</string>
+    <string name="routine_icon_smile">Smiley</string>
+    <string name="routine_icon_phone">Phone call</string>
+    <string name="routine_icon_people">People</string>
+    <string name="routine_icon_paw">Paw</string>
+    <string name="routine_icon_savings">Piggy bank</string>
+    <string name="routine_icon_laptop">Laptop</string>
+    <string name="routine_icon_phone_off">Phone off</string>
+    <string name="routine_icon_star">Star</string>
+    <string name="routine_icon_target">Target</string>
+    <string name="routine_icon_check">Check mark</string>
+</resources>

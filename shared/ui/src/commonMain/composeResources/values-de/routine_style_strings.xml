@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Farben und Icons der Routinen (Phase 5). Eigene Datei des Forks, die strings.xml des Originals bleibt unberührt.
+-->
+<resources>
+    <string name="routine_style_title">Farbe und Icon</string>
+    <string name="routine_style_color">Farbe</string>
+    <string name="routine_style_icon">Icon</string>
+    <string name="routine_style_done">Fertig</string>
+
+    <string name="routine_color_red">Rot</string>
+    <string name="routine_color_raspberry">Himbeere</string>
+    <string name="routine_color_pink">Rosa</string>
+    <string name="routine_color_purple">Lila</string>
+    <string name="routine_color_violet">Violett</string>
+    <string name="routine_color_indigo">Indigo</string>
+    <string name="routine_color_blue">Blau</string>
+    <string name="routine_color_sky_blue">Himmelblau</string>
+    <string name="routine_color_turquoise">Türkis</string>
+    <string name="routine_color_petrol">Petrol</string>
+    <string name="routine_color_mint">Mint</string>
+    <string name="routine_color_green">Grün</string>
+    <string name="routine_color_light_green">Hellgrün</string>
+    <string name="routine_color_lime">Limette</string>
+    <string name="routine_color_yellow">Gelb</string>
+    <string name="routine_color_amber">Bernstein</string>
+    <string name="routine_color_orange">Orange</string>
+    <string name="routine_color_coral">Koralle</string>
+    <string name="routine_color_rust">Rostrot</string>
+    <string name="routine_color_brown">Braun</string>
+    <string name="routine_color_sand">Sand</string>
+    <string name="routine_color_grey">Grau</string>
+    <string name="routine_color_slate">Schiefer</string>
+    <string name="routine_color_anthracite">Anthrazit</string>
+
+    <string name="routine_icon_bolt">Blitz</string>
+    <string name="routine_icon_water">Wassertropfen</string>
+    <string name="routine_icon_dumbbell">Hantel</string>
+    <string name="routine_icon_run">Laufen</string>
+    <string name="routine_icon_bike">Fahrrad</string>
+    <string name="routine_icon_swim">Schwimmen</string>
+    <string name="routine_icon_meditation">Meditation</string>
+    <string name="routine_icon_sleep">Mond und Schlaf</string>
+    <string name="routine_icon_morning">Sonne und Morgen</string>
+    <string name="routine_icon_alarm">Wecker</string>
+    <string name="routine_icon_book">Buch</string>
+    <string name="routine_icon_write">Stift und Schreiben</string>
+    <string name="routine_icon_learn">Lernen</string>
+    <string name="routine_icon_music">Musik</string>
+    <string name="routine_icon_paint">Pinsel</string>
+    <string name="routine_icon_cook">Kochen</string>
+    <string name="routine_icon_apple">Apfel</string>
+    <string name="routine_icon_coffee">Kaffee und Tee</string>
+    <string name="routine_icon_pill">Tablette</string>
+    <string name="routine_icon_tooth">Zahn</string>
+    <string name="routine_icon_shower">Dusche</string>
+    <string name="routine_icon_clean">Putzen</string>
+    <string name="routine_icon_flower">Blume und Pflanzen</string>
+    <string name="routine_icon_leaf">Blatt</string>
+    <string name="routine_icon_heart">Herz</string>
+    <string name="routine_icon_brain">Gehirn</string>
+    <string name="routine_icon_smile">Smiley</string>
+    <string name="routine_icon_phone">Telefon</string>
+    <string name="routine_icon_people">Personen</string>
+    <string name="routine_icon_paw">Pfote</string>
+    <string name="routine_icon_savings">Sparschwein</string>
+    <string name="routine_icon_laptop">Laptop</string>
+    <string name="routine_icon_phone_off">Handy aus</string>
+    <string name="routine_icon_star">Stern</string>
+    <string name="routine_icon_target">Zielscheibe</string>
+    <string name="routine_icon_check">Haken</string>
+</resources>

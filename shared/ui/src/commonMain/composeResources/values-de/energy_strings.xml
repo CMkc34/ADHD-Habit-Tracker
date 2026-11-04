@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Aktiv-Serie und Energie (Phase 2): Zeile in der Kopfzeile der Routinen-Seite, Energie-Seite,
+  Freeze-Hinweis und Energie-Zeile im Motivations-Pop-up.
+  Sichtbar heißt die Energie seit #112 „Wasser“ (💧), die Schlüssel bleiben energy_*.
+  Seit #119 zeichnet WaterText jedes 💧 als Wassermünze; 💧 bleibt deshalb der Platzhalter.
+  Eigene Datei des Forks, die strings.xml des Originals bleibt unberührt.
+-->
+<resources>
+    <!-- Kopfzeile: %1$d = Aktiv-Serie, %2$d = Energie -->
+    <plurals name="energy_header_line">
+        <item quantity="one">🔥 %1$d Tag aktiv · 💧 %2$d</item>
+        <item quantity="other">🔥 %1$d Tage aktiv · 💧 %2$d</item>
+    </plurals>
+    <string name="energy_header_desc">Wasser-Seite öffnen</string>
+
+    <!-- Energie-Seite -->
+    <string name="energy_title">Wasser</string>
+    <string name="energy_balance">Dein Wasser</string>
+    <string name="energy_current_streak">Aktiv-Serie</string>
+    <string name="energy_longest_streak">Längste Serie</string>
+    <plurals name="energy_days">
+        <item quantity="one">%1$d Tag</item>
+        <item quantity="other">%1$d Tage</item>
+    </plurals>
+    <string name="energy_last_days">Letzte 30 Tage</string>
+    <string name="energy_legend_active">Aktiv</string>
+    <string name="energy_legend_frozen">Gefroren</string>
+    <string name="energy_legend_missed">Verpasst</string>
+    <string name="energy_legend_open">Heute noch offen</string>
+    <string name="energy_legend_before_start">Vor dem Start</string>
+
+    <!-- Regeln: %1$d = Energie pro aktivem Tag, Kosten eines Freezes, max. gefrorene Tage am Stück -->
+    <string name="energy_rules_title">So funktioniert’s</string>
+    <string name="energy_rule_active">Ein Tag ist aktiv, sobald du irgendetwas einträgst – egal welche Routine, egal für welches Datum, auch über Widget oder Erinnerung.</string>
+    <string name="energy_rule_energy">Jeder aktive Tag bringt dir +%1$d 💧, ohne Obergrenze.</string>
+    <!-- %1$d = Bonus-Energie, %2$d = nötige Routinen an einem Tag -->
+    <string name="energy_rule_bonus">Hakst du an einem Tag %2$d oder mehr Routinen ab, bekommst du +%1$d 💧 Bonus. Nimmst du einen Haken zurück und es sind weniger als %2$d, wird der Bonus wieder abgezogen.</string>
+    <string name="energy_rule_freeze">Einen Tag verpasst? Ein Freeze kostet %1$d 💧 pro Tag und rettet deine Serie automatisch, bis zu %2$d Tage am Stück.</string>
+    <string name="energy_rule_frozen_day">Ein gefrorener Tag hält deine Serie, zählt aber nicht mit.</string>
+    <string name="energy_rule_break">Reißt die Serie trotzdem, bleibt dein Wasser erhalten.</string>
+    <string name="energy_rule_auto_freeze">Mit dem Schalter „Freezes automatisch einsetzen“ kannst du Freezes ausschalten, um Wasser für den Shop zu sparen.</string>
+    <!-- Schalter für automatische Freezes -->
+    <string name="energy_auto_freeze_title">Freezes automatisch einsetzen</string>
+    <string name="energy_auto_freeze_on">Verpasste Tage werden mit Wasser gerettet, wenn es reicht.</string>
+    <string name="energy_auto_freeze_off">Aus: Ein verpasster Tag beendet die Serie, dein Wasser bleibt für den Shop. Frühere Freezes bleiben.</string>
+    <!-- Freeze-Hinweis beim Öffnen: %1$d = Aktiv-Serie, %2$d = verbrauchte Energie, %3$d = restliche Energie -->
+    <string name="freeze_notice_title">❄️ Serie gerettet</string>
+    <plurals name="freeze_notice_text">
+        <item quantity="one">Deine Aktiv-Serie von %1$d Tag wurde gerettet (−%2$d 💧, noch %3$d 💧).</item>
+        <item quantity="other">Deine Aktiv-Serie von %1$d Tagen wurde gerettet (−%2$d 💧, noch %3$d 💧).</item>
+    </plurals>
+    <!-- %1$d = Anzahl der eingefrorenen verpassten Tage -->
+    <plurals name="freeze_notice_days">
+        <item quantity="one">Ein Freeze hat %1$d verpassten Tag überbrückt.</item>
+        <item quantity="other">Freezes haben %1$d verpasste Tage überbrückt.</item>
+    </plurals>
+
+    <!-- Motivations-Pop-up, erster Eintrag des Tages: %1$d = Aktiv-Serie -->
+    <plurals name="energy_popup_line">
+        <item quantity="one">+1 💧 · %1$d Tag aktiv</item>
+        <item quantity="other">+1 💧 · %1$d Tage aktiv</item>
+    </plurals>
+
+    <!-- Bonus-Pop-up nach dem Eintrag, der den Tagesbonus bringt: reason: %1$d = nötige Routinen; balance: %1$d = Wasser jetzt -->
+    <string name="bonus_popup_header">Tagesbonus</string>
+    <string name="bonus_popup_reason">%1$d Routinen an einem Tag!</string>
+    <string name="bonus_popup_text">Extra-Wasser für deine Pflanze.</string>
+    <string name="bonus_popup_balance">Du hast jetzt 💧 %1$d</string>
+</resources>

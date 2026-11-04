@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Statistiken (Phase 3): Energie-Seite und Gesamt-Statistik.
+  Eigene Datei des Forks, die strings.xml des Originals bleibt unberührt.
+-->
+<resources>
+    <!-- Energie-Seite -->
+    <string name="stats_active_days_per_month">Aktive Tage pro Monat</string>
+    <string name="stats_energy_per_month">Wasser pro Monat</string>
+    <string name="stats_energy_earned">💧 verdient</string>
+    <string name="stats_energy_spent">❄️ für Freezes</string>
+
+    <!-- Gesamt-Statistik -->
+    <string name="stats_month_review">Dieser Monat</string>
+    <plurals name="stats_change_points">
+        <item quantity="one">%1$s %2$d Prozentpunkt</item>
+        <item quantity="other">%1$s %2$d Prozentpunkte</item>
+    </plurals>
+    <string name="stats_previous_month">Vormonat: %1$s</string>
+    <string name="stats_no_planned_days">Diesen Monat ist noch nichts geplant</string>
+    <string name="stats_streak_overview">Serien</string>
+    <string name="stats_checks_per_week">Häkchen pro Woche</string>
+
+    <!-- Comebacks: neue Serien nach einer Pause -->
+    <string name="stats_comebacks">Comebacks</string>
+    <plurals name="stats_comebacks_habit">
+        <item quantity="one">Du bist %1$d-mal wieder eingestiegen.</item>
+        <item quantity="other">Du bist %1$d-mal wieder eingestiegen.</item>
+    </plurals>
+    <plurals name="stats_comebacks_total">
+        <item quantity="one">Über alle Routinen bist du %1$d-mal wieder eingestiegen.</item>
+        <item quantity="other">Über alle Routinen bist du %1$d-mal wieder eingestiegen.</item>
+    </plurals>
+    <string name="stats_comebacks_none">Bisher war kein Neustart nötig.</string>
+
+    <!-- Kurze Monatsnamen für die Diagramme -->
+    <string name="stats_month_1">Jan</string>
+    <string name="stats_month_2">Feb</string>
+    <string name="stats_month_3">Mär</string>
+    <string name="stats_month_4">Apr</string>
+    <string name="stats_month_5">Mai</string>
+    <string name="stats_month_6">Jun</string>
+    <string name="stats_month_7">Jul</string>
+    <string name="stats_month_8">Aug</string>
+    <string name="stats_month_9">Sep</string>
+    <string name="stats_month_10">Okt</string>
+    <string name="stats_month_11">Nov</string>
+    <string name="stats_month_12">Dez</string>
+</resources>

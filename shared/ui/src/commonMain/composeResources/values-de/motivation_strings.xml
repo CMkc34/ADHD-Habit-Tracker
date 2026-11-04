@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Motivations-Sprüche für das Check-in-Pop-up. Name = Spruch-ID aus QuoteCatalog (shared:core).
+  %1$d = aktive Tage in Folge (optional). STARTER ist immer genau 1 Tag, alle anderen Stufen >= 2.
+  Ton: "du", Sarkasmus STARTER ~3, BUILDING/ESTABLISHED ~4, LEGEND ~5 von 10, nie beschämend.
+-->
+<resources>
+    <!-- Dialog -->
+    <string name="motivation_header_motivating">Starkes Ding!</string>
+    <string name="motivation_header_sarcastic">Na sieh mal einer an…</string>
+    <string name="motivation_header_motivating_named">Starkes Ding, %1$s!</string>
+    <string name="motivation_header_sarcastic_named">Na sieh mal einer an, %1$s…</string>
+    <string name="motivation_tap_to_continue">Tippen zum Weitermachen</string>
+    <!-- unter der Serienzahl: %1$s = Routine-Name -->
+    <plurals name="motivation_streak_unit">
+        <item quantity="one">Tag am Stück · %1$s</item>
+        <item quantity="other">Tage am Stück · %1$s</item>
+    </plurals>
+
+    <!-- Einstellungen -->
+    <string name="motivation_setting">Motivations-Pop-up</string>
+    <string name="motivation_setting_desc">Nach jedem Abhaken einen kurzen Spruch mit deiner Serie zeigen</string>
+
+    <string name="quote_fallback">Abgehakt! Weiter so.</string>
+
+    <!-- STARTER (1 Tag) -->
+    <string name="quote_starter_motivating_1">Tag 1 ist geschafft. Jede Serie fängt genau so an.</string>
+    <string name="quote_starter_motivating_2">Der erste Haken sitzt. Morgen wird’s schon leichter.</string>
+    <string name="quote_starter_motivating_3">Anfangen ist der schwerste Teil – und den hast du gerade erledigt.</string>
+    <string name="quote_starter_motivating_4">Ein Tag, ein Haken, ein guter Start.</string>
+    <string name="quote_starter_sarcastic_1">Ein Tag. Noch keine Legende, aber immerhin aufgetaucht.</string>
+    <string name="quote_starter_sarcastic_2">Tag eins. Die Messlatte liegt jetzt offiziell über null.</string>
+    <string name="quote_starter_sarcastic_3">Schau an, der Haken funktioniert ja tatsächlich.</string>
+    <string name="quote_starter_sarcastic_4">Erster Tag geschafft. Dein zukünftiges Ich nickt vorsichtig anerkennend.</string>
+
+    <!-- BUILDING (2–4 Tage) -->
+    <string name="quote_building_motivating_1">%1$d Tage am Stück – da wächst gerade was.</string>
+    <string name="quote_building_motivating_2">%1$d Tage in Folge. Du baust gerade etwas auf.</string>
+    <string name="quote_building_motivating_3">Schon %1$d Tage dran. Bleib genau so dabei.</string>
+    <string name="quote_building_motivating_4">%1$d Tage! Kleine Schritte, echte Wirkung.</string>
+    <string name="quote_building_sarcastic_1">%1$d Tage? Fast so, als hättest du einen Plan.</string>
+    <string name="quote_building_sarcastic_2">%1$d Tage am Stück. Zufall ist das langsam nicht mehr.</string>
+    <string name="quote_building_sarcastic_3">%1$d Tage. Die Gewohnheit merkt, dass du es ernst meinst – sie ist nur noch etwas skeptisch.</string>
+    <string name="quote_building_sarcastic_4">Tag %1$d. Nicht schlecht für jemanden, der „mal schauen“ gesagt hat.</string>
+
+    <!-- ESTABLISHED (5–13 Tage) -->
+    <string name="quote_established_motivating_1">%1$d Tage! Das ist keine Laune mehr, das ist Gewohnheit.</string>
+    <string name="quote_established_motivating_2">%1$d Tage in Folge – dein Durchhaltevermögen zahlt sich aus.</string>
+    <string name="quote_established_motivating_3">%1$d Tage. Du hast bewiesen, dass du das kannst.</string>
+    <string name="quote_established_motivating_4">%1$d Tage am Stück. Das ist echter Fortschritt.</string>
+    <string name="quote_established_sarcastic_1">%1$d Tage in Folge. Wer bist du und was hast du mit der alten Version gemacht?</string>
+    <string name="quote_established_sarcastic_2">%1$d Tage. Pass auf, sonst wirst du noch zum Vorbild.</string>
+    <string name="quote_established_sarcastic_3">%1$d Tage am Stück. Die Ausreden-Abteilung meldet Kurzarbeit an.</string>
+    <string name="quote_established_sarcastic_4">%1$d Tage. Dein Kalender fragt sich langsam, ob alles in Ordnung ist.</string>
+
+    <!-- LEGEND (14+ Tage) -->
+    <string name="quote_legend_motivating_1">%1$d Tage. Ehrlich: Respekt.</string>
+    <string name="quote_legend_motivating_2">%1$d Tage! Das ist jetzt ein Teil von dir.</string>
+    <string name="quote_legend_motivating_3">%1$d Tage am Stück. Darauf kannst du richtig stolz sein.</string>
+    <string name="quote_legend_motivating_4">%1$d Tage. Du bist der Beweis, dass Dranbleiben funktioniert.</string>
+    <string name="quote_legend_sarcastic_1">%1$d Tage. Langsam wird es unheimlich, wie zuverlässig du bist.</string>
+    <string name="quote_legend_sarcastic_2">%1$d Tage. Irgendwann musst du uns verraten, wer dich ersetzt hat.</string>
+    <string name="quote_legend_sarcastic_3">%1$d Tage. Deine anderen Gewohnheiten werden langsam neidisch.</string>
+    <string name="quote_legend_sarcastic_4">%1$d Tage am Stück. Okay, wir haben verstanden. Angeben darfst du trotzdem.</string>
+</resources>

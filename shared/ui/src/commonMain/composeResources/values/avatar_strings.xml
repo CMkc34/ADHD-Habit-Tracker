@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Plant avatar (phase 4) on the energy page.
+  The fork's own file, the upstream strings.xml stays untouched.
+-->
+<resources>
+    <string name="avatar_default_name">Sprout</string>
+    <string name="avatar_stage_label">Stage %1$d of 12 · %2$s</string>
+    <plurals name="avatar_days_to_next">
+        <item quantity="one">%1$d more active day to the next stage</item>
+        <item quantity="other">%1$d more active days to the next stage</item>
+    </plurals>
+    <string name="avatar_fully_grown">Fully grown</string>
+    <string name="avatar_tired">Your plant is tired. A check-in today wakes it up again.</string>
+
+    <!-- Rename -->
+    <string name="avatar_rename_title">Rename your plant</string>
+    <string name="avatar_rename_hint">Leave empty to use “Sprout”</string>
+    <string name="avatar_save">Save</string>
+    <string name="avatar_cancel">Cancel</string>
+
+    <!-- New stage -->
+    <string name="avatar_new_stage_title">Your plant has grown!</string>
+    <string name="avatar_new_stage_text">%1$s reached stage %2$d: %3$s.</string>
+    <string name="avatar_new_stage_ok">Nice!</string>
+
+    <!-- Stage names -->
+    <string name="avatar_stage_1">Seed</string>
+    <string name="avatar_stage_2">Germ</string>
+    <string name="avatar_stage_3">Seedling</string>
+    <string name="avatar_stage_4">Sprout</string>
+    <string name="avatar_stage_5">Plantlet</string>
+    <string name="avatar_stage_6">Young plant</string>
+    <string name="avatar_stage_7">Sapling</string>
+    <string name="avatar_stage_8">Young tree</string>
+    <string name="avatar_stage_9">Tree</string>
+    <string name="avatar_stage_10">Big tree</string>
+    <string name="avatar_stage_11">Blossoming tree</string>
+    <string name="avatar_stage_12">Mighty tree</string>
+
+    <!-- Shop -->
+    <string name="shop_title">Shop</string>
+    <string name="shop_balance">You have %1$d 💧</string>
+    <string name="shop_pot_colors">Pot colors</string>
+    <string name="shop_accessories">Accessories</string>
+    <string name="shop_from_stage">from stage %1$d</string>
+    <string name="shop_buy_for">%1$d 💧</string>
+    <string name="shop_choose">Choose</string>
+    <string name="shop_chosen">Chosen</string>
+    <string name="shop_put_on">Put on</string>
+    <string name="shop_take_off">Take off</string>
+    <string name="shop_confirm_title">Buy %1$s?</string>
+    <string name="shop_confirm_text">Spend %1$d 💧? New balance: %2$d 💧</string>
+    <string name="shop_low_energy">Afterwards there is not enough water left for a freeze (%1$d 💧).</string>
+    <string name="shop_buy">Buy</string>
+    <string name="shop_item_pot_terracotta">Terracotta</string>
+    <string name="shop_item_pot_blue">Blue</string>
+    <string name="shop_item_pot_yellow">Yellow</string>
+    <string name="shop_item_pot_green">Green</string>
+    <string name="shop_item_pot_purple">Purple</string>
+    <string name="shop_item_pot_gold">Gold</string>
+    <string name="shop_item_acc_watering_can">Watering can</string>
+    <string name="shop_item_acc_ladybug">Ladybug</string>
+    <string name="shop_item_acc_butterfly">Butterfly</string>
+    <string name="shop_item_acc_blossoms">Blossoms</string>
+    <string name="shop_item_acc_bird">Bird</string>
+    <string name="shop_item_acc_birdhouse">Birdhouse</string>
+    <string name="shop_item_acc_fruits">Fruits</string>
+    <string name="shop_item_acc_fairy_lights">Fairy lights</string>
+    <string name="shop_item_acc_swing">Swing</string>
+    <string name="shop_decorations">Decorations</string>
+    <string name="shop_set_up">Set up</string>
+    <string name="shop_put_away">Put away</string>
+    <string name="shop_item_deco_mushrooms">Mushrooms</string>
+    <string name="shop_item_deco_fence">Garden fence</string>
+    <string name="shop_item_deco_snail">Snail</string>
+    <string name="shop_item_deco_hedgehog">Hedgehog</string>
+    <string name="shop_item_deco_rabbit">Rabbit</string>
+    <string name="shop_item_deco_bench">Park bench</string>
+    <string name="shop_item_deco_pond">Pond</string>
+    <string name="shop_item_deco_lantern">Lantern</string>
+    <string name="shop_preview">Preview</string>
+    <string name="shop_preview_title">Preview: %1$s</string>
+    <string name="shop_preview_without">Without</string>
+    <string name="shop_preview_with">With</string>
+    <string name="shop_preview_stage">This is how it looks from stage %1$d. Your plant is at stage %2$d.</string>
+    <string name="shop_preview_missing">You still need %1$d 💧.</string>
+    <string name="shop_close">Close</string>
+
+    <!-- Avatar tab (Phase 5) -->
+    <string name="avatar_tab">Avatar</string>
+
+    <!-- Meadow page and own shop page (#138) -->
+    <plurals name="avatar_stage_short_days">
+        <item quantity="one">Stage %1$d · %2$d day to go</item>
+        <item quantity="other">Stage %1$d · %2$d days to go</item>
+    </plurals>
+    <string name="avatar_stage_short_grown">Stage %1$d · fully grown</string>
+    <string name="shop_open">Open shop</string>
+    <string name="shop_seasonal">Season</string>
+    <string name="shop_out_of_season">Not on sale right now</string>
+    <!-- #140 second avatar -->
+    <string name="avatar_default_name_cherry">Cherry</string>
+    <string name="avatar_species_sprout_desc">Leafy green tree</string>
+    <string name="avatar_species_cherry_desc">Cherry tree with pink blossoms</string>
+    <string name="avatar_species_setting">Your avatar</string>
+    <string name="avatar_species_setting_hint">%1$s · tap to switch</string>
+    <string name="avatar_species_keep">Stage, water and bought items stay.</string>
+</resources>

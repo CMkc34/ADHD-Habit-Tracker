@@ -1,0 +1,141 @@
+/*
+ * Copyright (C) 2026  Shubham Gorai
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+package com.shub39.grit.core.data.notification
+
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.RemoteInput
+import com.shub39.grit.R
+import com.shub39.grit.core.GritLogger
+import com.shub39.grit.core.data.GritIntentReceiver
+import com.shub39.grit.core.habits.Habit
+import com.shub39.grit.core.interfaces.AppNotificationManager
+import com.shub39.grit.core.interfaces.IntentActions
+import org.koin.core.annotation.Single
+
+@Single(binds = [AppNotificationManager::class])
+class GritNotificationManager(private val context: Context) : AppNotificationManager {
+    companion object {
+        const val KEY_HABIT_INPUT = "key_habit_input"
+        private const val TAG = "NotificationManager"
+        private const val HABIT_NOTIF_ID_OFFSET = 0
+
+        fun createNotificationChannel(context: Context) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel =
+                NotificationChannel("1", "Grit Notifications", importance).apply {
+                    description = "Notification Channel for Habits"
+                }
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private val notificationManager by lazy { NotificationManagerCompat.from(context) }
+
+    // shows habit notification if permission granted
+    override fun habitNotification(habit: Habit) {
+        GritLogger.d(TAG, "Sending Habit Notification")
+
+        val intent =
+            Intent(context, GritIntentReceiver::class.java).apply {
+                putExtra("habit_id", habit.id)
+                action = IntentActions.ADD_HABIT_STATUS.action
+            }
+
+        val builder =
+            NotificationCompat.Builder(context, "1")
+                .setSmallIcon(R.drawable.notif_icon)
+                .setContentTitle(habit.title)
+                .setContentText(habit.description)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+
+        if (habit.isMeasurable) {
+            val remoteInput =
+                RemoteInput.Builder(KEY_HABIT_INPUT)
+                    .setLabel("Enter amount (${habit.targetUnit})")
+                    .build()
+
+            val pendingBroadcast =
+                PendingIntent.getBroadcast(
+                    context,
+                    habit.id.toInt(),
+                    intent,
+                    PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+
+            val action =
+                NotificationCompat.Action.Builder(
+                        R.drawable.notif_icon,
+                        "Log Progress",
+                        pendingBroadcast,
+                    )
+                    .addRemoteInput(remoteInput)
+                    .build()
+
+            builder.addAction(action)
+        } else {
+            val pendingBroadcast =
+                PendingIntent.getBroadcast(
+                    context,
+                    habit.id.toInt(),
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+
+            builder.addAction(R.drawable.notif_icon, "Mark Done", pendingBroadcast)
+        }
+
+        if (
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationManager.notify(habit.id.toInt() + HABIT_NOTIF_ID_OFFSET, builder.build())
+        } else {
+            GritLogger.e(TAG, "Notification permission denied!")
+        }
+    }
+
+    override fun cancelNotification(habitId: Int) {
+        val id = habitId + HABIT_NOTIF_ID_OFFSET
+        if (
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+        ) {
+            val updatedBuilder =
+                NotificationCompat.Builder(context, "1")
+                    .setSmallIcon(R.drawable.notif_icon)
+                    .setContentTitle("Done")
+                    .setPriority(NotificationCompat.PRIORITY_LOW)
+                    .setTimeoutAfter(500)
+                    .setAutoCancel(true)
+            notificationManager.notify(id, updatedBuilder.build())
+        }
+        notificationManager.cancel(id)
+    }
+}
