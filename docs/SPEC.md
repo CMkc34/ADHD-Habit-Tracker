@@ -662,7 +662,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 
 ### 9.7 Shop (#7)
 - Bestehende Shop-Mechanik (Preise, Mindestrang, Saison, Vorschau) bleibt. Neue Arten:
-  - ~~Outfit~~ entfällt: Farben sind frei wählbar (#6, #26)
+  - **Outfit** (genau eins oder keins): ersetzt die bei der Einrichtung gewählte Hauptfarbe (`gi_*`)
   - **Ausrüstung** (beliebig viele)
   - **Trainingsplatz-Teile** (fester Platz)
 - Rein kosmetisch. Katalog und Preise stehen in #7 und nur in `ShopCatalog`.
@@ -696,8 +696,10 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 - Kämpfer (#6) in **Pixel-Art** (Wunsch vom 2026-11-04) statt Papier-/Sticker-Stil, eigene Designs:
   - **Fünf Kämpfer** zur Wahl (`FighterCharacter`): Wind-Mönch, Straßenkämpfer, Schattenläufer,
     Funken-Talent und klassischer Karateka im Gi. Jeder mit eigener Silhouette und Ki-Farbe.
-  - **Farben frei wählbar** (`FighterColors`): Haut, Haare, Hauptfarbe, Akzent, jeweils aus den
-    Vorgaben in `FighterPalette` (helle/dunkle Töne werden berechnet). Wahl und Speicherung: #26.
+  - **Farben** (`FighterColors`): Haut, Haare, Hauptfarbe, Akzent, jeweils aus den Vorgaben in
+    `FighterPalette` (helle/dunkle Töne werden berechnet). Kämpfer und Farben werden **nur bei der
+    Einrichtung** gewählt und danach nicht mehr geändert (#26). Später ändert nur ein gekauftes
+    Outfit (Gi-Farbe, `FighterItems.outfits`) die Hauptfarbe.
   - Gezeichnet aus einfachen Formen auf festen Skelett-Punkten je Pose (`Skeleton`), automatisch
     schattiert und umrandet (`PixelPainter`), zusammengesetzt von `FighterPixels` (reines Kotlin,
     getestet), gemalt von `FighterAvatar`. 48 × 48 Pixel, Tinte als Umriss, hell wie dunkel.
@@ -707,8 +709,6 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
     **Ki-Strahl** (Spezialangriff, #14). Dazu `KiBlast` als fliegendes Geschoss für die Arena.
   - Müde: sitzt im Schneidersitz, Augen zu, „z“.
   - Ausrüstung (`FighterItems`) sitzt auf den Skelett-Punkten und passt so auf alle Kämpfer.
-    Da die Farben frei sind, verkauft der Shop (#7) **keine Outfit-Farben** mehr, nur Ausrüstung
-    und Trainingsplatz-Teile.
   - Trainingsplatz (#8) und Gegner (#13) sollten im selben Pixel-Stil gezeichnet werden.
 
 ### 9.10 Issues
@@ -732,7 +732,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 | #16 | Einrichtung und Texte |
 | #17 | Optional: Wasser für erste Siege |
 | #18 | Abnahme auf dem Gerät |
-| #26 | Kämpfer und Farben wählen (Einrichtung, Einstellungen, Speichern) |
+| #26 | Kämpfer und Farben bei der Einrichtung wählen und speichern |
 
 ---
 

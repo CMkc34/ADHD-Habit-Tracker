@@ -88,6 +88,7 @@ object FighterPixels {
         pose: FighterPose = FighterPose.STANCE,
         gear: Set<String> = emptySet(),
         frame: Int = 0,
+        outfit: String? = null,
     ): PixelImage {
         val tired = mood == FighterMood.TIRED
         val f = frame.mod(FRAMES)
@@ -100,7 +101,8 @@ object FighterPixels {
             }
         val bounce = !tired && pose == FighterPose.STANCE && f >= FRAMES / 2
         val s = base.bounced(if (bounce) 1f else 0f)
-        val drawing = Drawing(character, colors, rank, gear, s, tired)
+        val main = outfitColor(outfit) ?: colors.mainColor
+        val drawing = Drawing(character, colors, main, rank, gear, s, tired)
         drawing.draw()
 
         val ki = kiColor(character, rank)
@@ -154,6 +156,18 @@ object FighterPixels {
         return PixelImage(width, kiBlast.size, argb)
     }
 
+    /** The main colour of a shop outfit, `null` for no or an unknown outfit. */
+    fun outfitColor(outfit: String?): Int? =
+        when (outfit) {
+            FighterItems.GI_WHITE -> argb(0xF4F1EA)
+            FighterItems.GI_BLUE -> argb(0x4A78C8)
+            FighterItems.GI_RED -> argb(0xD9524A)
+            FighterItems.GI_BLACK -> argb(0x3A3B4E)
+            FighterItems.GI_PURPLE -> argb(0x8E62C4)
+            FighterItems.GI_GOLD -> argb(0xE8BE4A)
+            else -> null
+        }
+
     /** Fill colour of each belt, also used by the unit tests to keep them apart. */
     fun beltColor(belt: Belt): Int = beltColors.getValue(belt)
 
@@ -201,6 +215,7 @@ object FighterPixels {
     private class Drawing(
         val character: FighterCharacter,
         colors: FighterColors,
+        mainColor: Int,
         val rank: FighterRank,
         val gear: Set<String>,
         val s: Skeleton,
@@ -212,7 +227,7 @@ object FighterPixels {
 
         private val skin = Paint(colors.skinColor, "skin")
         private val hair = Paint(colors.hairColor, "hair")
-        private val main = Paint(colors.mainColor, "main")
+        private val main = Paint(mainColor, "main")
         private val accent = Paint(colors.accentColor, "accent")
         private val iris = mix(colors.accentColor, INK, 0.5f)
         private val belt = Paint(beltColors.getValue(rank.belt), "belt")

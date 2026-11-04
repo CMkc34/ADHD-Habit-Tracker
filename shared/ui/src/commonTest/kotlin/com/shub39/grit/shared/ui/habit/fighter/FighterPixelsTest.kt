@@ -60,8 +60,11 @@ class FighterPixelsTest {
         pose: FighterPose = FighterPose.STANCE,
         colors: FighterColors = character.defaultColors,
         frame: Int = 0,
+        outfit: String? = null,
     ): List<Int> =
-        FighterPixels.render(character, rank, mood, colors, pose, frame = frame).argb.toList()
+        FighterPixels.render(character, rank, mood, colors, pose, frame = frame, outfit = outfit)
+            .argb
+            .toList()
 
     @Test
     fun `every character, rank, mood and pose renders a full canvas`() {
@@ -129,6 +132,26 @@ class FighterPixelsTest {
             for (colors in changed) {
                 assertNotEquals(plain, render(character, colors = colors), "$character $colors")
             }
+        }
+    }
+
+    @Test
+    fun `every outfit replaces the main colour and unknown outfits change nothing`() {
+        for (character in FighterCharacter.entries) {
+            fun wearing(outfit: String?) = render(character, outfit = outfit)
+            val images = FighterItems.outfits.map { wearing(it) }
+            assertEquals(images.size, images.toSet().size, "$character")
+            assertEquals(wearing(null), wearing("gone"))
+            assertEquals(render(character), wearing(null))
+        }
+    }
+
+    @Test
+    fun `outfits stand apart from every belt`() {
+        for (outfit in FighterItems.outfits) {
+            val gi = FighterPixels.outfitColor(outfit)!!
+            val apart = Belt.entries.all { distance(FighterPixels.beltColor(it), gi) >= 20 }
+            assertTrue(apart, outfit)
         }
     }
 

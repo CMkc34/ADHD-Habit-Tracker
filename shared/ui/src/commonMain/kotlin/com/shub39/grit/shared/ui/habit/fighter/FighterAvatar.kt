@@ -50,8 +50,9 @@ import kotlin.math.min
 
 /**
  * The fighter avatar (#6): one of the [FighterCharacter]s in pixel art, in the [colors] the user
- * picked, with ki-energy moves. The [rank] shows through the belt and a few upgrades (wrist wraps,
- * headband, emblem, golden aura); [gear] are the worn items from [FighterItems]. A
+ * picked at the start, with ki-energy moves. The [rank] shows through the belt and a few upgrades
+ * (wrist wraps, headband, emblem, golden aura). A bought [outfit] replaces the main colour, [gear]
+ * are the worn items; both are ids from [FighterItems]. A
  * [FighterMood.TIRED] fighter sits and dozes, otherwise the fighter takes the [pose]. The idle
  * motion follows the system's animation setting and stops completely when [animate] is false.
  */
@@ -62,6 +63,7 @@ fun FighterAvatar(
     mood: FighterMood,
     modifier: Modifier = Modifier,
     colors: FighterColors = character.defaultColors,
+    outfit: String? = null,
     gear: Set<String> = emptySet(),
     pose: FighterPose = FighterPose.STANCE,
     animate: Boolean = true,
@@ -69,7 +71,7 @@ fun FighterAvatar(
     val frame = if (animate) rememberPixelFrame() else null
     // each frame is built once and then only painted
     val frames =
-        remember(character, rank, mood, colors, gear, pose) {
+        remember(character, rank, mood, colors, outfit, gear, pose) {
             arrayOfNulls<PixelImage>(FighterPixels.FRAMES)
         }
 
@@ -77,9 +79,8 @@ fun FighterAvatar(
         val f = frame?.value ?: 0
         val image =
             frames[f]
-                ?: FighterPixels.render(character, rank, mood, colors, pose, gear, f).also {
-                    frames[f] = it
-                }
+                ?: FighterPixels.render(character, rank, mood, colors, pose, gear, f, outfit)
+                    .also { frames[f] = it }
         drawPixels(image)
     }
 }
@@ -210,6 +211,24 @@ private fun PosesPreview() {
                 )
                 KiBlast(character, Modifier.width(80.dp), animate = false)
             }
+        }
+    }
+}
+
+@PreviewWrapper(GritPreviewWrapper::class)
+@Preview(widthDp = 480, heightDp = 100)
+@Composable
+private fun OutfitsPreview() {
+    Row {
+        FighterItems.outfits.forEach { outfit ->
+            FighterAvatar(
+                FighterCharacter.KARATEKA,
+                FighterRank.BRAWLER,
+                FighterMood.READY,
+                Modifier.size(80.dp),
+                outfit = outfit,
+                animate = false,
+            )
         }
     }
 }
