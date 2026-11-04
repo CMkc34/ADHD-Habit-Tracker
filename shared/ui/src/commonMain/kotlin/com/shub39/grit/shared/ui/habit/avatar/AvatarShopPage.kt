@@ -47,12 +47,12 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.ShopItem
 import com.shub39.grit.core.avatar.ShopItemKind
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
@@ -148,13 +148,13 @@ fun AvatarShopPage(
         ) {
             item {
                 MeadowScene(
-                    stage = avatar.plant.stage,
-                    mood = avatar.plant.mood,
+                    stage = avatar.fighter.rank.plantStage,
+                    mood = avatar.fighter.mood.plantMood,
                     potColor = avatar.data.potColor,
                     accessories = avatar.data.accessories,
                     decorations = avatar.data.decorations,
-                    weather = avatar.plant.weather,
-                    species = avatar.data.species,
+                    weather = avatar.fighter.weather,
+                    species = avatar.data.look,
                     modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth(),
                 )
             }
@@ -207,11 +207,11 @@ private fun AvatarShopPagePreview() {
     AvatarShopPage(
         avatar =
             AvatarState(
-                plant =
-                    PlantState(
+                fighter =
+                    FighterState(
                         activeDays = 32,
-                        stage = PlantStage.YOUNG_PLANT,
-                        mood = PlantMood.HAPPY,
+                        rank = FighterRank.FIGHTER,
+                        mood = FighterMood.READY,
                     ),
                 energy = 30,
                 data =

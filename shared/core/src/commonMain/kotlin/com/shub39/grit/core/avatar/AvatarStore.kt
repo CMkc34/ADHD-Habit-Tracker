@@ -16,22 +16,36 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterStat
 import kotlinx.coroutines.flow.Flow
 
-/** What is stored about the plant; its stage and the energy balance are derived. */
+/** What is stored about the fighter; its rank, stats and the energy balance are derived. */
 data class AvatarData(
     val name: String = "",
+    /**
+     * Everything ever bought. Purchases of items that are no longer in the [ShopCatalog] stay here,
+     * but are neither owned nor charged (SPEC 9.8).
+     */
     val purchases: List<Purchase> = emptyList(),
     val potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
     val accessories: Set<String> = emptySet(),
-    /** Bought decorations that are shown on the meadow. */
+    /** Bought decorations that are shown in the scene. */
     val decorations: Set<String> = emptySet(),
-    /** Highest stage the user has been told about, so a new stage is announced once. */
+    /**
+     * Highest rank number the user has been told about, so a new rank is announced once. It is the
+     * former plant stage, which has the same thresholds.
+     */
     val seenStage: Int = 0,
-    /** How the plant calls the user (#139); empty while the user has not given a name. */
+    /** How the fighter calls the user (#139); empty while the user has not given a name. */
     val userName: String = "",
-    /** Which plant the user chose (#140). */
-    val species: AvatarSpecies = AvatarSpecies.SPROUT,
+    /** Who trains with the user, stored where the plant species was. */
+    val look: FighterLook = FighterLook.DEFAULT,
+    /**
+     * Highest level of each stat the user has been told about. Empty until the levels are first
+     * stored, which happens without announcing them (first run after the update, SPEC 9.8).
+     */
+    val seenStatLevels: Map<FighterStat, Int> = emptyMap(),
 ) {
     /**
      * Combines the current record with a restored backup: purchases are joined (the earlier one
@@ -50,7 +64,11 @@ data class AvatarData(
             decorations = decorations.ifEmpty { backup.decorations },
             seenStage = maxOf(seenStage, backup.seenStage),
             userName = userName.ifBlank { backup.userName },
-            species = if (species == AvatarSpecies.SPROUT) backup.species else species,
+            look = if (look == FighterLook.DEFAULT) backup.look else look,
+            seenStatLevels =
+                (seenStatLevels.keys + backup.seenStatLevels.keys).associateWith {
+                    maxOf(seenStatLevels[it] ?: 0, backup.seenStatLevels[it] ?: 0)
+                },
         )
 }
 
@@ -61,7 +79,7 @@ interface AvatarStore {
 
     suspend fun setUserName(name: String)
 
-    suspend fun setSpecies(species: AvatarSpecies)
+    suspend fun setLook(look: FighterLook)
 
     suspend fun addPurchase(purchase: Purchase)
 
@@ -72,6 +90,9 @@ interface AvatarStore {
     suspend fun setDecoration(itemId: String, shown: Boolean)
 
     suspend fun markStageSeen(stage: Int)
+
+    /** Stores [levels] as seen; per stat, the higher of the stored and the given level is kept. */
+    suspend fun markStatLevelsSeen(levels: Map<FighterStat, Int>)
 
     /** Replaces everything stored with [data], used when restoring a backup. */
     suspend fun replaceAll(data: AvatarData)

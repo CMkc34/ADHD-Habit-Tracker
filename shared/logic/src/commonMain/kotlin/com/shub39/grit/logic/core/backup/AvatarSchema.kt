@@ -17,15 +17,15 @@
 package com.shub39.grit.logic.core.backup
 
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterLook
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 /**
- * The plant avatar in a backup (phase 4, decorations since #82); dates are ISO strings
- * (`2026-10-22`).
+ * The avatar in a backup (phase 4, decorations since #82); dates are ISO strings (`2026-10-22`).
+ * Purchases of plant items are kept, so the backup still imports into older versions (SPEC 9.8).
  */
 @Serializable
 data class AvatarSchema(
@@ -37,8 +37,8 @@ data class AvatarSchema(
     val decorations: List<String> = emptyList(),
     // #139: how the plant calls the user
     val userName: String = "",
-    // #140: which plant grows, see AvatarSpecies.id
-    val species: String = AvatarSpecies.SPROUT.id,
+    // #140: which plant grows; since phase 6 the FighterLook id, which keeps the plant ids
+    val species: String = FighterLook.DEFAULT.id,
 )
 
 @Serializable data class PurchaseSchema(val itemId: String, val date: String, val price: Int)
@@ -52,7 +52,7 @@ fun AvatarData.toAvatarSchema(): AvatarSchema {
         seenStage = seenStage,
         decorations = decorations.sorted(),
         userName = userName,
-        species = species.id,
+        species = look.id,
     )
 }
 
@@ -65,6 +65,6 @@ fun AvatarSchema.toAvatarData(): AvatarData {
         seenStage = seenStage,
         decorations = decorations.toSet(),
         userName = userName,
-        species = AvatarSpecies.fromId(species),
+        look = FighterLook.fromId(species),
     )
 }

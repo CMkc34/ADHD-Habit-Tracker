@@ -16,7 +16,6 @@
  */
 package com.shub39.grit.core.fighter
 
-import com.shub39.grit.core.avatar.PlantStage
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -25,9 +24,10 @@ class FighterRankTest {
 
     @Test
     fun `ranks use exactly the plant thresholds`() {
+        // the former PlantStage thresholds: the rank after the update equals the plant stage
         assertEquals(12, FighterRank.entries.size)
         assertEquals(
-            PlantStage.entries.map { it.minActiveDays },
+            listOf(0, 3, 7, 14, 21, 30, 45, 60, 90, 150, 240, 365),
             FighterRank.entries.map { it.minActiveDays },
         )
         assertEquals(12, FighterRank.LEGEND.number)

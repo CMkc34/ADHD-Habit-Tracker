@@ -23,16 +23,18 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarStore
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.fighter.StatLevelCodec
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import org.koin.core.annotation.Single
 
-/** Stores the plant in the app's shared preferences file, under keys prefixed with `avatar_`. */
+/** Stores the fighter in the app's shared preferences file, under keys prefixed with `avatar_`. */
 @Single(binds = [AvatarStore::class])
 class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarStore {
 
@@ -42,9 +44,13 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
         private val potColorKey = stringPreferencesKey("avatar_pot_color")
         private val accessoriesKey = stringSetPreferencesKey("avatar_accessories")
         private val decorationsKey = stringSetPreferencesKey("avatar_decorations")
+        // the rank number; the key is the plant's, so ranks the plant had are not announced again
         private val seenStageKey = intPreferencesKey("avatar_seen_stage")
         private val userNameKey = stringPreferencesKey("avatar_user_name")
+        // the FighterLook id, which keeps the plant species ids (sprout, cherry)
         private val speciesKey = stringPreferencesKey("avatar_species")
+        // "statKey|level" entries, see StatLevelCodec
+        private val seenStatLevelsKey = stringSetPreferencesKey("avatar_seen_stat_levels")
 
         private const val SEPARATOR = "|"
 
@@ -71,7 +77,8 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
                 decorations = prefs[decorationsKey].orEmpty(),
                 seenStage = prefs[seenStageKey] ?: 0,
                 userName = prefs[userNameKey].orEmpty(),
-                species = AvatarSpecies.fromId(prefs[speciesKey]),
+                look = FighterLook.fromId(prefs[speciesKey]),
+                seenStatLevels = StatLevelCodec.decodeAll(prefs[seenStatLevelsKey].orEmpty()),
             )
         }
 
@@ -83,8 +90,8 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
         datastore.edit { it[userNameKey] = name }
     }
 
-    override suspend fun setSpecies(species: AvatarSpecies) {
-        datastore.edit { it[speciesKey] = species.id }
+    override suspend fun setLook(look: FighterLook) {
+        datastore.edit { it[speciesKey] = look.id }
     }
 
     override suspend fun addPurchase(purchase: Purchase) {
@@ -113,6 +120,17 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
         datastore.edit { it[seenStageKey] = maxOf(it[seenStageKey] ?: 0, stage) }
     }
 
+    override suspend fun markStatLevelsSeen(levels: Map<FighterStat, Int>) {
+        datastore.edit {
+            val seen = StatLevelCodec.decodeAll(it[seenStatLevelsKey].orEmpty())
+            val merged =
+                (seen.keys + levels.keys).associateWith { stat ->
+                    maxOf(seen[stat] ?: 0, levels[stat] ?: 0)
+                }
+            it[seenStatLevelsKey] = StatLevelCodec.encodeAll(merged)
+        }
+    }
+
     override suspend fun replaceAll(data: AvatarData) {
         datastore.edit {
             it[nameKey] = data.name
@@ -123,7 +141,8 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
             it[decorationsKey] = data.decorations
             it[seenStageKey] = data.seenStage
             it[userNameKey] = data.userName
-            it[speciesKey] = data.species.id
+            it[speciesKey] = data.look.id
+            it[seenStatLevelsKey] = StatLevelCodec.encodeAll(data.seenStatLevels)
         }
     }
 }

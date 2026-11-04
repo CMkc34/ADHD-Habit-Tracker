@@ -23,8 +23,8 @@ import com.shub39.grit.core.activity.ActivityRepo
 import com.shub39.grit.core.activity.DayStatus
 import com.shub39.grit.core.activity.FreezeNotice
 import com.shub39.grit.core.avatar.AvatarRepo
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.UserName
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.HabitRepo
@@ -286,8 +286,7 @@ class HabitViewModel(
                 is HabitsAction.FinishNameSetup -> {
                     val name = UserName.clean(action.name)
                     if (name.isNotEmpty()) avatarRepo.setUserName(name)
-                    if (action.species != AvatarSpecies.SPROUT)
-                        avatarRepo.setSpecies(action.species)
+                    if (action.look != FighterLook.DEFAULT) avatarRepo.setLook(action.look)
                     motivationSettings.setSetupDone()
                     _state.update { it.copy(nameSetup = false) }
                     checkDailyGreeting()
@@ -305,8 +304,12 @@ class HabitViewModel(
 
                 is HabitsAction.WearShopItem -> avatarRepo.wear(action.itemId, action.worn)
 
-                HabitsAction.DismissNewStage -> {
-                    _state.value.avatar?.let { avatarRepo.markStageSeen(it.plant.stage) }
+                HabitsAction.DismissNewRank -> {
+                    _state.value.avatar?.let { avatarRepo.markRankSeen(it.fighter.rank) }
+                }
+
+                HabitsAction.DismissNewStatLevels -> {
+                    _state.value.avatar?.let { avatarRepo.markStatLevelsSeen(it.statLevels) }
                 }
 
                 is HabitsAction.SetRoutineStyle -> {
@@ -568,7 +571,7 @@ class HabitViewModel(
                 it.copy(
                     dailyGreeting =
                         DailyGreetingState(
-                            kind = DailyGreeting.kindOf(hasRoutines, avatar.plant),
+                            kind = DailyGreeting.kindOf(hasRoutines, avatar.fighter),
                             dayTime = DailyGreeting.dayTimeOf(LocalDateTime.now().hour),
                             avatar = avatar,
                             activityStreak = streak,

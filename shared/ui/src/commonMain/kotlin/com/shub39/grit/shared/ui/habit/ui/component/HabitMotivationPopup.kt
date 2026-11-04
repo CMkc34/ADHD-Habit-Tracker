@@ -32,16 +32,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.motivation.MotivationQuote
 import com.shub39.grit.core.motivation.QuoteTone
 import com.shub39.grit.core.motivation.StreakTier
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
+import com.shub39.grit.shared.ui.habit.avatar.PlantMood
+import com.shub39.grit.shared.ui.habit.avatar.PlantStage
+import com.shub39.grit.shared.ui.habit.avatar.plantStage
 import com.shub39.grit.shared.ui.habit.motivation.CelebrationStage
 import com.shub39.grit.shared.ui.habit.motivation.CheckInStageColors
 import com.shub39.grit.shared.ui.habit.motivation.StagePill
@@ -106,11 +107,11 @@ fun HabitMotivationPopup(
 
         val plantScale = rememberPopIn(delayMillis = 150)
         PlantAvatar(
-            stage = avatar?.plant?.stage ?: PlantStage.SEED,
+            stage = avatar?.fighter?.rank?.plantStage ?: PlantStage.SEED,
             mood = PlantMood.HAPPY,
             potColor = avatar?.data?.potColor ?: ShopCatalog.DEFAULT_POT_COLOR,
             accessories = avatar?.data?.accessories.orEmpty(),
-            species = avatar?.data?.species ?: AvatarSpecies.SPROUT,
+            species = avatar?.data?.look ?: FighterLook.KAI,
             modifier =
                 Modifier.size(170.dp).graphicsLayer {
                     scaleX = plantScale

@@ -16,15 +16,17 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterRank
+
 /**
- * What the buy dialog shows for [item]: the plant without and with it. When the item needs a higher
- * stage, the plant is shown grown to that stage, so the preview never draws an accessory on a plant
- * that cannot hold it yet.
+ * What the buy dialog shows for [item]: the avatar without and with it. When the item needs a
+ * higher rank, the avatar is shown at that rank, so the preview never draws an item on an avatar
+ * that cannot wear it yet.
  */
 data class ShopPreview(
     val item: ShopItem,
     val check: PurchaseCheck,
-    val stage: PlantStage,
+    val rank: FighterRank,
     val without: AvatarData,
     val with: AvatarData,
     /** Water still needed to buy it, 0 when there is enough. */
@@ -33,16 +35,16 @@ data class ShopPreview(
     val canBuy: Boolean
         get() = check == PurchaseCheck.OK
 
-    /** The preview shows a later stage than the plant has reached. */
-    val isFutureStage: Boolean
-        get() = check == PurchaseCheck.STAGE_TOO_LOW
+    /** The preview shows a later rank than the fighter has reached. */
+    val isFutureRank: Boolean
+        get() = check == PurchaseCheck.RANK_TOO_LOW
 }
 
 fun AvatarState.preview(item: ShopItem): ShopPreview =
     ShopPreview(
         item = item,
         check = check(item),
-        stage = maxOf(plant.stage, item.minStage),
+        rank = maxOf(fighter.rank, item.minRank),
         without = data,
         with = tryOn(item),
         missingEnergy = (item.price - energy).coerceAtLeast(0),

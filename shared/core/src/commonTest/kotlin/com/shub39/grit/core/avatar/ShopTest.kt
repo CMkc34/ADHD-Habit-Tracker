@@ -18,8 +18,10 @@ package com.shub39.grit.core.avatar
 
 import com.shub39.grit.core.activity.ActivityPlanner
 import com.shub39.grit.core.activity.DayStatus
+import com.shub39.grit.core.fighter.FighterRank
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlinx.datetime.LocalDate
 
@@ -132,19 +134,47 @@ class ShopTest {
 
         assertEquals(
             PurchaseCheck.ALREADY_OWNED,
-            Shop.check(blue, PlantStage.TREE, energy = 100, purchases = bought, today = day(0)),
+            Shop.check(blue, FighterRank.CHAMPION, energy = 100, purchases = bought, today = day(0)),
         )
         assertEquals(
-            PurchaseCheck.STAGE_TOO_LOW,
-            Shop.check(bird, PlantStage.SAPLING, energy = 100, purchases = bought, today = day(0)),
+            PurchaseCheck.RANK_TOO_LOW,
+            Shop.check(
+                bird,
+                FighterRank.CHALLENGER,
+                energy = 100,
+                purchases = bought,
+                today = day(0),
+            ),
         )
         assertEquals(
             PurchaseCheck.NOT_ENOUGH_ENERGY,
-            Shop.check(bird, PlantStage.YOUNG_TREE, energy = 39, purchases = bought, today = day(0)),
+            Shop.check(bird, FighterRank.VETERAN, energy = 39, purchases = bought, today = day(0)),
         )
         assertEquals(
             PurchaseCheck.OK,
-            Shop.check(bird, PlantStage.YOUNG_TREE, energy = 40, purchases = bought, today = day(0)),
+            Shop.check(bird, FighterRank.VETERAN, energy = 40, purchases = bought, today = day(0)),
+        )
+    }
+
+    @Test
+    fun `purchases of items no longer in the catalog are not owned`() {
+        val bought = listOf(Purchase("pot_blue", day(0), 10), Purchase("acc_gone", day(0), 25))
+
+        val owned = Shop.owned(bought)
+        assertTrue("pot_blue" in owned)
+        assertFalse("acc_gone" in owned)
+        assertEquals(listOf(bought[0]), Shop.charged(bought))
+    }
+
+    @Test
+    fun `water spent on items no longer in the catalog comes back`() {
+        // 20 active days = 20 energy; 10 spent on a known item, 25 on an item that left the shop
+        val purchases = listOf(buy(price = 10, onDay = 15), Purchase("acc_gone", day(16), 25))
+
+        assertEquals(10, plan(active = (0..19).toList(), today = 19, purchases).energy)
+        assertEquals(
+            plan(active = (0..19).toList(), today = 19, listOf(buy(price = 10, onDay = 15))),
+            plan(active = (0..19).toList(), today = 19, purchases),
         )
     }
 

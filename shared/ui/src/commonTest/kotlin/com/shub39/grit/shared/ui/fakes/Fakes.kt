@@ -24,12 +24,12 @@ import com.shub39.grit.core.activity.DayStatus
 import com.shub39.grit.core.activity.FreezeNotice
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarRepo
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
 import com.shub39.grit.core.avatar.PurchaseCheck
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.HabitRepo
@@ -233,10 +233,12 @@ class FakeActivityRepo(
 class FakeAvatarRepo(
     private val activityRepo: FakeActivityRepo = FakeActivityRepo(),
     val data: MutableStateFlow<AvatarData> = MutableStateFlow(AvatarData()),
+    /** XP per stat, set directly instead of computed from check-ins. */
+    val xp: MutableStateFlow<Map<FighterStat, Int>> = MutableStateFlow(emptyMap()),
 ) : AvatarRepo {
     override fun getAvatarState(): Flow<AvatarState> =
-        combine(activityRepo.report, data) { report, data ->
-            AvatarState(PlantState.of(report), report.energy, data)
+        combine(activityRepo.report, data, xp) { report, data, xp ->
+            AvatarState(FighterState.of(report, xp), report.energy, data)
         }
 
     val bought = mutableListOf<String>()
@@ -250,16 +252,18 @@ class FakeAvatarRepo(
 
     override suspend fun setUserName(name: String) = data.update { it.copy(userName = name) }
 
-    override suspend fun setSpecies(species: AvatarSpecies) =
-        data.update { it.copy(species = species) }
+    override suspend fun setLook(look: FighterLook) = data.update { it.copy(look = look) }
 
     override suspend fun wear(itemId: String, worn: Boolean) =
         data.update {
             it.copy(accessories = if (worn) it.accessories + itemId else it.accessories - itemId)
         }
 
-    override suspend fun markStageSeen(stage: PlantStage) =
-        data.update { it.copy(seenStage = stage.number) }
+    override suspend fun markRankSeen(rank: FighterRank) =
+        data.update { it.copy(seenStage = rank.number) }
+
+    override suspend fun markStatLevelsSeen(levels: Map<FighterStat, Int>) =
+        data.update { it.copy(seenStatLevels = it.seenStatLevels + levels) }
 }
 
 class FakeAlarmScheduler : AlarmScheduler {

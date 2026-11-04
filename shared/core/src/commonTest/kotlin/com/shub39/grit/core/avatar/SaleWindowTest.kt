@@ -16,6 +16,7 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterRank
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -28,7 +29,7 @@ class SaleWindowTest {
     private val winter = SaleWindow(fromMonth = 12, fromDay = 20, toMonth = 1, toDay = 6)
 
     private val pumpkin =
-        ShopItem("deco_pumpkin", ShopItemKind.DECORATION, 30, PlantStage.SEED, season = autumn)
+        ShopItem("deco_pumpkin", ShopItemKind.DECORATION, 30, FighterRank.ROOKIE, season = autumn)
     private val mushrooms = ShopCatalog.byId("deco_mushrooms")!!
     private val items = listOf(mushrooms, pumpkin)
 
@@ -74,7 +75,7 @@ class SaleWindowTest {
         assertEquals(listOf(mushrooms, pumpkin), Shop.offered(LocalDate(2027, 3, 1), bought, items))
         assertEquals(
             PurchaseCheck.ALREADY_OWNED,
-            Shop.check(pumpkin, PlantStage.SEED, 100, bought, LocalDate(2027, 3, 1)),
+            Shop.check(pumpkin, FighterRank.ROOKIE, 100, bought, LocalDate(2027, 3, 1)),
         )
     }
 
@@ -82,11 +83,11 @@ class SaleWindowTest {
     fun `a seasonal item can only be bought in its window`() {
         assertEquals(
             PurchaseCheck.OUT_OF_SEASON,
-            Shop.check(pumpkin, PlantStage.SEED, 100, emptyList(), LocalDate(2026, 12, 1)),
+            Shop.check(pumpkin, FighterRank.ROOKIE, 100, emptyList(), LocalDate(2026, 12, 1)),
         )
         assertEquals(
             PurchaseCheck.OK,
-            Shop.check(pumpkin, PlantStage.SEED, 100, emptyList(), LocalDate(2026, 10, 15)),
+            Shop.check(pumpkin, FighterRank.ROOKIE, 100, emptyList(), LocalDate(2026, 10, 15)),
         )
     }
 }

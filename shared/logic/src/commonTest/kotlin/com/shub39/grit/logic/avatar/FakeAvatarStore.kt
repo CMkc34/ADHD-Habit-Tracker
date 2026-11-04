@@ -17,9 +17,10 @@
 package com.shub39.grit.logic.avatar
 
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarStore
 import com.shub39.grit.core.avatar.Purchase
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterStat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -37,8 +38,8 @@ class FakeAvatarStore(initial: AvatarData = AvatarData()) : AvatarStore {
         data.update { it.copy(userName = name) }
     }
 
-    override suspend fun setSpecies(species: AvatarSpecies) {
-        data.update { it.copy(species = species) }
+    override suspend fun setLook(look: FighterLook) {
+        data.update { it.copy(look = look) }
     }
 
     override suspend fun addPurchase(purchase: Purchase) {
@@ -63,6 +64,18 @@ class FakeAvatarStore(initial: AvatarData = AvatarData()) : AvatarStore {
 
     override suspend fun markStageSeen(stage: Int) {
         data.update { it.copy(seenStage = maxOf(it.seenStage, stage)) }
+    }
+
+    override suspend fun markStatLevelsSeen(levels: Map<FighterStat, Int>) {
+        data.update {
+            val seen = it.seenStatLevels
+            it.copy(
+                seenStatLevels =
+                    (seen.keys + levels.keys).associateWith { stat ->
+                        maxOf(seen[stat] ?: 0, levels[stat] ?: 0)
+                    }
+            )
+        }
     }
 
     override suspend fun replaceAll(data: AvatarData) {

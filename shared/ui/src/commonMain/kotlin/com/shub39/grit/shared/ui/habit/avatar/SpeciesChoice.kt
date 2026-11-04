@@ -41,10 +41,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.shub39.grit.core.avatar.AvatarSpecies
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.avatar_species_cherry_desc
@@ -63,22 +61,22 @@ data class SpeciesChoiceColors(
 
 /** The short line under a species' name. */
 @Composable
-fun speciesDescription(species: AvatarSpecies): String =
+fun speciesDescription(species: FighterLook): String =
     stringResource(
         when (species) {
-            AvatarSpecies.SPROUT -> Res.string.avatar_species_sprout_desc
-            AvatarSpecies.CHERRY -> Res.string.avatar_species_cherry_desc
+            FighterLook.KAI -> Res.string.avatar_species_sprout_desc
+            FighterLook.MIRA -> Res.string.avatar_species_cherry_desc
         }
     )
 
 /**
- * One card per [AvatarSpecies] side by side, each showing that plant at [stage] with the user's
+ * One card per [FighterLook] side by side, each showing that plant at [stage] with the user's
  * [potColor] and [accessories]; the [selected] one is framed and ticked (#140).
  */
 @Composable
 fun SpeciesChoice(
-    selected: AvatarSpecies,
-    onSelect: (AvatarSpecies) -> Unit,
+    selected: FighterLook,
+    onSelect: (FighterLook) -> Unit,
     colors: SpeciesChoiceColors,
     modifier: Modifier = Modifier,
     stage: PlantStage = PlantStage.YOUNG_TREE,
@@ -86,7 +84,7 @@ fun SpeciesChoice(
     accessories: Set<String> = emptySet(),
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        AvatarSpecies.entries.forEach { species ->
+        FighterLook.entries.forEach { species ->
             val isSelected = species == selected
             Surface(
                 color = colors.card,
@@ -115,7 +113,7 @@ fun SpeciesChoice(
                             modifier = Modifier.fillMaxWidth(),
                         )
                         Text(
-                            text = defaultPlantName(species),
+                            text = defaultFighterName(species),
                             style =
                                 MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Black
@@ -154,7 +152,7 @@ fun SpeciesChoice(
 @Composable
 private fun SpeciesChoicePreview() {
     SpeciesChoice(
-        selected = AvatarSpecies.CHERRY,
+        selected = FighterLook.MIRA,
         onSelect = {},
         colors =
             SpeciesChoiceColors(

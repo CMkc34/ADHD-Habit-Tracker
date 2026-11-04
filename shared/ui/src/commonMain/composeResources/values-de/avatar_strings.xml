@@ -4,7 +4,6 @@
   Eigene Datei des Forks, die strings.xml des Originals bleibt unberührt.
 -->
 <resources>
-    <string name="avatar_default_name">Sprout</string>
     <string name="avatar_stage_label">Stufe %1$d von 12 · %2$s</string>
     <plurals name="avatar_days_to_next">
         <item quantity="one">Noch %1$d aktiver Tag bis zur nächsten Stufe</item>
@@ -100,7 +99,6 @@
     <string name="shop_seasonal">Saison</string>
     <string name="shop_out_of_season">Gerade nicht im Angebot</string>
     <!-- #140 zweiter Avatar -->
-    <string name="avatar_default_name_cherry">Kirsche</string>
     <string name="avatar_species_sprout_desc">Grüner Laubbaum</string>
     <string name="avatar_species_cherry_desc">Kirschbaum mit rosa Blüten</string>
     <string name="avatar_species_setting">Dein Avatar</string>

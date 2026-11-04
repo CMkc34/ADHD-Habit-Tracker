@@ -18,40 +18,65 @@ package com.shub39.grit.logic.avatar
 
 import com.shub39.grit.core.activity.ActivityRepo
 import com.shub39.grit.core.avatar.AvatarRepo
-import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.avatar.AvatarStore
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.PurchaseCheck
 import com.shub39.grit.core.avatar.Shop
 import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.avatar.ShopItemKind
 import com.shub39.grit.core.avatar.UserName
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.fighter.FighterState
+import com.shub39.grit.core.fighter.RoutineStatStore
+import com.shub39.grit.core.fighter.StatXp
+import com.shub39.grit.core.fighter.statOf
+import com.shub39.grit.core.habits.HabitRepo
 import com.shub39.grit.core.now
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDate
 import org.koin.core.annotation.Single
 
 @Single(binds = [AvatarRepo::class])
-class AvatarRepository(private val activityRepo: ActivityRepo, private val store: AvatarStore) :
-    AvatarRepo {
+class AvatarRepository(
+    private val activityRepo: ActivityRepo,
+    private val store: AvatarStore,
+    private val habitRepo: HabitRepo,
+    private val routineStatStore: RoutineStatStore,
+) : AvatarRepo {
 
     override fun getAvatarState(): Flow<AvatarState> =
-        combine(activityRepo.getActivityReport(), store.getAvatar()) { report, data ->
+        combine(activityRepo.getActivityReport(), store.getAvatar(), xp()) { report, data, xp ->
                 AvatarState(
-                    plant = PlantState.of(report),
+                    fighter = FighterState.of(report, xp),
                     energy = report.energy,
                     data = data,
                     today = LocalDate.now(),
                 )
             }
-            // the first look sets the stage the user knows, later stages are announced
-            .onEach { if (it.data.seenStage == 0) store.markStageSeen(it.plant.stage.number) }
+            // the first look sets what the user knows, later ranks and levels are announced;
+            // users of the plant keep their stage as rank, and their XP is not announced at once
+            .onEach {
+                if (it.data.seenStage == 0) store.markStageSeen(it.fighter.rank.number)
+                if (it.data.seenStatLevels.isEmpty()) store.markStatLevelsSeen(it.statLevels)
+            }
+
+    /** XP per stat from all routines and their check-ins (SPEC 9.3). */
+    private fun xp(): Flow<Map<FighterStat, Int>> =
+        combine(habitRepo.getHabitsWithAnalytics(), routineStatStore.getStats()) { habits, stats ->
+                StatXp.of(
+                    habits = habits.map { it.habit },
+                    statuses = habits.flatMap { it.statuses },
+                    statOf = stats::statOf,
+                )
+            }
+            .distinctUntilChanged()
 
     override suspend fun buy(itemId: String): PurchaseCheck {
         val item = ShopCatalog.byId(itemId) ?: return PurchaseCheck.ALREADY_OWNED
@@ -68,7 +93,7 @@ class AvatarRepository(private val activityRepo: ActivityRepo, private val store
 
     override suspend fun setUserName(name: String) = store.setUserName(UserName.clean(name))
 
-    override suspend fun setSpecies(species: AvatarSpecies) = store.setSpecies(species)
+    override suspend fun setLook(look: FighterLook) = store.setLook(look)
 
     override suspend fun wear(itemId: String, worn: Boolean) {
         val item = ShopCatalog.byId(itemId) ?: return
@@ -82,5 +107,8 @@ class AvatarRepository(private val activityRepo: ActivityRepo, private val store
         }
     }
 
-    override suspend fun markStageSeen(stage: PlantStage) = store.markStageSeen(stage.number)
+    override suspend fun markRankSeen(rank: FighterRank) = store.markStageSeen(rank.number)
+
+    override suspend fun markStatLevelsSeen(levels: Map<FighterStat, Int>) =
+        store.markStatLevelsSeen(levels)
 }

@@ -56,11 +56,11 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.Weather
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
@@ -119,13 +119,13 @@ fun AvatarPage(
             val plantScale = (sceneHeight / 2f).coerceIn(1f, MAX_PLANT_SCALE)
 
             MeadowScene(
-                stage = avatar.plant.stage,
-                mood = avatar.plant.mood,
+                stage = avatar.fighter.rank.plantStage,
+                mood = avatar.fighter.mood.plantMood,
                 potColor = avatar.data.potColor,
                 accessories = avatar.data.accessories,
                 decorations = avatar.data.decorations,
-                weather = avatar.plant.weather,
-                species = avatar.data.species,
+                weather = avatar.fighter.weather,
+                species = avatar.data.look,
                 plantScale = plantScale,
                 sceneHeight = sceneHeight,
                 skyTop = (statusBar + TOP_BAR_SPACE) / unit,
@@ -149,7 +149,7 @@ fun AvatarPage(
                 onOpenShop = onOpenShop,
             )
 
-            if (avatar.plant.mood == PlantMood.TIRED) {
+            if (avatar.fighter.mood == FighterMood.TIRED) {
                 Surface(
                     shape = RoundedCornerShape(16.dp),
                     color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
@@ -168,7 +168,7 @@ fun AvatarPage(
     if (avatar != null && showRename) {
         RenameAvatarDialog(
             currentName = avatar.data.name,
-            species = avatar.data.species,
+            species = avatar.data.look,
             onSave = {
                 onAction(HabitsAction.RenameAvatar(it))
                 showRename = false
@@ -177,11 +177,12 @@ fun AvatarPage(
         )
     }
 
-    avatar?.newStage?.let { stage ->
+    // placeholder until the rank-up notice of #9
+    avatar?.newRank?.let { rank ->
         NewStageDialog(
             avatar = avatar,
-            stage = stage,
-            onDismiss = { onAction(HabitsAction.DismissNewStage) },
+            stage = rank.plantStage,
+            onDismiss = { onAction(HabitsAction.DismissNewRank) },
         )
     }
 }
@@ -189,7 +190,7 @@ fun AvatarPage(
 /** Water on the left, the name sign in the middle, the shop button on the right. */
 @Composable
 private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenShop: () -> Unit) {
-    val plant = avatar.plant
+    val fighter = avatar.fighter
     val paper = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f)
 
     Row(
@@ -211,26 +212,26 @@ private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenS
                 verticalArrangement = Arrangement.spacedBy(3.dp),
             ) {
                 Text(
-                    text = "${plantName(avatar.data)} ✎",
+                    text = "${fighterName(avatar.data)} ✎",
                     style =
                         MaterialTheme.typography.titleMedium.copy(fontFamily = flexFontEmphasis()),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 LinearProgressIndicator(
-                    progress = { plant.stageProgress },
+                    progress = { fighter.rankProgress },
                     modifier = Modifier.fillMaxWidth().height(6.dp),
                 )
-                val daysToNext = plant.daysToNextStage
+                val daysToNext = fighter.daysToNextRank
                 Text(
                     text =
                         if (daysToNext == null)
-                            stringResource(Res.string.avatar_stage_short_grown, plant.stage.number)
+                            stringResource(Res.string.avatar_stage_short_grown, fighter.rank.number)
                         else
                             pluralStringResource(
                                 Res.plurals.avatar_stage_short_days,
                                 daysToNext,
-                                plant.stage.number,
+                                fighter.rank.number,
                                 daysToNext,
                             ),
                     style = MaterialTheme.typography.labelMedium,
@@ -273,7 +274,12 @@ private fun AvatarPageFreshInstallPreview() {
     AvatarPage(
         avatar =
             AvatarState(
-                plant = PlantState(activeDays = 0, stage = PlantStage.SEED, mood = PlantMood.TIRED),
+                fighter =
+                    FighterState(
+                        activeDays = 0,
+                        rank = FighterRank.ROOKIE,
+                        mood = FighterMood.TIRED,
+                    ),
                 energy = 0,
                 data = AvatarData(),
             ),
@@ -289,11 +295,11 @@ private fun AvatarPageWithPurchasesPreview() {
     AvatarPage(
         avatar =
             AvatarState(
-                plant =
-                    PlantState(
+                fighter =
+                    FighterState(
                         activeDays = 100,
-                        stage = PlantStage.TREE,
-                        mood = PlantMood.HAPPY,
+                        rank = FighterRank.CHAMPION,
+                        mood = FighterMood.READY,
                         weather = Weather.SUNNY,
                     ),
                 energy = 30,

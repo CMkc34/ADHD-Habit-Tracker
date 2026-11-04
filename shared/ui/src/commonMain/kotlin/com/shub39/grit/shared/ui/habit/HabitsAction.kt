@@ -16,7 +16,7 @@
  */
 package com.shub39.grit.shared.ui.habit
 
-import com.shub39.grit.core.avatar.AvatarSpecies
+import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.RoutineStyle
@@ -84,20 +84,21 @@ sealed interface HabitsAction {
     /** close the daily greeting; the welcome greeting opens the add sheet afterwards */
     data object DismissDailyGreeting : HabitsAction
 
-    /** finish the first start setup with the user's [name]; empty skips it (#139) */
-    data class FinishNameSetup(
-        val name: String,
-        val species: AvatarSpecies = AvatarSpecies.SPROUT,
-    ) : HabitsAction
+    /** finish the first start setup with the user's [name] (empty skips it, #139) and [look] */
+    data class FinishNameSetup(val name: String, val look: FighterLook = FighterLook.DEFAULT) :
+        HabitsAction
 
     /** close the freeze notice and remember its freezes as seen */
     data object DismissFreezeNotice : HabitsAction
 
-    /** give the plant avatar a new name, blank brings back the default */
+    /** give the fighter a new name, blank brings back the default */
     data class RenameAvatar(val name: String) : HabitsAction
 
-    /** close the notice about a new plant stage and remember the stage as seen */
-    data object DismissNewStage : HabitsAction
+    /** close the notice about a new rank and remember the rank as seen */
+    data object DismissNewRank : HabitsAction
+
+    /** close the notice about new stat levels and remember the current levels as seen */
+    data object DismissNewStatLevels : HabitsAction
 
     /** buy an item from the plant's shop with energy */
     data class BuyShopItem(val itemId: String) : HabitsAction

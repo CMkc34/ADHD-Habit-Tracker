@@ -38,15 +38,18 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantStage
-import com.shub39.grit.core.avatar.PlantState
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.core.motivation.DayTime
 import com.shub39.grit.core.motivation.GreetingKind
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.avatar.MeadowScene
-import com.shub39.grit.shared.ui.habit.avatar.plantName
+import com.shub39.grit.shared.ui.habit.avatar.PlantMood
+import com.shub39.grit.shared.ui.habit.avatar.fighterName
+import com.shub39.grit.shared.ui.habit.avatar.plantMood
+import com.shub39.grit.shared.ui.habit.avatar.plantStage
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import com.shub39.grit.shared.ui.viewmodel.HabitViewModel
 import grit.shared.ui.generated.resources.Res
@@ -113,8 +116,8 @@ fun DailyGreetingStage(
     modifier: Modifier = Modifier,
 ) {
     val avatar = greeting.avatar
-    val plant = avatar.plant
-    val name = plantName(avatar.data)
+    val fighter = avatar.fighter
+    val name = fighterName(avatar.data)
     // the user's own name in the header and the welcome when they gave one (#139)
     val userName = avatar.data.userName
 
@@ -145,14 +148,14 @@ fun DailyGreetingStage(
 
         val sceneScale = rememberPopIn(delayMillis = 150)
         MeadowScene(
-            stage = plant.stage,
-            // a plant without a single active day is new, not tired: it greets awake
-            mood = if (plant.activeDays == 0) PlantMood.HAPPY else plant.mood,
+            stage = fighter.rank.plantStage,
+            // a fighter without a single active day is new, not tired: it greets awake
+            mood = if (fighter.activeDays == 0) PlantMood.HAPPY else fighter.mood.plantMood,
             potColor = avatar.data.potColor,
             accessories = avatar.data.accessories,
             decorations = avatar.data.decorations,
-            weather = plant.weather,
-            species = avatar.data.species,
+            weather = fighter.weather,
+            species = avatar.data.look,
             plantScale = GREETING_PLANT_SCALE,
             modifier =
                 Modifier.widthIn(max = 420.dp)
@@ -184,8 +187,8 @@ fun DailyGreetingStage(
                 GreetingKind.FIRST_DAY -> stringResource(Res.string.greeting_first_day_text)
                 GreetingKind.TIRED -> stringResource(Res.string.greeting_tired_text)
                 GreetingKind.GROWING -> {
-                    val missing = plant.daysToNextStage
-                    val next = plant.stage.next
+                    val missing = fighter.daysToNextRank
+                    val next = fighter.rank.next
                     if (missing == null || next == null) {
                         stringResource(Res.string.greeting_growing_last)
                     } else {
@@ -243,29 +246,29 @@ fun DailyGreetingStage(
     }
 }
 
-private fun previewGreeting(kind: GreetingKind, activeDays: Int, mood: PlantMood) =
+private fun previewGreeting(kind: GreetingKind, activeDays: Int, mood: FighterMood) =
     DailyGreetingState(
         kind = kind,
         dayTime = DayTime.MORNING,
         avatar =
             AvatarState(
-                plant = PlantState(activeDays, PlantStage.forActiveDays(activeDays), mood),
+                fighter = FighterState(activeDays, FighterRank.forActiveDays(activeDays), mood),
                 energy = 12,
                 data = AvatarData(),
             ),
-        activityStreak = if (mood == PlantMood.HAPPY) 6 else 0,
+        activityStreak = if (mood == FighterMood.READY) 6 else 0,
     )
 
 @PreviewWrapper(GritPreviewWrapper::class)
 @Preview
 @Composable
 private fun WelcomePreview() {
-    DailyGreetingStage(previewGreeting(GreetingKind.WELCOME, 0, PlantMood.TIRED), onDismiss = {})
+    DailyGreetingStage(previewGreeting(GreetingKind.WELCOME, 0, FighterMood.TIRED), onDismiss = {})
 }
 
 @PreviewWrapper(GritPreviewWrapper::class)
 @Preview
 @Composable
 private fun GrowingPreview() {
-    DailyGreetingStage(previewGreeting(GreetingKind.GROWING, 25, PlantMood.HAPPY), onDismiss = {})
+    DailyGreetingStage(previewGreeting(GreetingKind.GROWING, 25, FighterMood.READY), onDismiss = {})
 }

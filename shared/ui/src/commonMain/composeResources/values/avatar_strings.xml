@@ -4,7 +4,6 @@
   The fork's own file, the upstream strings.xml stays untouched.
 -->
 <resources>
-    <string name="avatar_default_name">Sprout</string>
     <string name="avatar_stage_label">Stage %1$d of 12 · %2$s</string>
     <plurals name="avatar_days_to_next">
         <item quantity="one">%1$d more active day to the next stage</item>
@@ -100,7 +99,6 @@
     <string name="shop_seasonal">Season</string>
     <string name="shop_out_of_season">Not on sale right now</string>
     <!-- #140 second avatar -->
-    <string name="avatar_default_name_cherry">Cherry</string>
     <string name="avatar_species_sprout_desc">Leafy green tree</string>
     <string name="avatar_species_cherry_desc">Cherry tree with pink blossoms</string>
     <string name="avatar_species_setting">Your avatar</string>

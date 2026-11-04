@@ -16,13 +16,17 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.core.now
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
-/** The plant as the UI shows it; [today] decides which seasonal items are for sale. */
+/** The fighter as the UI shows it; [today] decides which seasonal items are for sale. */
 data class AvatarState(
-    val plant: PlantState,
+    val fighter: FighterState,
     val energy: Int,
     val data: AvatarData,
     val today: LocalDate = LocalDate.now(),
@@ -30,12 +34,35 @@ data class AvatarState(
     val owned: Set<String>
         get() = Shop.owned(data.purchases)
 
-    /** A stage reached since the user last looked, `null` when there is nothing new. */
-    val newStage: PlantStage?
-        get() = plant.stage.takeIf { it.number > data.seenStage && data.seenStage > 0 }
+    /** The fighter's name: the one the user gave, otherwise the name of its look. */
+    val name: String
+        get() = data.name.ifBlank { data.look.defaultName }
+
+    /**
+     * A rank reached since the user last looked, `null` when there is nothing new. The rank number
+     * is stored where the plant stage was, so ranks the plant already had are not announced again.
+     */
+    val newRank: FighterRank?
+        get() = fighter.rank.takeIf { it.number > data.seenStage && data.seenStage > 0 }
+
+    /**
+     * Stat levels reached since the user last looked, empty when there is nothing new. Nothing is
+     * announced before the first levels were stored, see [AvatarData.seenStatLevels].
+     */
+    val newStatLevels: Map<FighterStat, Int>
+        get() =
+            if (data.seenStatLevels.isEmpty()) emptyMap()
+            else
+                FighterStat.entries
+                    .associateWith { fighter.level(it) }
+                    .filter { (stat, level) -> level > (data.seenStatLevels[stat] ?: 1) }
+
+    /** The current level of every stat, to store as seen. */
+    val statLevels: Map<FighterStat, Int>
+        get() = FighterStat.entries.associateWith { fighter.level(it) }
 
     fun check(item: ShopItem): PurchaseCheck =
-        Shop.check(item, plant.stage, energy, data.purchases, today)
+        Shop.check(item, fighter.rank, energy, data.purchases, today)
 
     /** What the shop shows today, see [Shop.offered]. */
     val offered: List<ShopItem>
@@ -48,7 +75,7 @@ data class AvatarState(
             ShopItemKind.DECORATION -> item.id in data.decorations
         }
 
-    /** What the plant would look like with [item] on, for the preview before buying. */
+    /** What the fighter would look like with [item] on, for the preview before buying. */
     fun tryOn(item: ShopItem): AvatarData =
         when (item.kind) {
             ShopItemKind.POT_COLOR -> data.copy(potColor = item.id)
@@ -65,17 +92,20 @@ interface AvatarRepo {
 
     suspend fun rename(name: String)
 
-    /** Stores how the plant calls the user, see [UserName.clean]. */
+    /** Stores how the fighter calls the user, see [UserName.clean]. */
     suspend fun setUserName(name: String)
 
-    /** Switches the plant; stage, water and purchases stay. */
-    suspend fun setSpecies(species: AvatarSpecies)
+    /** Switches the fighter's look; rank, stats, water and purchases stay. */
+    suspend fun setLook(look: FighterLook)
 
     /**
-     * Puts an owned item on or takes it off (a decoration is shown or hidden on the meadow); a pot
-     * color can only be replaced, not removed.
+     * Puts an owned item on or takes it off (a decoration is shown or hidden in the scene); an
+     * outfit can only be replaced, not removed.
      */
     suspend fun wear(itemId: String, worn: Boolean)
 
-    suspend fun markStageSeen(stage: PlantStage)
+    suspend fun markRankSeen(rank: FighterRank)
+
+    /** Remembers [levels] as announced; a stored level never goes down. */
+    suspend fun markStatLevelsSeen(levels: Map<FighterStat, Int>)
 }

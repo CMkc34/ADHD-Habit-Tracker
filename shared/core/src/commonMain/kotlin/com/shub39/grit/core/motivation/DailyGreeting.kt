@@ -16,8 +16,8 @@
  */
 package com.shub39.grit.core.motivation
 
-import com.shub39.grit.core.avatar.PlantMood
-import com.shub39.grit.core.avatar.PlantState
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterState
 import kotlinx.datetime.LocalDate
 
 /** What the plant says when it greets the user on the first app start of a day. */
@@ -47,11 +47,11 @@ object DailyGreeting {
     fun isDue(enabled: Boolean, lastShown: LocalDate?, today: LocalDate): Boolean =
         enabled && (lastShown == null || lastShown < today)
 
-    fun kindOf(hasRoutines: Boolean, plant: PlantState): GreetingKind =
+    fun kindOf(hasRoutines: Boolean, fighter: FighterState): GreetingKind =
         when {
             !hasRoutines -> GreetingKind.WELCOME
-            plant.activeDays == 0 -> GreetingKind.FIRST_DAY
-            plant.mood == PlantMood.TIRED -> GreetingKind.TIRED
+            fighter.activeDays == 0 -> GreetingKind.FIRST_DAY
+            fighter.mood == FighterMood.TIRED -> GreetingKind.TIRED
             else -> GreetingKind.GROWING
         }
 

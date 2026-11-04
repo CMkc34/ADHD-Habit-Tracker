@@ -17,6 +17,7 @@
 package com.shub39.grit.core.activity
 
 import com.shub39.grit.core.avatar.Purchase
+import com.shub39.grit.core.avatar.Shop
 import kotlinx.datetime.LocalDate
 
 enum class DayStatus {
@@ -61,7 +62,8 @@ object ActivityPlanner {
      * Energy spent on [purchases] is taken on the day of the purchase, but only after a gap that is
      * open on that day has been decided, so a purchase never undoes a freeze that was shown before.
      * A purchase never takes the energy below 0: when a merged backup brings in a purchase that was
-     * not affordable here, the difference is dropped.
+     * not affordable here, the difference is dropped. Purchases of items that are no longer in the
+     * shop's catalog are not charged, see [Shop.charged].
      *
      * A gap is not frozen when [autoFreeze] was off on any of its days. Switching freezes off keeps
      * the freezes of earlier days.
@@ -81,7 +83,7 @@ object ActivityPlanner {
         val days = linkedMapOf<LocalDate, DayStatus>()
         val earnedBonus = mutableSetOf<LocalDate>()
         val gap = mutableListOf<LocalDate>()
-        val spendByDay = purchases.groupBy({ it.date }, { it.price })
+        val spendByDay = Shop.charged(purchases).groupBy({ it.date }, { it.price })
 
         fun spendPending() {
             energy = maxOf(0, energy - pendingSpend)
