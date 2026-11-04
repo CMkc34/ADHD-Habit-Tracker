@@ -1092,10 +1092,7 @@ private fun PlantAccessoriesPreview() {
             mood = PlantMood.HAPPY,
             potColor = "pot_gold",
             accessories =
-                ShopCatalog.items
-                    .filter { it.kind == ShopItemKind.GEAR }
-                    .map { it.id }
-                    .toSet(),
+                ShopCatalog.items.filter { it.kind == ShopItemKind.GEAR }.map { it.id }.toSet(),
             animate = false,
             modifier = Modifier.size(160.dp),
         )

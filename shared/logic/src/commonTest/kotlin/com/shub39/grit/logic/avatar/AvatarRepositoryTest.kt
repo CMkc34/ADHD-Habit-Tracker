@@ -94,27 +94,26 @@ class AvatarRepositoryTest {
     }
 
     @Test
-    fun `one outfit is worn at a time and taking it off brings back the setup colours`() =
-        runTest {
-            val store = FakeAvatarStore()
-            val repository = repository(activeDays = 20, store = store)
-            assertNull(store.data.value.outfit)
+    fun `one outfit is worn at a time and taking it off brings back the setup colours`() = runTest {
+        val store = FakeAvatarStore()
+        val repository = repository(activeDays = 20, store = store)
+        assertNull(store.data.value.outfit)
 
-            repository.buy("gi_blue")
-            assertEquals("gi_blue", store.data.value.outfit)
-            repository.buy("gi_red")
-            assertEquals("gi_red", store.data.value.outfit)
+        repository.buy("gi_blue")
+        assertEquals("gi_blue", store.data.value.outfit)
+        repository.buy("gi_red")
+        assertEquals("gi_red", store.data.value.outfit)
 
-            // taking off an outfit that is not worn changes nothing
-            repository.wear("gi_blue", worn = false)
-            assertEquals("gi_red", store.data.value.outfit)
+        // taking off an outfit that is not worn changes nothing
+        repository.wear("gi_blue", worn = false)
+        assertEquals("gi_red", store.data.value.outfit)
 
-            repository.wear("gi_red", worn = false)
-            assertNull(store.data.value.outfit)
+        repository.wear("gi_red", worn = false)
+        assertNull(store.data.value.outfit)
 
-            repository.wear("gi_blue", worn = true)
-            assertEquals("gi_blue", store.data.value.outfit)
-        }
+        repository.wear("gi_blue", worn = true)
+        assertEquals("gi_blue", store.data.value.outfit)
+    }
 
     @Test
     fun `outfits that are not owned cannot be worn`() = runTest {

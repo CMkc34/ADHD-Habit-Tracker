@@ -61,10 +61,7 @@ class SaleWindowTest {
 
     @Test
     fun `the shop hides a seasonal item outside its window`() {
-        assertEquals(
-            listOf(mat, pumpkin),
-            Shop.offered(LocalDate(2026, 11, 3), emptyList(), items),
-        )
+        assertEquals(listOf(mat, pumpkin), Shop.offered(LocalDate(2026, 11, 3), emptyList(), items))
         assertEquals(listOf(mat), Shop.offered(LocalDate(2026, 12, 3), emptyList(), items))
     }
 
