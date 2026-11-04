@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Fighter avatar (phase 6): rank and stat names. Ranks follow core.fighter.FighterRank.number.
+  The fork's own file, the upstream strings.xml stays untouched.
+-->
+<resources>
+    <string name="fighter_rank_1">Neuling</string>
+    <string name="fighter_rank_2">Schüler</string>
+    <string name="fighter_rank_3">Sparringspartner</string>
+    <string name="fighter_rank_4">Raufbold</string>
+    <string name="fighter_rank_5">Herausforderer</string>
+    <string name="fighter_rank_6">Kämpfer</string>
+    <string name="fighter_rank_7">Anwärter</string>
+    <string name="fighter_rank_8">Veteran</string>
+    <string name="fighter_rank_9">Champion</string>
+    <string name="fighter_rank_10">Meister</string>
+    <string name="fighter_rank_11">Großmeister</string>
+    <string name="fighter_rank_12">Legende</string>
+
+    <string name="fighter_stat_strength">Kraft</string>
+    <string name="fighter_stat_speed">Tempo</string>
+    <string name="fighter_stat_stamina">Ausdauer</string>
+    <string name="fighter_stat_focus">Fokus</string>
+</resources>
