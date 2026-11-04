@@ -29,7 +29,7 @@ class SaleWindowTest {
     private val winter = SaleWindow(fromMonth = 12, fromDay = 20, toMonth = 1, toDay = 6)
 
     private val pumpkin =
-        ShopItem("deco_pumpkin", ShopItemKind.DECORATION, 30, FighterRank.ROOKIE, season = autumn)
+        ShopItem("deco_pumpkin", ShopItemKind.PROP, 30, FighterRank.ROOKIE, season = autumn)
     private val mushrooms = ShopCatalog.byId("deco_mushrooms")!!
     private val items = listOf(mushrooms, pumpkin)
 

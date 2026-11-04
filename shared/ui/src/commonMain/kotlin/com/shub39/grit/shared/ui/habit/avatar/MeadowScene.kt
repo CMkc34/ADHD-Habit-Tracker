@@ -792,7 +792,7 @@ private fun DrawScope.lantern(p: DecorationPainter) {
 @Preview(widthDp = 400, heightDp = 620)
 @Composable
 private fun MeadowScenePreview() {
-    val all = ShopCatalog.items.filter { it.kind == ShopItemKind.DECORATION }.map { it.id }.toSet()
+    val all = ShopCatalog.items.filter { it.kind == ShopItemKind.PROP }.map { it.id }.toSet()
     Column {
         listOf(
                 Triple(PlantStage.SEEDLING, PlantMood.HAPPY, Weather.HAZY),

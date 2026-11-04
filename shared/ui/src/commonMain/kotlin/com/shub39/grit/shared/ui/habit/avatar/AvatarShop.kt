@@ -232,19 +232,19 @@ private fun ShopRow(
         when (check) {
             PurchaseCheck.ALREADY_OWNED ->
                 when {
-                    item.kind == ShopItemKind.POT_COLOR && worn ->
+                    item.kind == ShopItemKind.OUTFIT && worn ->
                         OutlinedButton(onClick = {}, enabled = false) {
                             Text(stringResource(Res.string.shop_chosen))
                         }
-                    item.kind == ShopItemKind.POT_COLOR ->
+                    item.kind == ShopItemKind.OUTFIT ->
                         FilledTonalButton(onClick = { onWear(true) }) {
                             Text(stringResource(Res.string.shop_choose))
                         }
-                    item.kind == ShopItemKind.DECORATION && worn ->
+                    item.kind == ShopItemKind.PROP && worn ->
                         OutlinedButton(onClick = { onWear(false) }) {
                             Text(stringResource(Res.string.shop_put_away))
                         }
-                    item.kind == ShopItemKind.DECORATION ->
+                    item.kind == ShopItemKind.PROP ->
                         FilledTonalButton(onClick = { onWear(true) }) {
                             Text(stringResource(Res.string.shop_set_up))
                         }
@@ -285,13 +285,13 @@ private fun ShopRow(
 private fun ItemIcon(item: ShopItem) {
     Box(modifier = Modifier.size(32.dp), contentAlignment = Alignment.Center) {
         when (item.kind) {
-            ShopItemKind.POT_COLOR ->
+            ShopItemKind.OUTFIT ->
                 Box(
                     modifier =
                         Modifier.size(24.dp).background(potColorOf(item.id), shape = CircleShape)
                 )
-            ShopItemKind.ACCESSORY,
-            ShopItemKind.DECORATION ->
+            ShopItemKind.GEAR,
+            ShopItemKind.PROP ->
                 Text(text = item.emoji(), style = MaterialTheme.typography.titleLarge)
         }
     }
@@ -424,7 +424,7 @@ private val previewAvatar =
 private fun ShopItemListPreview() {
     ShopItemList(
         avatar = previewAvatar,
-        items = ShopCatalog.items.filter { it.kind == ShopItemKind.ACCESSORY },
+        items = ShopCatalog.items.filter { it.kind == ShopItemKind.GEAR },
         onBuyClick = {},
         onWear = { _, _ -> },
     )

@@ -70,17 +70,17 @@ data class AvatarState(
 
     fun isWorn(item: ShopItem): Boolean =
         when (item.kind) {
-            ShopItemKind.POT_COLOR -> data.potColor == item.id
-            ShopItemKind.ACCESSORY -> item.id in data.accessories
-            ShopItemKind.DECORATION -> item.id in data.decorations
+            ShopItemKind.OUTFIT -> data.potColor == item.id
+            ShopItemKind.GEAR -> item.id in data.accessories
+            ShopItemKind.PROP -> item.id in data.decorations
         }
 
     /** What the fighter would look like with [item] on, for the preview before buying. */
     fun tryOn(item: ShopItem): AvatarData =
         when (item.kind) {
-            ShopItemKind.POT_COLOR -> data.copy(potColor = item.id)
-            ShopItemKind.ACCESSORY -> data.copy(accessories = data.accessories + item.id)
-            ShopItemKind.DECORATION -> data.copy(decorations = data.decorations + item.id)
+            ShopItemKind.OUTFIT -> data.copy(potColor = item.id)
+            ShopItemKind.GEAR -> data.copy(accessories = data.accessories + item.id)
+            ShopItemKind.PROP -> data.copy(decorations = data.decorations + item.id)
         }
 }
 

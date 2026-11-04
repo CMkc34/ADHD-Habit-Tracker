@@ -79,10 +79,10 @@ private enum class ShopTab(val title: StringResource) {
 
     fun items(offered: List<ShopItem>): List<ShopItem> =
         when (this) {
-            POTS -> offered.filter { it.season == null && it.kind == ShopItemKind.POT_COLOR }
-            ACCESSORIES -> offered.filter { it.season == null && it.kind == ShopItemKind.ACCESSORY }
+            POTS -> offered.filter { it.season == null && it.kind == ShopItemKind.OUTFIT }
+            ACCESSORIES -> offered.filter { it.season == null && it.kind == ShopItemKind.GEAR }
             DECORATIONS ->
-                offered.filter { it.season == null && it.kind == ShopItemKind.DECORATION }
+                offered.filter { it.season == null && it.kind == ShopItemKind.PROP }
             SEASON -> offered.filter { it.season != null }
         }
 }

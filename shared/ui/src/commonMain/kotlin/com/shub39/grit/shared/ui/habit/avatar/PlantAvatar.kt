@@ -1093,7 +1093,7 @@ private fun PlantAccessoriesPreview() {
             potColor = "pot_gold",
             accessories =
                 ShopCatalog.items
-                    .filter { it.kind == ShopItemKind.ACCESSORY }
+                    .filter { it.kind == ShopItemKind.GEAR }
                     .map { it.id }
                     .toSet(),
             animate = false,

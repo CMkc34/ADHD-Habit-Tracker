@@ -16,6 +16,7 @@
  */
 package com.shub39.grit.shared.ui
 
+import com.shub39.grit.core.avatar.ShopCatalog
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 import kotlin.test.Test
@@ -76,5 +77,14 @@ class ForkTranslationTest {
     @Test
     fun `german and english offer the same plurals`() {
         assertEquals(plurals("values"), plurals("values-de"))
+    }
+
+    @Test
+    fun `every shop item has a name in german and english`() {
+        listOf("values", "values-de").forEach { dir ->
+            val names = stringNames(dir)
+            val missing = ShopCatalog.items.map { "shop_item_${it.id}" }.filterNot { it in names }
+            assertTrue(missing.isEmpty(), "$dir is missing $missing")
+        }
     }
 }
