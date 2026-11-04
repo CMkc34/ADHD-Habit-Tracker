@@ -13,7 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */ package com.shub39.grit.core.fighter
+ */
+package com.shub39.grit.core.fighter
 
 /** The four stats a routine can train. Each routine trains exactly one of them. */
 enum class FighterStat(val key: String) {

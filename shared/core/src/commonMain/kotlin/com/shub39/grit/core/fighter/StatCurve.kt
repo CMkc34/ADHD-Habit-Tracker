@@ -13,7 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */ package com.shub39.grit.core.fighter
+ */
+package com.shub39.grit.core.fighter
 
 /**
  * Level curve of a stat: level L is reached at `5 * (L - 1) * L / 2` XP, so 0, 5, 15, 30, 50 …

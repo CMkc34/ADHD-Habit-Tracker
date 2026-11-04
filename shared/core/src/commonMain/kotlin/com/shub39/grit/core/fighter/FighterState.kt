@@ -13,7 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */ package com.shub39.grit.core.fighter
+ */
+package com.shub39.grit.core.fighter
 
 import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.activity.DayStatus

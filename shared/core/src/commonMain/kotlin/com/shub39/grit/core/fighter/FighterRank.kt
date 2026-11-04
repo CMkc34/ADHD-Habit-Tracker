@@ -13,7 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */ package com.shub39.grit.core.fighter
+ */
+package com.shub39.grit.core.fighter
 
 /**
  * Ranks of the fighter avatar, earned with total active days. The thresholds are the same as the
