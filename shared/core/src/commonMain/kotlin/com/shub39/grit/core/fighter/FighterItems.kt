@@ -17,19 +17,12 @@
 package com.shub39.grit.core.fighter
 
 /**
- * Ids of everything the fighter can wear (SPEC 9.7). The fighter drawing (#6) knows how to draw
- * each of them; prices and minimum ranks belong to the shop catalog (#7). The ids are stored with
+ * Ids of the gear the fighter can wear (SPEC 9.7). The fighter drawing (#6) knows how to draw each
+ * of them; prices and minimum ranks belong to the shop catalog (#7). The colours of the fighter are
+ * picked freely ([FighterColors]), so the shop sells no outfit colours. The ids are stored with
  * each purchase, so they never change.
  */
 object FighterItems {
-    /** The free gi everybody owns. */
-    const val GI_WHITE = "gi_white"
-    const val GI_BLUE = "gi_blue"
-    const val GI_RED = "gi_red"
-    const val GI_BLACK = "gi_black"
-    const val GI_PURPLE = "gi_purple"
-    const val GI_GOLD = "gi_gold"
-
     const val SWEATBAND = "gear_sweatband"
     const val GLOVES = "gear_gloves"
     const val SNEAKERS = "gear_sneakers"
@@ -37,11 +30,6 @@ object FighterItems {
     const val SUNGLASSES = "gear_sunglasses"
     const val CHAMPION_BELT = "gear_champion_belt"
     const val CROWN = "gear_crown"
-
-    const val DEFAULT_OUTFIT = GI_WHITE
-
-    /** Exactly one is worn. */
-    val outfits: List<String> = listOf(GI_WHITE, GI_BLUE, GI_RED, GI_BLACK, GI_PURPLE, GI_GOLD)
 
     /** Any number can be worn at the same time. */
     val gear: List<String> =

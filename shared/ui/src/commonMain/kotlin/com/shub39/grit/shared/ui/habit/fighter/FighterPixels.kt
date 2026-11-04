@@ -17,16 +17,25 @@
 package com.shub39.grit.shared.ui.habit.fighter
 
 import com.shub39.grit.core.fighter.Belt
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterItems
-import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.shared.ui.habit.fighter.PixelPainter.Companion.INK
+import com.shub39.grit.shared.ui.habit.fighter.PixelPainter.Companion.argb
+import com.shub39.grit.shared.ui.habit.fighter.PixelPainter.Companion.mix
+import com.shub39.grit.shared.ui.habit.fighter.PixelPainter.Companion.shade
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.hypot
+import kotlin.math.sin
 
 /** What the fighter is doing. A [FighterMood.TIRED] fighter always sits, whatever the pose. */
 enum class FighterPose {
     /** Fighting stance with a light idle bounce. */
     STANCE,
-    /** Gathering ki: a glowing aura and a ki ball between the hands. */
+    /** Gathering ki: a glowing, flickering aura and a ki ball at the hip. */
     CHARGE,
     /** Firing the ki blast, the special attack in the arena. */
     BLAST,
@@ -41,12 +50,12 @@ class PixelImage(val width: Int, val height: Int, internal val argb: IntArray) {
 }
 
 /**
- * Builds the fighter's pixel art (#6) from [FighterSprites]: picks the pose, puts the head, the
- * face, the rank upgrades and the gear on their anchors, adds the auras and resolves every colour
- * slot. Pure Kotlin, so it is unit tested and [FighterAvatar] only paints the result.
+ * Builds the fighter's pixel art (#6): one of the [FighterCharacter]s in the user's
+ * [FighterColors], drawn on the [Skeleton] of the pose with the rank upgrades, the gear, the face
+ * and the ki effects. Pure Kotlin, so it is unit tested and [FighterAvatar] only paints the result.
  */
 object FighterPixels {
-    const val SIZE = FighterSprites.SIZE
+    const val SIZE = Skeleton.SIZE
 
     /** Animation frames in one loop; [FighterAvatar] shows one every 100 ms. */
     const val FRAMES = 12
@@ -59,298 +68,543 @@ object FighterPixels {
 
     fun hasGoldenAura(rank: FighterRank) = rank == FighterRank.LEGEND
 
+    /** Every fighter has its own ki colour; the Legend's ki turns gold. */
+    fun kiColor(character: FighterCharacter, rank: FighterRank = FighterRank.ROOKIE): Int =
+        if (hasGoldenAura(rank)) GOLD
+        else
+            when (character) {
+                FighterCharacter.WIND_MONK -> argb(0xFF9A3C)
+                FighterCharacter.STREET_BRAWLER -> argb(0x4FD1B0)
+                FighterCharacter.SHADOW_RUNNER -> argb(0xB06CFF)
+                FighterCharacter.SPARK_PRODIGY -> argb(0x58D7F0)
+                FighterCharacter.KARATEKA -> argb(0xE0405A)
+            }
+
     fun render(
-        look: FighterLook,
+        character: FighterCharacter,
         rank: FighterRank,
         mood: FighterMood,
+        colors: FighterColors = character.defaultColors,
         pose: FighterPose = FighterPose.STANCE,
-        outfit: String = FighterItems.DEFAULT_OUTFIT,
         gear: Set<String> = emptySet(),
         frame: Int = 0,
     ): PixelImage {
         val tired = mood == FighterMood.TIRED
-        val p =
-            when {
-                tired -> FighterSprites.tired
-                pose == FighterPose.CHARGE -> FighterSprites.charge
-                pose == FighterPose.BLAST -> FighterSprites.blast
-                else -> FighterSprites.stance
-            }
         val f = frame.mod(FRAMES)
-        val bounce = if (!tired && pose == FighterPose.STANCE && f >= FRAMES / 2) 1 else 0
+        val base =
+            when {
+                tired -> Skeleton.sitting
+                pose == FighterPose.CHARGE -> Skeleton.charge
+                pose == FighterPose.BLAST -> Skeleton.blast
+                else -> Skeleton.stance
+            }
+        val bounce = !tired && pose == FighterPose.STANCE && f >= FRAMES / 2
+        val s = base.bounced(if (bounce) 1f else 0f)
+        val drawing = Drawing(character, colors, rank, gear, s, tired)
+        drawing.draw()
+
+        val ki = kiColor(character, rank)
+        val charging = !tired && pose == FighterPose.CHARGE
         val golden = hasGoldenAura(rank)
-        val canvas = Canvas()
-
-        if (FighterItems.CAPE in gear) canvas.put(p.cape, p.capeAt.x, p.capeAt.y + bounce)
-
-        // the legs stay on the ground, the upper body bounces
-        canvas.put(p.body, p.bodyAt.x, p.bodyAt.y, rows = p.hipRow until p.body.height)
-        canvas.put(p.body, p.bodyAt.x, p.bodyAt.y + bounce, rows = 0 until p.hipRow)
-        canvas.beltStripes(rank.belt.goldStripes)
-
-        val head = if (look == FighterLook.MIRA) FighterSprites.miraHead else FighterSprites.kaiHead
-        val fx = p.headAt.x
-        val fy = p.headAt.y + bounce
-        canvas.put(head.sprite, fx - head.faceX, fy)
-        with(FighterSprites) {
-            val eye = if (tired) eyeDroopy else eyeOpen
-            val eyeDy = if (tired) 1 else 0
-            canvas.put(eye, fx + leftEye.x, fy + leftEye.y + eyeDy)
-            canvas.put(eye, fx + rightEye.x, fy + rightEye.y + eyeDy)
-            canvas.put(
-                if (tired) sleepyMouth else smile,
-                fx + mouthAt.x + if (tired) 1 else 0,
-                fy + mouthAt.y,
-            )
-            if (hasHeadband(rank)) canvas.put(headband, fx + headbandAt.x, fy + headbandAt.y)
-            if (FighterItems.SUNGLASSES in gear) {
-                canvas.put(sunglasses, fx + sunglassesAt.x, fy + sunglassesAt.y)
-            }
-            if (FighterItems.CROWN in gear) canvas.put(crown, fx + crownAt.x, fy + crownAt.y)
-
-            if (hasEmblem(rank)) canvas.put(emblem, p.emblemAt.x, p.emblemAt.y + bounce)
-            if (FighterItems.CHAMPION_BELT in gear) {
-                canvas.put(sash, p.sashAt.x, p.sashAt.y + bounce)
-            }
-
-            p.kiAt?.let { at ->
-                val ball =
-                    when {
-                        pose == FighterPose.BLAST -> if (f % 2 == 0) kiBurst else kiBig
-                        f % 4 < 2 -> kiSmall
-                        else -> kiBig
-                    }
-                canvas.put(ball, at.x - ball.width / 2, at.y - ball.height / 2)
-            }
+        val p = drawing.painter
+        val at = s.ki
+        if (at != null && !tired) {
+            val pulse = if (pose == FighterPose.BLAST) f % 2 else f % 4 / 2
+            kiBall(p, at, s.kiRadius + 0.8f * pulse, ki, f)
         }
-
-        when {
-            !tired && pose == FighterPose.CHARGE -> canvas.kiFlames(f)
-            golden -> canvas.goldenOutline(f)
-        }
-
         if (tired) {
-            val z = FighterSprites.sleepyZ
-            canvas.put(z, fx + FighterSprites.sleepyZAt.x, fy + FighterSprites.sleepyZAt.y - f / 4)
+            p.effect(
+                s.head.px + 9,
+                s.head.py - 12 - f / 4,
+                listOf("ZZZ", ".Z.", "ZZZ"),
+                mapOf('Z' to SLEEPY_Z),
+            )
         }
-
-        val colors = Colors(look, rank, outfit, gear, golden)
-        return PixelImage(SIZE, SIZE, IntArray(SIZE * SIZE) { colors.of(canvas.cells[it]) })
+        val argb =
+            when {
+                charging ->
+                    p.render(halo = mix(ki, WHITE, 0.35f), beforeEffects = { kiFlames(it, ki, f) })
+                golden -> p.render(halo = GOLD, haloLit = { x, y -> (x + 2 * y + f) % 6 != 0 })
+                else -> p.render()
+            }
+        return PixelImage(SIZE, SIZE, argb)
     }
 
-    /** The flying ki blast for the arena, [FighterSprites.kiBlast] with a flickering tail. */
-    fun renderKiBlast(golden: Boolean = false, frame: Int = 0): PixelImage {
-        val sprite = FighterSprites.kiBlast
+    /** The flying ki blast of [character] for the arena, 24 x 12 with a flickering tail. */
+    fun renderKiBlast(
+        character: FighterCharacter,
+        rank: FighterRank = FighterRank.ROOKIE,
+        frame: Int = 0,
+    ): PixelImage {
+        val ki = kiColor(character, rank)
+        val core = mix(ki, WHITE, 0.85f)
+        val light = mix(ki, WHITE, 0.45f)
         val flicker = frame.mod(2) == 1
-        val ki = if (golden) goldKi else tealKi
+        val width = kiBlast.first().length
         val argb =
-            IntArray(sprite.width * sprite.height) { i ->
-                val x = i % sprite.width
-                val c = sprite[x, i / sprite.width]
-                when {
-                    flicker && x < 3 && c == 'q' -> 0
-                    c == 'K' -> ki[0]
-                    c == 'k' -> ki[1]
-                    c == 'q' -> ki[2]
+            IntArray(width * kiBlast.size) { i ->
+                val x = i % width
+                when (kiBlast[i / width][x]) {
+                    'K' -> core
+                    'k' -> light
+                    'q' -> if (flicker && x < 3) 0 else ki
                     else -> 0
                 }
             }
-        return PixelImage(sprite.width, sprite.height, argb)
+        return PixelImage(width, kiBlast.size, argb)
     }
 
     /** Fill colour of each belt, also used by the unit tests to keep them apart. */
-    fun beltColor(belt: Belt): Int = beltColors.getValue(belt).first
+    fun beltColor(belt: Belt): Int = beltColors.getValue(belt)
 
-    /** The lower row of the belt, which keeps a belt apart from a gi of the same colour. */
-    fun beltShade(belt: Belt): Int = beltColors.getValue(belt).second
+    private fun kiBall(p: PixelPainter, c: Pt, r: Float, ki: Int, frame: Int) {
+        val core = mix(ki, WHITE, 0.85f)
+        val light = mix(ki, WHITE, 0.45f)
+        val edge = shade(ki)
+        for (y in 0 until SIZE) for (x in 0 until SIZE) {
+            val d = hypot(x + 0.5f - c.x, y + 0.5f - c.y)
+            val color =
+                when {
+                    d < r * 0.45f -> core
+                    d < r * 0.72f -> light
+                    d < r -> ki
+                    d < r + 1.2f && (x + y + frame) % 2 == 0 -> edge
+                    else -> null
+                }
+            if (color != null) p.effectPixel(x, y, color)
+        }
+        repeat(4) { i ->
+            val angle = (i * 0.5 + frame * 0.13) * PI
+            val dist = r + 2.5f
+            p.effectPixel(
+                (c.x + cos(angle) * dist).toInt(),
+                (c.y + sin(angle) * dist).toInt(),
+                light,
+            )
+        }
+    }
 
-    fun outfitColor(outfit: String): Int = outfitColors(outfit).first
+    /** Flames that lick upwards from the top of the aura and flicker per frame. */
+    private fun kiFlames(out: IntArray, ki: Int, frame: Int) {
+        val light = mix(ki, WHITE, 0.35f)
+        for (x in 0 until SIZE) {
+            val top = (0 until SIZE).firstOrNull { out[it * SIZE + x] != 0 } ?: continue
+            val height = ((x * 7 + frame * 5 + x * x) % 6).coerceAtMost(4)
+            for (i in 1..height) {
+                val y = top - i
+                if (y >= 0) out[y * SIZE + x] = if (i == height) ki else light
+            }
+        }
+    }
 
-    private class Canvas {
-        val cells = CharArray(SIZE * SIZE) { EMPTY }
+    /** Draws one character on one skeleton. */
+    private class Drawing(
+        val character: FighterCharacter,
+        colors: FighterColors,
+        val rank: FighterRank,
+        val gear: Set<String>,
+        val s: Skeleton,
+        val tired: Boolean,
+    ) {
+        val painter = PixelPainter(SIZE)
+        private val p = painter
+        private val h = s.head
 
-        operator fun get(x: Int, y: Int): Char =
-            if (x in 0 until SIZE && y in 0 until SIZE) cells[y * SIZE + x] else EMPTY
+        private val skin = Paint(colors.skinColor, "skin")
+        private val hair = Paint(colors.hairColor, "hair")
+        private val main = Paint(colors.mainColor, "main")
+        private val accent = Paint(colors.accentColor, "accent")
+        private val iris = mix(colors.accentColor, INK, 0.5f)
+        private val belt = Paint(beltColors.getValue(rank.belt), "belt")
+        private val wrap = Paint(WRAP, "wrap")
+        private val karate = character == FighterCharacter.KARATEKA
 
-        operator fun set(x: Int, y: Int, c: Char) {
-            if (x in 0 until SIZE && y in 0 until SIZE) cells[y * SIZE + x] = c
+        private fun at(dx: Number, dy: Number) = h + Pt(dx, dy)
+
+        fun draw() {
+            if (FighterItems.CAPE in gear) cape()
+            behind()
+            legs()
+            feet()
+            arm(s.backArm, front = false)
+            torso()
+            belt()
+            if (FighterItems.CHAMPION_BELT in gear) sash()
+            arm(s.frontArm, front = true)
+            afterArms()
+            p.ellipse(h, 8.4f, 8f, skin)
+            head()
+            if (hasHeadband(rank)) headband()
+            face()
+            if (hasEmblem(rank)) emblem()
+            if (FighterItems.SUNGLASSES in gear) sunglasses()
+            if (FighterItems.CROWN in gear) crown()
+            if (rank.belt.goldStripes > 0) beltStripes(rank.belt.goldStripes)
         }
 
-        fun put(sprite: Sprite, x: Int, y: Int, rows: IntRange = 0 until sprite.height) {
-            for (row in rows) for (col in 0 until sprite.width) {
-                val c = sprite[col, row]
-                if (c != EMPTY) this[x + col, y + row] = c
+        private fun cape() {
+            val l = s.leftShoulder
+            val r = s.rightShoulder
+            val paint = Paint(CAPE, "cape")
+            val points =
+                if (s.sitting) listOf(l + Pt(-1, 0), r + Pt(1, 0), r + Pt(4, 10), l + Pt(-4, 10))
+                else listOf(l + Pt(1, 0), r + Pt(-2, 0), r + Pt(-5, 13), l + Pt(-7, 14))
+            p.poly(points, paint)
+        }
+
+        /** Parts behind the body: the monk's scarf tail, the runner's headband tails. */
+        private fun behind() {
+            when (character) {
+                FighterCharacter.WIND_MONK -> {
+                    val root = s.leftShoulder + Pt(2, 0)
+                    val mid = root + Pt(-11, 4)
+                    p.capsule(root, mid, 2.2f, accent, 1.6f)
+                    p.capsule(mid, root + Pt(-15, 9), 1.6f, accent, 1.2f)
+                }
+                FighterCharacter.SHADOW_RUNNER -> {
+                    p.capsule(at(-8, -4), at(-17, -1), 1.6f, accent, 1.1f)
+                    p.capsule(at(-8, -3), at(-18, 3), 1.5f, accent, 1.0f)
+                }
+                else -> Unit
             }
         }
 
-        /** Gold stripes near the end of the belt (Master, Grandmaster). */
-        fun beltStripes(count: Int) {
-            if (count == 0) return
-            val top = (0 until SIZE).firstOrNull { y -> (0 until SIZE).any { this[it, y] == 'B' } }
-            if (top == null) return
-            val end = (0 until SIZE).last { this[it, top] == 'B' }
-            repeat(count) { i ->
-                val x = end - 1 - 2 * i
-                this[x, top] = 'Y'
-                this[x, top + 1] = 'y'
+        private fun pants(): Paint =
+            when (character) {
+                FighterCharacter.WIND_MONK -> Paint(MONK_PANTS, "pants")
+                FighterCharacter.STREET_BRAWLER -> Paint(JOGGERS, "pants")
+                FighterCharacter.SPARK_PRODIGY -> Paint(GI_WHITE, "pants")
+                FighterCharacter.SHADOW_RUNNER,
+                FighterCharacter.KARATEKA -> main
+            }
+
+        private fun legs() {
+            val paint = pants()
+            val (r1, r2, r3, r4) =
+                when (character) {
+                    FighterCharacter.WIND_MONK -> listOf(3.2f, 3.6f, 3.4f, 2.6f)
+                    FighterCharacter.KARATEKA -> listOf(2.9f, 2.7f, 2.6f, 2.4f)
+                    else -> listOf(2.6f, 2.4f, 2.2f, 2.0f)
+                }
+            for (leg in listOf(s.backLeg, s.frontLeg)) {
+                p.capsule(leg.root, leg.joint, r1, paint, r2)
+                p.capsule(leg.joint, leg.end, r3, paint, r4)
             }
         }
 
-        private fun filled(x: Int, y: Int) = this[x, y] != EMPTY
-
-        private fun border(): List<Pair<Int, Int>> = buildList {
-            for (y in 0 until SIZE) for (x in 0 until SIZE) {
-                if (!filled(x, y) && NEIGHBOURS.any { (dx, dy) -> filled(x + dx, y + dy) }) {
-                    add(x to y)
+        private fun feet() {
+            val sneakers = FighterItems.SNEAKERS in gear
+            val paint =
+                when {
+                    sneakers -> Paint(SNEAKER, "shoe")
+                    character == FighterCharacter.WIND_MONK -> Paint(SANDAL, "shoe")
+                    character == FighterCharacter.STREET_BRAWLER -> Paint(GI_WHITE, "shoe")
+                    karate -> skin
+                    else -> Paint(DARK_SHOE, "shoe")
+                }
+            val rx = if (s.sitting) 2.6f else 3.3f
+            for (foot in listOf(s.backFoot, s.frontFoot)) {
+                p.ellipse(foot, rx, 1.8f, paint)
+                val y = foot.py
+                when {
+                    sneakers -> p.face(foot.px - 3, y, listOf("WWWWWW"), mapOf('W' to WHITE))
+                    character == FighterCharacter.STREET_BRAWLER ->
+                        p.face(foot.px - 2, y, listOf("AAAA"), mapOf('A' to accent.color))
                 }
             }
         }
 
-        /** One pixel of shimmering gold around the Legend. */
-        fun goldenOutline(frame: Int) {
-            for ((x, y) in border()) if ((x + 2 * y + frame) % 6 != 0) this[x, y] = 'A'
+        private fun arm(limb: Limb, front: Boolean) {
+            val sleeve = if (character == FighterCharacter.WIND_MONK) skin else main
+            fun along(t: Float) = limb.joint.lerp(limb.end, t)
+            p.capsule(limb.root, limb.joint, if (karate) 2.5f else 2.3f, sleeve)
+            p.capsule(limb.joint, limb.end, 2.0f, if (karate) skin else sleeve)
+            // the karateka's rolled sleeves end just below the elbow
+            if (karate) p.capsule(limb.joint, along(0.22f), 2.4f, main)
+            when (character) {
+                FighterCharacter.WIND_MONK -> p.capsule(along(0.35f), limb.end, 2.1f, wrap)
+                FighterCharacter.SHADOW_RUNNER ->
+                    p.capsule(along(0.3f), along(0.85f), 2.3f, Paint(GUARD, "guard"))
+                else -> Unit
+            }
+            if (hasWristWraps(rank) && character != FighterCharacter.WIND_MONK) {
+                p.capsule(along(0.6f), along(0.9f), 2.15f, wrap)
+            }
+            if (FighterItems.SWEATBAND in gear) {
+                p.capsule(along(0.55f), along(0.75f), 2.4f, Paint(SWEATBAND, "sweatband"))
+            }
+            val hand =
+                when {
+                    FighterItems.GLOVES in gear -> Paint(GLOVE, "glove")
+                    character == FighterCharacter.STREET_BRAWLER -> Paint(FINGERLESS, "glove")
+                    else -> skin
+                }
+            if (front) p.ellipse(limb.end, 2.6f, 2.4f, hand)
+            else p.ellipse(limb.end, 2.2f, 2.1f, hand)
         }
 
-        /** A ki aura: a glowing outline with flames that lick upwards and flicker per frame. */
-        fun kiFlames(frame: Int) {
-            for ((x, y) in border()) this[x, y] = 'k'
-            for (x in 0 until SIZE) {
-                val top = (0 until SIZE).firstOrNull { filled(x, it) } ?: continue
-                val height = ((x * 7 + frame * 5 + x * x) % 5).coerceAtMost(3)
-                for (i in 1..height) this[x, top - i] = if (i == height) 'q' else 'k'
+        private fun torso() {
+            val l = s.leftShoulder
+            val r = s.rightShoulder
+            val height = s.beltLeft.y - l.y + 2
+            fun strip(from: Float, to: Float) =
+                listOf(l + Pt(from, 0f), l + Pt(to, 0f), l + Pt(to, height), l + Pt(from, height))
+            when (character) {
+                FighterCharacter.SPARK_PRODIGY -> {
+                    p.poly(s.torso, Paint(GI_WHITE, "gi"))
+                    p.poly(listOf(l, l + Pt(4, 0), l + Pt(4, 7), l + Pt(1, 7)), main)
+                    p.poly(listOf(r + Pt(-4, 0), r, r + Pt(-1, 7), r + Pt(-4, 7)), main)
+                }
+                FighterCharacter.STREET_BRAWLER -> {
+                    p.poly(s.torso, main)
+                    p.poly(strip(5f, 9f), Paint(GI_WHITE, "shirt"))
+                    p.poly(strip(3f, 5f), accent)
+                }
+                FighterCharacter.KARATEKA -> {
+                    p.poly(s.torso, main)
+                    p.poly(listOf(l + Pt(5, 0), l + Pt(9, 0), l + Pt(7, 5)), skin)
+                    p.capsule(l + Pt(4, 0), l + Pt(8, 8), 0.6f, accent)
+                    p.capsule(r + Pt(-4, 0), l + Pt(7, 6), 0.6f, accent)
+                }
+                else -> p.poly(s.torso, main)
             }
-            for ((x, y) in border()) if ((x + y + frame) % 3 == 0) this[x, y] = 'q'
+        }
+
+        private fun belt() {
+            val l = s.beltLeft
+            val r = s.beltRight
+            p.poly(listOf(l, r, r + Pt(-1f, 2.6f), l + Pt(1f, 2.6f)), belt)
+            val knot = l.lerp(r, 0.55f)
+            p.capsule(knot + Pt(0f, 2.5f), knot + Pt(-1f, 5.5f), 0.6f, belt)
+            p.capsule(knot + Pt(1f, 2.5f), knot + Pt(2f, 5f), 0.6f, belt)
+        }
+
+        private fun beltStripes(count: Int) {
+            repeat(count) { i ->
+                val x = s.beltRight.px - 3 - 2 * i
+                p.face(x, s.beltRight.py, listOf("Y", "Y", "Y"), mapOf('Y' to GOLD))
+            }
+        }
+
+        private fun sash() {
+            val gold = Paint(GOLD, "gold")
+            val from = s.rightShoulder + Pt(-1, 0)
+            val to = s.beltLeft + Pt(1, 0)
+            p.capsule(from, to, 1.3f, gold)
+            val plate = from.lerp(to, 0.45f)
+            p.ellipse(plate, 2.6f, 2.0f, gold)
+            p.face(plate.px, plate.py, listOf("N"), mapOf('N' to GEM))
+        }
+
+        /** Parts in front of both arms: the monk's scarf, the brawler's hood. */
+        private fun afterArms() {
+            val l = s.leftShoulder
+            val r = s.rightShoulder
+            when (character) {
+                FighterCharacter.WIND_MONK -> p.capsule(l + Pt(2, 0), r + Pt(-1, 0), 2.2f, accent)
+                FighterCharacter.STREET_BRAWLER ->
+                    p.capsule(l + Pt(0, 1), r + Pt(0, 1), 1.8f, main, 2.0f)
+                else -> Unit
+            }
+        }
+
+        private fun head() {
+            when (character) {
+                FighterCharacter.WIND_MONK -> {
+                    p.ellipse(at(0, -4.5), 8.2f, 4.6f, hair)
+                    p.poly(listOf(at(-8.2, -2), at(-6, -6), at(-3, -3), at(-7, 1)), hair)
+                    p.ellipse(at(0, -10.8), 2.6f, 2.4f, hair)
+                    p.poly(listOf(at(-2, -8), at(2, -8), at(1, -10), at(-1, -10)), accent)
+                }
+                FighterCharacter.STREET_BRAWLER -> {
+                    p.poly(BRAWLER_HAIR.map { (dx, dy) -> at(dx, dy) }, hair)
+                    p.poly(listOf(at(5, -11.5), at(11, -13), at(8, -9)), hair)
+                    p.poly(listOf(at(-7, -10), at(-11, -11), at(-9, -7)), hair)
+                }
+                FighterCharacter.SHADOW_RUNNER -> {
+                    p.capsule(at(-8, 0), at(-11, 3), 1.8f, hair)
+                    p.ellipse(at(0, -4), 8.6f, 6.0f, Paint(mix(main.color, INK, 0.2f), "hood"))
+                    p.poly(
+                        listOf(at(-8.4, 1), at(8.4, 1), at(8, 5), at(5, 8), at(-5, 8), at(-8, 5)),
+                        Paint(mix(main.color, INK, 0.3f), "mask"),
+                    )
+                    p.poly(listOf(at(-8.4, -4), at(8.4, -4), at(8.4, -2), at(-8.4, -2)), accent)
+                }
+                FighterCharacter.SPARK_PRODIGY -> {
+                    for ((dx, dy, r) in CLOUD) p.ellipse(at(dx, dy), r, r * 0.9f, hair)
+                    p.poly(listOf(at(-8.4, -7), at(8.4, -7), at(8.4, -5), at(-8.4, -5)), accent)
+                    val lens = Paint(LENS, "lens")
+                    p.ellipse(at(-3, -6), 2.4f, 2.2f, lens)
+                    p.ellipse(at(3, -6), 2.4f, 2.2f, lens)
+                }
+                FighterCharacter.KARATEKA -> {
+                    p.ellipse(at(0, -4.5), 8.4f, 4.6f, hair)
+                    p.poly(listOf(at(-6, -7), at(-4, -11.5), at(-1, -8)), hair)
+                    p.poly(listOf(at(-2, -8), at(1.5, -12.5), at(3, -8)), hair)
+                    p.poly(listOf(at(2, -8), at(6.5, -11), at(7, -6)), hair)
+                    p.poly(KARATEKA_FRINGE.map { (dx, dy) -> at(dx, dy) }, hair)
+                    p.poly(listOf(at(-8.4, -3), at(-6.5, -3), at(-7.5, 1)), hair)
+                }
+            }
+        }
+
+        private fun headband() {
+            val band = Paint(HEADBAND, "band")
+            p.capsule(at(-8.2, -2.6), at(8.2, -2.6), 0.9f, band)
+            p.capsule(at(-8, -2.4), at(-12, 0.5), 0.9f, band, 0.6f)
+        }
+
+        private fun face() {
+            val ex = h.px - 4
+            val ey = h.py - 1
+            val ink = mapOf('O' to INK)
+            if (tired) {
+                for (x in listOf(ex, ex + 6)) {
+                    p.face(x, ey + 1, listOf("OOO"), ink)
+                    p.face(x, ey - 2, listOf("OOO"), ink)
+                }
+            } else {
+                val eye =
+                    if (character == FighterCharacter.SHADOW_RUNNER) listOf("OOO", "WII")
+                    else listOf("OOO", "OWI", "OII")
+                val colors = mapOf('O' to INK, 'W' to WHITE, 'I' to iris)
+                p.face(ex, ey, eye, colors)
+                p.face(ex + 6, ey, eye, colors)
+                p.face(ex - 1, ey - 2, listOf("OOO.", "O..."), ink)
+                p.face(ex + 6, ey - 2, listOf(".OOO", "...O"), ink)
+            }
+            if (character == FighterCharacter.SHADOW_RUNNER) return
+            if (tired) p.face(ex + 4, ey + 5, listOf("O"), mapOf('O' to MOUTH))
+            else p.face(ex + 3, ey + 4, listOf("O..O", ".OO."), mapOf('O' to MOUTH))
+            p.face(ex - 1, ey + 4, listOf("R"), mapOf('R' to BLUSH))
+            p.face(ex + 9, ey + 4, listOf("R"), mapOf('R' to BLUSH))
+        }
+
+        private fun emblem() {
+            val at = s.leftShoulder + Pt(3, 3)
+            p.face(at.px, at.py, listOf(".Y.", "YNY", ".Y."), mapOf('Y' to GOLD, 'N' to GEM))
+        }
+
+        private fun sunglasses() {
+            p.face(
+                h.px - 5,
+                h.py - 1,
+                listOf("OLLLOOOLLLO", ".LlL...LlL."),
+                mapOf('O' to INK, 'L' to LENS_DARK, 'l' to LENS_SHINE),
+            )
+        }
+
+        private fun crown() {
+            val top =
+                when (character) {
+                    FighterCharacter.WIND_MONK,
+                    FighterCharacter.SPARK_PRODIGY -> -16
+                    FighterCharacter.STREET_BRAWLER -> -15
+                    FighterCharacter.SHADOW_RUNNER,
+                    FighterCharacter.KARATEKA -> -12
+                }
+            p.face(
+                h.px - 3,
+                h.py + top,
+                listOf("Y.YY.Y", "YNYYNY", "yyyyyy"),
+                mapOf('Y' to GOLD, 'y' to GOLD_SHADE, 'N' to GEM),
+            )
         }
     }
 
-    private class Colors(
-        look: FighterLook,
-        rank: FighterRank,
-        outfit: String,
-        gear: Set<String>,
-        golden: Boolean,
-    ) {
-        private val skin = if (look == FighterLook.MIRA) miraSkin else kaiSkin
-        private val hair = if (look == FighterLook.MIRA) miraHair else kaiHair
-        private val gi = outfitColors(outfit)
-        private val belt = beltColors.getValue(rank.belt)
-        private val ki = if (golden) goldKi else tealKi
-        private val gloves = FighterItems.GLOVES in gear
-        private val sweatband = FighterItems.SWEATBAND in gear
-        private val sneakers = FighterItems.SNEAKERS in gear
-        private val wraps = hasWristWraps(rank)
+    private val CLOUD =
+        listOf(
+            Triple(-7f, -5f, 4f),
+            Triple(-3f, -9f, 4.5f),
+            Triple(3f, -9.5f, 4.6f),
+            Triple(8f, -6f, 4f),
+            Triple(0f, -7f, 5f),
+            Triple(-9f, -1f, 2.6f),
+            Triple(9f, -1.5f, 2.6f),
+        )
 
-        fun of(c: Char): Int =
-            when (c) {
-                EMPTY -> 0
-                'O',
-                'E' -> INK
-                'W' -> WHITE
-                'S' -> skin.first
-                's' -> skin.second
-                'R' -> BLUSH
-                'H' -> hair.first
-                'h' -> hair.second
-                'T' -> HAIR_TIE
-                'G' -> gi.first
-                'g' -> gi.second
-                'B' -> belt.first
-                'b' -> belt.second
-                'F' -> if (gloves) GLOVE else skin.first
-                'f' ->
-                    when {
-                        gloves -> GLOVE_SHADE
-                        wraps -> WRAP
-                        else -> skin.second
-                    }
-                'X' ->
-                    when {
-                        sweatband -> SWEATBAND
-                        wraps -> WRAP
-                        else -> skin.first
-                    }
-                'P' -> if (sneakers) SNEAKER else skin.first
-                'p' -> if (sneakers) SNEAKER_SOLE else skin.second
-                'M' -> MOUTH
-                'L' -> LENS
-                'l' -> LENS_SHINE
-                'D' -> HEADBAND
-                'd' -> HEADBAND_SHADE
-                'C' -> CAPE
-                'c' -> CAPE_SHADE
-                'Y',
-                'A' -> GOLD
-                'y' -> GOLD_SHADE
-                'N' -> GEM
-                'K' -> ki[0]
-                'k' -> ki[1]
-                'q' -> ki[2]
-                'Z' -> SLEEPY_Z
-                else -> error("unknown pixel '$c'")
-            }
-    }
+    private val BRAWLER_HAIR =
+        listOf(
+            -9f to -1f,
+            -10f to -7f,
+            -6f to -11f,
+            -1f to -12.5f,
+            5f to -11.5f,
+            9f to -7f,
+            9f to -1f,
+            6f to -5f,
+            3f to -4f,
+            0f to -7f,
+            -4f to -4f,
+            -6f to -5f,
+        )
 
-    private const val EMPTY = '.'
-    private val NEIGHBOURS = listOf(1 to 0, -1 to 0, 0 to 1, 0 to -1)
+    private val KARATEKA_FRINGE =
+        listOf(
+            -8.4f to -4f,
+            -1f to -4f,
+            3f to -2.5f,
+            5f to -4f,
+            8.6f to -3.5f,
+            8.6f to -6f,
+            -8.6f to -6f,
+        )
 
-    // fixed palette: the fighter looks the same in light and dark theme, the ink outline keeps
-    // every part apart
-    private fun argb(rgb: Long): Int = (0xFF000000 or rgb).toInt()
+    private val kiBlast =
+        listOf(
+            "...............qqqq.....",
+            ".............qqkkkkqq...",
+            "..........qqqkkKKKKkkq..",
+            ".......qqqkkkKKKKKKKkkq.",
+            "...qqqqkkkkKKKKKKKKKKkq.",
+            "qqqkkkkKKKKKKKKKKKKKKkkq",
+            "qqqkkkkKKKKKKKKKKKKKKkkq",
+            "...qqqqkkkkKKKKKKKKKKkq.",
+            ".......qqqkkkKKKKKKKkkq.",
+            "..........qqqkkKKKKkkq..",
+            ".............qqkkkkqq...",
+            "...............qqqq.....",
+        )
 
-    private val INK = argb(0x2B2235)
+    // fixed colours; the fighter looks the same in light and dark theme, the ink outline keeps it
+    // apart from any background
     private val WHITE = argb(0xFFFFFF)
-    private val BLUSH = argb(0xFF8FA0)
-    private val MOUTH = argb(0xA0323C)
-    private val HAIR_TIE = argb(0xE0566E)
-    private val GLOVE = argb(0xE04848)
-    private val GLOVE_SHADE = argb(0xB03434)
-    private val WRAP = argb(0xEFE9DA)
-    private val SWEATBAND = argb(0x3FA9F5)
-    private val SNEAKER = argb(0xE04848)
-    private val SNEAKER_SOLE = argb(0xFFFFFF)
-    private val LENS = argb(0x1E1A26)
-    private val LENS_SHINE = argb(0x7A86A8)
-    private val HEADBAND = argb(0x2FB5A0)
-    private val HEADBAND_SHADE = argb(0x22877A)
-    private val CAPE = argb(0x4D5BD6)
-    private val CAPE_SHADE = argb(0x36419E)
     private val GOLD = argb(0xFFD34A)
     private val GOLD_SHADE = argb(0xC99A2A)
     private val GEM = argb(0xE0405A)
+    private val MOUTH = argb(0x7A2E35)
+    private val BLUSH = argb(0xF59AA0)
     private val SLEEPY_Z = argb(0xB8B0F0)
+    private val WRAP = argb(0xEFE6D2)
+    private val GLOVE = argb(0xE04848)
+    private val FINGERLESS = argb(0x2C2C38)
+    private val SWEATBAND = argb(0x3FA9F5)
+    private val SNEAKER = argb(0xE04848)
+    private val CAPE = argb(0x4D5BD6)
+    private val HEADBAND = argb(0xB8323F)
+    private val LENS = argb(0x58D7F0)
+    private val LENS_DARK = argb(0x1E1A26)
+    private val LENS_SHINE = argb(0x7A86A8)
+    private val GUARD = argb(0x8A93A8)
+    private val GI_WHITE = argb(0xF4F1EA)
+    private val MONK_PANTS = argb(0x3E7F8C)
+    private val JOGGERS = argb(0x3A3F55)
+    private val SANDAL = argb(0x5A4636)
+    private val DARK_SHOE = argb(0x1E2230)
 
-    private val kaiSkin = argb(0xE0A47A) to argb(0xC07F58)
-    private val miraSkin = argb(0xF8D6BC) to argb(0xE2AF8E)
-    private val kaiHair = argb(0x2E2A3A) to argb(0x57506E)
-    private val miraHair = argb(0x6B3E2E) to argb(0x96614A)
-
-    private val tealKi = listOf(argb(0xF4FFFB), argb(0x8FF3DA), argb(0x2FB5A0))
-    private val goldKi = listOf(argb(0xFFFDE0), argb(0xFFE066), argb(0xF0A830))
-
-    private val beltColors: Map<Belt, Pair<Int, Int>> =
+    private val beltColors: Map<Belt, Int> =
         mapOf(
-            Belt.WHITE to (argb(0xFAFAF7) to argb(0xC3C6D2)),
-            Belt.YELLOW to (argb(0xF5D33F) to argb(0xC9A82A)),
-            Belt.ORANGE to (argb(0xF28C28) to argb(0xC2691C)),
-            Belt.GREEN to (argb(0x4FB35A) to argb(0x3A8A45)),
-            Belt.BLUE to (argb(0x3F7FD9) to argb(0x2E5FA8)),
-            Belt.PURPLE to (argb(0x9B5CD0) to argb(0x7642A3)),
-            Belt.BROWN to (argb(0x8B5A3C) to argb(0x6A422B)),
-            Belt.RED to (argb(0xD93B3B) to argb(0xA82C2C)),
-            Belt.BLACK to (argb(0x26232E) to argb(0x15131A)),
-            Belt.BLACK_ONE_STRIPE to (argb(0x26232E) to argb(0x15131A)),
-            Belt.BLACK_TWO_STRIPES to (argb(0x26232E) to argb(0x15131A)),
-            Belt.GOLD to (argb(0xD4A017) to argb(0xA87C0E)),
+            Belt.WHITE to argb(0xFAFAF7),
+            Belt.YELLOW to argb(0xF5D33F),
+            Belt.ORANGE to argb(0xF28C28),
+            Belt.GREEN to argb(0x4FB35A),
+            Belt.BLUE to argb(0x3F7FD9),
+            Belt.PURPLE to argb(0x9B5CD0),
+            Belt.BROWN to argb(0x8B5A3C),
+            Belt.RED to argb(0xD93B3B),
+            Belt.BLACK to argb(0x26232E),
+            Belt.BLACK_ONE_STRIPE to argb(0x26232E),
+            Belt.BLACK_TWO_STRIPES to argb(0x26232E),
+            Belt.GOLD to argb(0xD4A017),
         )
-
-    /** Unknown outfit ids fall back to the white gi. */
-    private fun outfitColors(outfit: String): Pair<Int, Int> =
-        when (outfit) {
-            FighterItems.GI_BLUE -> argb(0x5B86D6) to argb(0x41679F)
-            FighterItems.GI_RED -> argb(0xE0645A) to argb(0xAF463F)
-            FighterItems.GI_BLACK -> argb(0x55566E) to argb(0x3C3D52)
-            FighterItems.GI_PURPLE -> argb(0x9A72CC) to argb(0x7553A3)
-            FighterItems.GI_GOLD -> argb(0xEBC65E) to argb(0xC39A3A)
-            else -> argb(0xF4F3EE) to argb(0xC9CCD8)
-        }
 }

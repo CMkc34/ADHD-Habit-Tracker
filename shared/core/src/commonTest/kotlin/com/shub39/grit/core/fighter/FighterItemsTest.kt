@@ -23,14 +23,8 @@ import kotlin.test.assertTrue
 class FighterItemsTest {
 
     @Test
-    fun `ids are unique and outfits and gear do not overlap`() {
-        val all = FighterItems.outfits + FighterItems.gear
-        assertEquals(all.size, all.toSet().size)
-    }
-
-    @Test
-    fun `the default outfit is the white gi`() {
-        assertEquals(FighterItems.GI_WHITE, FighterItems.DEFAULT_OUTFIT)
-        assertTrue(FighterItems.DEFAULT_OUTFIT in FighterItems.outfits)
+    fun `gear ids are unique`() {
+        assertEquals(FighterItems.gear.size, FighterItems.gear.toSet().size)
+        assertTrue(FighterItems.gear.all { it.startsWith("gear_") })
     }
 }

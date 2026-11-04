@@ -662,7 +662,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 
 ### 9.7 Shop (#7)
 - Bestehende Shop-Mechanik (Preise, Mindestrang, Saison, Vorschau) bleibt. Neue Arten:
-  - **Outfit** (genau eins)
+  - ~~Outfit~~ entfällt: Farben sind frei wählbar (#6, #26)
   - **Ausrüstung** (beliebig viele)
   - **Trainingsplatz-Teile** (fester Platz)
 - Rein kosmetisch. Katalog und Preise stehen in #7 und nur in `ShopCatalog`.
@@ -676,7 +676,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   führt zusammen.
 - Umstieg:
   - Rang = bisherige Pflanzenstufe (`avatar_seen_stage` bleibt), keine Hinweise beim ersten Start.
-  - `avatar_species`: `sprout` → Kai, `cherry` → Mira.
+  - `avatar_species`: `sprout` → Kai, `cherry` → Mira; daraus Wind-Mönch bzw. Funken-Talent (#26).
   - Gekaufte Pflanzen-Teile werden ignoriert, das Wasser ist wieder da.
 
 ### 9.9 UI
@@ -690,16 +690,25 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   drei Aktionen.
 - Routinen-Formular und -Karte zeigen den trainierten Wert (#4).
 - Motivations-Pop-up (#15): „+1 Kraft-XP“, „Kraft Stufe 4!“, „+1 🎟“.
-- Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (Kai / Mira), keine Pflanzen-Texte mehr.
+- Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (fünf Kämpfer + Farben, #26), keine
+  Pflanzen-Texte mehr.
 - Alles selbst gezeichnet (`Canvas`), Bewegung folgt „Animationen entfernen“.
-- Kämpfer (#6) in **Pixel-Art** (Wunsch vom 2026-11-04) statt Papier-/Sticker-Stil, eigenes Design:
-  - Sprites als Zeichen-Raster in `FighterSprites`, zusammengesetzt von `FighterPixels` (reines
-    Kotlin, getestet), gemalt von `FighterAvatar`. Feste Palette, Tinte als Umriss, hell wie dunkel.
-  - Posen `FighterPose`: Kampfhaltung (leichtes Wippen), **Ki laden** (Aura + Ki-Ball) und
+- Kämpfer (#6) in **Pixel-Art** (Wunsch vom 2026-11-04) statt Papier-/Sticker-Stil, eigene Designs:
+  - **Fünf Kämpfer** zur Wahl (`FighterCharacter`): Wind-Mönch, Straßenkämpfer, Schattenläufer,
+    Funken-Talent und klassischer Karateka im Gi. Jeder mit eigener Silhouette und Ki-Farbe.
+  - **Farben frei wählbar** (`FighterColors`): Haut, Haare, Hauptfarbe, Akzent, jeweils aus den
+    Vorgaben in `FighterPalette` (helle/dunkle Töne werden berechnet). Wahl und Speicherung: #26.
+  - Gezeichnet aus einfachen Formen auf festen Skelett-Punkten je Pose (`Skeleton`), automatisch
+    schattiert und umrandet (`PixelPainter`), zusammengesetzt von `FighterPixels` (reines Kotlin,
+    getestet), gemalt von `FighterAvatar`. 48 × 48 Pixel, Tinte als Umriss, hell wie dunkel.
+  - Rang: Gürtelfarbe bei allen fünf, ab Rang 4 Handgelenk-Tape, ab 7 Stirnband, ab 9 Emblem,
+    Rang 12 goldene Aura und goldenes Ki.
+  - Posen `FighterPose`: Kampfhaltung (leichtes Wippen), **Ki laden** (Aura, Flammen, Ki-Ball) und
     **Ki-Strahl** (Spezialangriff, #14). Dazu `KiBlast` als fliegendes Geschoss für die Arena.
-  - Müde: sitzt im Schneidersitz, Augen zu, „z“. Rang 12: goldene Aura, goldenes Ki.
-  - Ausrüstung sitzt auf festen Ankern (Hände, Handgelenke, Füße sind im Raster markiert). Ids in
-    `FighterItems` (`core.fighter`), Preise und Ränge bleiben in #7.
+  - Müde: sitzt im Schneidersitz, Augen zu, „z“.
+  - Ausrüstung (`FighterItems`) sitzt auf den Skelett-Punkten und passt so auf alle Kämpfer.
+    Da die Farben frei sind, verkauft der Shop (#7) **keine Outfit-Farben** mehr, nur Ausrüstung
+    und Trainingsplatz-Teile.
   - Trainingsplatz (#8) und Gegner (#13) sollten im selben Pixel-Stil gezeichnet werden.
 
 ### 9.10 Issues
@@ -723,6 +732,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 | #16 | Einrichtung und Texte |
 | #17 | Optional: Wasser für erste Siege |
 | #18 | Abnahme auf dem Gerät |
+| #26 | Kämpfer und Farben wählen (Einrichtung, Einstellungen, Speichern) |
 
 ---
 
