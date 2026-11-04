@@ -16,6 +16,7 @@
  */
 package com.shub39.grit.core.fighter
 
+/** The four stats a routine can train. Each routine trains exactly one of them. */
 enum class FighterStat(val key: String) {
     /** Damage. */
     STRENGTH("strength"),
