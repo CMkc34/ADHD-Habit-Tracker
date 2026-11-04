@@ -137,7 +137,9 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
             it[nameKey] = data.name
             it[purchasesKey] =
                 data.purchases.mapTo(mutableSetOf()) { purchase -> purchase.encode() }
-            if (data.outfit == null) it.remove(outfitKey) else it[outfitKey] = data.outfit
+            data.outfit.let { outfit ->
+                if (outfit == null) it.remove(outfitKey) else it[outfitKey] = outfit
+            }
             it[accessoriesKey] = data.accessories
             it[decorationsKey] = data.decorations
             it[seenStageKey] = data.seenStage
