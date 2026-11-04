@@ -311,14 +311,7 @@ internal object FighterSprites {
     val mouthAt = Px(7, 11)
 
     /** From rank 7: a long headband knotted at the back, the tails flying to the left. */
-    val headband =
-        Sprite(
-            listOf(
-                "..dODDDDDDDDDDDDO",
-                ".dD..............",
-                "dD...............",
-            )
-        )
+    val headband = Sprite(listOf("..dODDDDDDDDDDDDO", ".dD..............", "dD..............."))
     val headbandAt = Px(-3, 5)
 
     val sunglasses = Sprite(listOf("OlLOOlLO", ".LL..LL."))
@@ -332,16 +325,7 @@ internal object FighterSprites {
 
     /** The champion belt is worn over the shoulder, so the rank belt stays visible. */
     val sash =
-        Sprite(
-            listOf(
-                ".....yY.",
-                "..OOOOO.",
-                ".OYYNYYO",
-                ".OyYYYyO",
-                "..OOOOO.",
-                ".yY.....",
-            )
-        )
+        Sprite(listOf(".....yY.", "..OOOOO.", ".OYYNYYO", ".OyYYYyO", "..OOOOO.", ".yY....."))
 
     /** From rank 9: a small gold emblem on the chest. */
     val emblem = Sprite(listOf(".Y.", "YNY", ".Y."))

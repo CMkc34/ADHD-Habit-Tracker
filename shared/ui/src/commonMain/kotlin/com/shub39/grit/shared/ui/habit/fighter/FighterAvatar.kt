@@ -93,8 +93,8 @@ fun KiBlast(modifier: Modifier = Modifier, golden: Boolean = false, animate: Boo
 }
 
 /**
- * The current animation frame, 0 until [FighterPixels.FRAMES], one every 100 ms. Read it only
- * while drawing, so a new frame repaints the canvas without recomposing.
+ * The current animation frame, 0 until [FighterPixels.FRAMES], one every 100 ms. Read it only while
+ * drawing, so a new frame repaints the canvas without recomposing.
  */
 @Composable
 private fun rememberPixelFrame(): State<Int> {
@@ -110,9 +110,7 @@ private fun rememberPixelFrame(): State<Int> {
                 ),
             label = "frame",
         )
-    return remember(time) {
-        derivedStateOf { time.value.toInt().mod(FighterPixels.FRAMES) }
-    }
+    return remember(time) { derivedStateOf { time.value.toInt().mod(FighterPixels.FRAMES) } }
 }
 
 /**
