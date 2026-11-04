@@ -20,6 +20,7 @@ import com.shub39.grit.core.GritLogger
 import com.shub39.grit.core.activity.ActivityData
 import com.shub39.grit.core.activity.ActivityStore
 import com.shub39.grit.core.avatar.AvatarStore
+import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.HabitRepo
 import com.shub39.grit.core.habits.style.RoutineStyleStore
 import com.shub39.grit.core.interfaces.AlarmScheduler
@@ -46,6 +47,7 @@ class RestoreImpl(
     private val activityStore: ActivityStore,
     private val avatarStore: AvatarStore,
     private val routineStyleStore: RoutineStyleStore,
+    private val routineStatStore: RoutineStatStore,
 ) : RestoreRepo {
     override suspend fun restoreData(): RestoreResult {
         return try {
@@ -92,9 +94,12 @@ class RestoreImpl(
                 )
             }
 
-            // habits keep their ids on import, so styles map onto them directly
+            // habits keep their ids on import, so styles and stats map onto them directly
             jsonDeserialized.routineStyles?.forEach {
                 routineStyleStore.setStyle(it.habitId, it.toRoutineStyle())
+            }
+            jsonDeserialized.routineStats?.forEach {
+                routineStatStore.setStat(it.habitId, it.toFighterStat())
             }
 
             RestoreResult.Success

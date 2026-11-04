@@ -25,6 +25,7 @@ import com.shub39.grit.core.activity.FreezeNotice
 import com.shub39.grit.core.avatar.AvatarRepo
 import com.shub39.grit.core.avatar.AvatarSpecies
 import com.shub39.grit.core.avatar.UserName
+import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.HabitRepo
 import com.shub39.grit.core.habits.HabitStatus
@@ -76,6 +77,7 @@ class HabitViewModel(
     @Provided private val activityRepo: ActivityRepo,
     @Provided private val avatarRepo: AvatarRepo,
     @Provided private val routineStyleStore: RoutineStyleStore,
+    @Provided private val routineStatStore: RoutineStatStore,
 ) : ViewModel() {
     private var habitStatusJob: Job? = null
     private var overallAnalyticsJob: Job? = null
@@ -420,6 +422,7 @@ class HabitViewModel(
         repo.deleteHabit(habit.id)
         scheduler.cancel(habit)
         routineStyleStore.deleteStyle(habit.id)
+        routineStatStore.deleteStat(habit.id)
     }
 
     private suspend fun insertHabitStatus(habit: Habit, date: LocalDate) {

@@ -29,6 +29,8 @@ import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.avatar.PlantStage
 import com.shub39.grit.core.avatar.PlantState
 import com.shub39.grit.core.avatar.PurchaseCheck
+import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.HabitRepo
 import com.shub39.grit.core.habits.HabitStatus
@@ -281,4 +283,15 @@ class FakeRoutineStyleStore : RoutineStyleStore {
         styles.update { it + (habitId to style) }
 
     override suspend fun deleteStyle(habitId: Long) = styles.update { it - habitId }
+}
+
+class FakeRoutineStatStore : RoutineStatStore {
+    val stats = MutableStateFlow<Map<Long, FighterStat>>(emptyMap())
+
+    override fun getStats(): Flow<Map<Long, FighterStat>> = stats
+
+    override suspend fun setStat(habitId: Long, stat: FighterStat) =
+        stats.update { it + (habitId to stat) }
+
+    override suspend fun deleteStat(habitId: Long) = stats.update { it - habitId }
 }
