@@ -21,7 +21,11 @@ import com.shub39.grit.core.fighter.FighterRank
 import kotlinx.datetime.LocalDate
 
 enum class ShopItemKind {
-    /** A gi colour; replaces the main colour chosen at setup. */
+    /**
+     * A gi colour. At most one is worn; it replaces the main colour chosen at setup, and taking it
+     * off brings that colour back. None is free: after setup the look only changes with bought
+     * items.
+     */
     OUTFIT,
     /** Worn by the fighter; any number at the same time. */
     GEAR,
@@ -53,11 +57,9 @@ data class Purchase(val itemId: String, val date: LocalDate, val price: Int)
  * stored with each purchase, so they never change; prices and ranks live only here.
  */
 object ShopCatalog {
-    const val DEFAULT_POT_COLOR = FighterItems.GI_WHITE
-
     val items: List<ShopItem> =
         listOf(
-            ShopItem(FighterItems.GI_WHITE, ShopItemKind.OUTFIT, 0, FighterRank.ROOKIE),
+            ShopItem(FighterItems.GI_WHITE, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
             ShopItem(FighterItems.GI_BLUE, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
             ShopItem(FighterItems.GI_RED, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
             ShopItem(FighterItems.GI_BLACK, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
@@ -81,6 +83,9 @@ object ShopCatalog {
         )
 
     fun byId(id: String): ShopItem? = items.firstOrNull { it.id == id }
+
+    /** Whether [id] is an outfit of the catalog; older ids (the plant's pot colours) are not. */
+    fun isOutfit(id: String?): Boolean = id != null && byId(id)?.kind == ShopItemKind.OUTFIT
 }
 
 enum class PurchaseCheck {

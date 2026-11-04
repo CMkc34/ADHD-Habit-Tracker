@@ -60,7 +60,7 @@ fun AvatarSpeciesSheet(
                     onSelected = MaterialTheme.colorScheme.onPrimary,
                 ),
             stage = if (stage >= PlantStage.SAPLING) stage else PlantStage.YOUNG_TREE,
-            potColor = avatar.potColor,
+            potColor = avatar.outfit.orEmpty(),
             accessories = avatar.accessories,
             modifier = Modifier.fillMaxWidth(),
         )

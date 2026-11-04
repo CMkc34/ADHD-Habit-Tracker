@@ -58,4 +58,5 @@
     <string name="shop_item_prop_banner">Banner</string>
     <string name="shop_item_prop_trophy_shelf">Trophy shelf</string>
     <string name="shop_item_prop_gong">Gong</string>
+    <string name="shop_preview_rank">This is how it looks from rank %1$d. Your fighter is at rank %2$d.</string>
 </resources>

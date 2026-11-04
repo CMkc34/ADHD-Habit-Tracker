@@ -46,8 +46,8 @@ class FakeAvatarStore(initial: AvatarData = AvatarData()) : AvatarStore {
         data.update { it.copy(purchases = it.purchases + purchase) }
     }
 
-    override suspend fun setPotColor(itemId: String) {
-        data.update { it.copy(potColor = itemId) }
+    override suspend fun setOutfit(itemId: String?) {
+        data.update { it.copy(outfit = itemId) }
     }
 
     override suspend fun setAccessory(itemId: String, worn: Boolean) {

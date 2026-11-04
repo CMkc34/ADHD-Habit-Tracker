@@ -137,7 +137,7 @@ fun NewStageDialog(avatar: AvatarState, stage: PlantStage, onDismiss: () -> Unit
         PlantAvatar(
             stage = stage,
             mood = avatar.fighter.mood.plantMood,
-            potColor = avatar.data.potColor,
+            potColor = avatar.data.outfit.orEmpty(),
             accessories = avatar.data.accessories,
             species = avatar.data.look,
             modifier = Modifier.widthIn(max = 160.dp).fillMaxWidth(),
@@ -169,7 +169,7 @@ private val previewAvatar =
         energy = 12,
         data =
             AvatarData(
-                potColor = "pot_blue",
+                outfit = "pot_blue",
                 accessories = setOf("acc_ladybug"),
                 decorations = setOf("deco_mushrooms", "deco_rabbit"),
             ),

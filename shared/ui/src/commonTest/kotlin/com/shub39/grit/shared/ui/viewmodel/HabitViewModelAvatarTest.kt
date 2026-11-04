@@ -146,10 +146,10 @@ class HabitViewModelAvatarTest {
             val viewModel = viewModel()
             backgroundScope.launch { viewModel.state.collect {} }
 
-            viewModel.onAction(HabitsAction.BuyShopItem("acc_ladybug"))
-            viewModel.onAction(HabitsAction.WearShopItem("acc_bird", worn = true))
+            viewModel.onAction(HabitsAction.BuyShopItem("gear_sweatband"))
+            viewModel.onAction(HabitsAction.WearShopItem("gear_cape", worn = true))
 
-            assertEquals(listOf("acc_ladybug"), avatarRepo.bought)
-            assertEquals(setOf("acc_bird"), viewModel.state.value.avatar?.data?.accessories)
+            assertEquals(listOf("gear_sweatband"), avatarRepo.bought)
+            assertEquals(setOf("gear_cape"), viewModel.state.value.avatar?.data?.accessories)
         }
 }

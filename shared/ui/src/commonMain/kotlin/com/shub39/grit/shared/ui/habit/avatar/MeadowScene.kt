@@ -108,7 +108,7 @@ fun MeadowScene(
     stage: PlantStage,
     mood: PlantMood,
     modifier: Modifier = Modifier,
-    potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
+    potColor: String = "",
     accessories: Set<String> = emptySet(),
     decorations: Set<String> = emptySet(),
     weather: Weather = Weather.FAIR,

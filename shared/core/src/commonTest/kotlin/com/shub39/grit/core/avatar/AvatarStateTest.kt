@@ -30,8 +30,8 @@ import kotlinx.datetime.LocalDate
 
 class AvatarStateTest {
 
-    private val bird = ShopCatalog.byId("acc_bird")!!
-    private val blue = ShopCatalog.byId("pot_blue")!!
+    private val cape = ShopCatalog.byId("gear_cape")!!
+    private val blue = ShopCatalog.byId("gi_blue")!!
 
     private fun state(
         rank: FighterRank,
@@ -47,14 +47,14 @@ class AvatarStateTest {
 
     @Test
     fun `check uses rank, energy and purchases`() {
-        assertEquals(PurchaseCheck.RANK_TOO_LOW, state(FighterRank.VETERAN.prev(), 100).check(bird))
-        assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, state(FighterRank.VETERAN, 39).check(bird))
-        assertEquals(PurchaseCheck.OK, state(FighterRank.VETERAN, 40).check(bird))
+        assertEquals(PurchaseCheck.RANK_TOO_LOW, state(FighterRank.FIGHTER.prev(), 100).check(cape))
+        assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, state(FighterRank.FIGHTER, 39).check(cape))
+        assertEquals(PurchaseCheck.OK, state(FighterRank.FIGHTER, 40).check(cape))
 
-        val owned = AvatarData(purchases = listOf(Purchase(bird.id, LocalDate(2026, 1, 1), 40)))
+        val owned = AvatarData(purchases = listOf(Purchase(cape.id, LocalDate(2026, 1, 1), 40)))
         assertEquals(
             PurchaseCheck.ALREADY_OWNED,
-            state(FighterRank.CHAMPION, 100, owned).check(bird),
+            state(FighterRank.CHAMPION, 100, owned).check(cape),
         )
     }
 
@@ -62,23 +62,24 @@ class AvatarStateTest {
     fun `worn items and the preview`() {
         val plain = state(FighterRank.CHAMPION, 0)
         assertFalse(plain.isWorn(blue))
-        assertTrue(plain.isWorn(ShopCatalog.byId(ShopCatalog.DEFAULT_POT_COLOR)!!))
+        assertNull(plain.data.outfit)
+        assertFalse(plain.isWorn(ShopCatalog.byId("gi_white")!!))
 
-        assertEquals("pot_blue", plain.tryOn(blue).potColor)
-        assertEquals(setOf("acc_bird"), plain.tryOn(bird).accessories)
-        assertTrue(state(FighterRank.CHAMPION, 0, plain.tryOn(bird)).isWorn(bird))
+        assertEquals("gi_blue", plain.tryOn(blue).outfit)
+        assertEquals(setOf("gear_cape"), plain.tryOn(cape).accessories)
+        assertTrue(state(FighterRank.CHAMPION, 0, plain.tryOn(cape)).isWorn(cape))
     }
 
     @Test
-    fun `decorations are shown in the scene, not worn`() {
-        val pond = ShopCatalog.byId("deco_pond")!!
+    fun `props are shown in the training ground, not worn`() {
+        val gong = ShopCatalog.byId("prop_gong")!!
         val plain = state(FighterRank.CHAMPION, 0)
 
-        val preview = plain.tryOn(pond)
-        assertEquals(setOf("deco_pond"), preview.decorations)
+        val preview = plain.tryOn(gong)
+        assertEquals(setOf("prop_gong"), preview.decorations)
         assertEquals(emptySet(), preview.accessories)
-        assertFalse(plain.isWorn(pond))
-        assertTrue(state(FighterRank.CHAMPION, 0, preview).isWorn(pond))
+        assertFalse(plain.isWorn(gong))
+        assertTrue(state(FighterRank.CHAMPION, 0, preview).isWorn(gong))
     }
 
     @Test
@@ -87,13 +88,13 @@ class AvatarStateTest {
             AvatarData(
                 purchases =
                     listOf(
-                        Purchase("pot_blue", LocalDate(2026, 1, 1), 10),
+                        Purchase("gi_blue", LocalDate(2026, 1, 1), 10),
                         Purchase("plant_only_item", LocalDate(2026, 1, 2), 30),
                     )
             )
 
         val owned = state(FighterRank.CHAMPION, 0, data).owned
-        assertTrue("pot_blue" in owned)
+        assertTrue("gi_blue" in owned)
         assertFalse("plant_only_item" in owned)
     }
 

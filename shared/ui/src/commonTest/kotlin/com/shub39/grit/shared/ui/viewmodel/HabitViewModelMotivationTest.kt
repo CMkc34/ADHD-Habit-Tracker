@@ -122,14 +122,14 @@ class HabitViewModelMotivationTest {
     @Test
     fun `popup shows the user's plant`() =
         runTest(dispatcher) {
-            avatarRepo.data.value = AvatarData(potColor = "pot_blue")
+            avatarRepo.data.value = AvatarData(outfit = "gi_blue")
             val viewModel = viewModel()
             repo.currentStreaks[meditate.id] = 5
 
             viewModel.onAction(HabitsAction.InsertStatus(meditate, today))
 
             val popup = assertNotNull(viewModel.state.value.motivationPopup)
-            assertEquals("pot_blue", assertNotNull(popup.avatar).data.potColor)
+            assertEquals("gi_blue", assertNotNull(popup.avatar).data.outfit)
         }
 
     @Test

@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.motivation.MotivationQuote
 import com.shub39.grit.core.motivation.QuoteTone
@@ -109,7 +108,7 @@ fun HabitMotivationPopup(
         PlantAvatar(
             stage = avatar?.fighter?.rank?.plantStage ?: PlantStage.SEED,
             mood = PlantMood.HAPPY,
-            potColor = avatar?.data?.potColor ?: ShopCatalog.DEFAULT_POT_COLOR,
+            potColor = avatar?.data?.outfit.orEmpty(),
             accessories = avatar?.data?.accessories.orEmpty(),
             species = avatar?.data?.look ?: FighterLook.KAI,
             modifier =

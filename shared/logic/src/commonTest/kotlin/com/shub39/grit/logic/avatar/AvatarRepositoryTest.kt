@@ -23,7 +23,6 @@ import com.shub39.grit.core.activity.FreezeNotice
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.PurchaseCheck
-import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.now
@@ -77,67 +76,86 @@ class AvatarRepositoryTest {
         val store = FakeAvatarStore()
         val repository = repository(activeDays = 30, store = store)
 
-        assertEquals(PurchaseCheck.OK, repository.buy("acc_watering_can"))
+        assertEquals(PurchaseCheck.OK, repository.buy("gear_gloves"))
 
         val state = repository.getAvatarState().first()
-        assertEquals(30 - 25, state.energy)
-        assertEquals(setOf("acc_watering_can"), state.data.accessories)
-        assertEquals(PurchaseCheck.ALREADY_OWNED, repository.buy("acc_watering_can"))
+        assertEquals(30 - 20, state.energy)
+        assertEquals(setOf("gear_gloves"), state.data.accessories)
+        assertEquals(PurchaseCheck.ALREADY_OWNED, repository.buy("gear_gloves"))
     }
 
     @Test
     fun `items above the rank or the balance cannot be bought`() = runTest {
         val repository = repository(activeDays = 10)
 
-        assertEquals(PurchaseCheck.RANK_TOO_LOW, repository.buy("acc_bird"))
-        assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, repository.buy("acc_watering_can"))
+        assertEquals(PurchaseCheck.RANK_TOO_LOW, repository.buy("gear_cape"))
+        assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, repository.buy("gear_gloves"))
         assertEquals(emptyList(), repository.getAvatarState().first().data.purchases)
     }
 
     @Test
-    fun `a bought pot color replaces the current one and cannot be taken off`() = runTest {
+    fun `one outfit is worn at a time and taking it off brings back the setup colours`() =
+        runTest {
+            val store = FakeAvatarStore()
+            val repository = repository(activeDays = 20, store = store)
+            assertNull(store.data.value.outfit)
+
+            repository.buy("gi_blue")
+            assertEquals("gi_blue", store.data.value.outfit)
+            repository.buy("gi_red")
+            assertEquals("gi_red", store.data.value.outfit)
+
+            // taking off an outfit that is not worn changes nothing
+            repository.wear("gi_blue", worn = false)
+            assertEquals("gi_red", store.data.value.outfit)
+
+            repository.wear("gi_red", worn = false)
+            assertNull(store.data.value.outfit)
+
+            repository.wear("gi_blue", worn = true)
+            assertEquals("gi_blue", store.data.value.outfit)
+        }
+
+    @Test
+    fun `outfits that are not owned cannot be worn`() = runTest {
         val store = FakeAvatarStore()
-        val repository = repository(activeDays = 20, store = store)
 
-        repository.buy("pot_blue")
-        repository.wear("pot_blue", worn = false)
-        assertEquals("pot_blue", store.data.value.potColor)
+        repository(activeDays = 20, store = store).wear("gi_white", worn = true)
 
-        repository.wear(ShopCatalog.DEFAULT_POT_COLOR, worn = true)
-        assertEquals(ShopCatalog.DEFAULT_POT_COLOR, store.data.value.potColor)
+        assertNull(store.data.value.outfit)
     }
 
     @Test
     fun `items that are not owned cannot be worn`() = runTest {
         val store = FakeAvatarStore()
 
-        repository(activeDays = 5, store = store).wear("acc_swing", worn = true)
+        repository(activeDays = 5, store = store).wear("gear_crown", worn = true)
 
         assertEquals(emptySet(), store.data.value.accessories)
     }
 
     @Test
-    fun `a bought decoration is shown and can be hidden again`() = runTest {
+    fun `a bought prop is shown and can be hidden again`() = runTest {
         val store = FakeAvatarStore()
         val repository = repository(activeDays = 20, store = store)
 
-        assertEquals(PurchaseCheck.OK, repository.buy("deco_mushrooms"))
-        assertEquals(setOf("deco_mushrooms"), store.data.value.decorations)
+        assertEquals(PurchaseCheck.OK, repository.buy("prop_mat"))
+        assertEquals(setOf("prop_mat"), store.data.value.decorations)
         assertEquals(emptySet(), store.data.value.accessories)
 
-        repository.wear("deco_mushrooms", worn = false)
+        repository.wear("prop_mat", worn = false)
         assertEquals(emptySet(), store.data.value.decorations)
-        assertEquals(listOf("deco_mushrooms"), store.data.value.purchases.map { it.itemId })
+        assertEquals(listOf("prop_mat"), store.data.value.purchases.map { it.itemId })
 
-        repository.wear("deco_mushrooms", worn = true)
-        assertEquals(setOf("deco_mushrooms"), store.data.value.decorations)
+        repository.wear("prop_mat", worn = true)
+        assertEquals(setOf("prop_mat"), store.data.value.decorations)
     }
 
     @Test
-    fun `decorations that are not owned cannot be shown`() = runTest {
+    fun `props that are not owned cannot be shown`() = runTest {
         val store = FakeAvatarStore()
 
-        repository(activeDays = 400, store = store).wear("deco_pond", worn = true)
+        repository(activeDays = 400, store = store).wear("prop_gong", worn = true)
 
         assertEquals(emptySet(), store.data.value.decorations)
     }
@@ -217,7 +235,7 @@ class AvatarRepositoryTest {
                 AvatarData(
                     purchases =
                         listOf(
-                            Purchase("pot_blue", today, 10),
+                            Purchase("gi_blue", today, 10),
                             Purchase("plant_only_item", today, 15),
                         )
                 )
@@ -226,7 +244,7 @@ class AvatarRepositoryTest {
         val state = repository(activeDays = 30, store = store).getAvatarState().first()
 
         assertEquals(30 - 10, state.energy)
-        assertEquals(setOf(ShopCatalog.DEFAULT_POT_COLOR, "pot_blue"), state.owned)
+        assertEquals(setOf("gi_blue"), state.owned)
         // still stored, so nothing is lost when a backup goes back to an older version
         assertEquals(2, store.data.value.purchases.size)
     }
@@ -234,19 +252,19 @@ class AvatarRepositoryTest {
     @Test
     fun `restoring merges purchases and keeps local choices`() {
         val today = LocalDate.now()
-        val local = AvatarData(name = "Fern", purchases = listOf(Purchase("pot_blue", today, 10)))
+        val local = AvatarData(name = "Fern", purchases = listOf(Purchase("gi_blue", today, 10)))
         val backup =
             AvatarData(
                 name = "Grit",
                 purchases =
                     listOf(
-                        Purchase("pot_blue", today.minus(3, DateTimeUnit.DAY), 10),
-                        Purchase("acc_ladybug", today, 15),
+                        Purchase("gi_blue", today.minus(3, DateTimeUnit.DAY), 10),
+                        Purchase("gear_sweatband", today, 15),
                     ),
-                potColor = "pot_blue",
-                accessories = setOf("acc_ladybug"),
+                outfit = "gi_blue",
+                accessories = setOf("gear_sweatband"),
                 seenStage = 4,
-                decorations = setOf("deco_pond"),
+                decorations = setOf("prop_gong"),
             )
 
         val merged = local.mergedWith(backup)
@@ -256,13 +274,13 @@ class AvatarRepositoryTest {
             listOf(today.minus(3, DateTimeUnit.DAY), today),
             merged.purchases.map { it.date },
         )
-        assertEquals("pot_blue", merged.potColor)
-        assertEquals(setOf("acc_ladybug"), merged.accessories)
+        assertEquals("gi_blue", merged.outfit)
+        assertEquals(setOf("gear_sweatband"), merged.accessories)
         assertEquals(4, merged.seenStage)
-        assertEquals(setOf("deco_pond"), merged.decorations)
+        assertEquals(setOf("prop_gong"), merged.decorations)
         assertEquals(
-            setOf("deco_fence"),
-            local.copy(decorations = setOf("deco_fence")).mergedWith(backup).decorations,
+            setOf("prop_mat"),
+            local.copy(decorations = setOf("prop_mat")).mergedWith(backup).decorations,
         )
     }
 }

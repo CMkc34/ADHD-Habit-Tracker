@@ -151,7 +151,7 @@ fun DailyGreetingStage(
             stage = fighter.rank.plantStage,
             // a fighter without a single active day is new, not tired: it greets awake
             mood = if (fighter.activeDays == 0) PlantMood.HAPPY else fighter.mood.plantMood,
-            potColor = avatar.data.potColor,
+            potColor = avatar.data.outfit.orEmpty(),
             accessories = avatar.data.accessories,
             decorations = avatar.data.decorations,
             weather = fighter.weather,

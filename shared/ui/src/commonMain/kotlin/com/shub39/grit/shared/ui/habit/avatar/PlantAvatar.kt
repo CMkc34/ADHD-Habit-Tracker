@@ -94,7 +94,7 @@ fun potColorOf(itemId: String): Color =
         "pot_green" -> Color(0xFF5FA55A)
         "pot_purple" -> Color(0xFF8E5CC2)
         "pot_gold" -> Color(0xFFD4AF37)
-        else -> Color(0xFFC8693E) // ShopCatalog.DEFAULT_POT_COLOR
+        else -> Color(0xFFC8693E) // no or an unknown colour
     }
 
 /**
@@ -110,7 +110,7 @@ fun PlantAvatar(
     stage: PlantStage,
     mood: PlantMood,
     modifier: Modifier = Modifier,
-    potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
+    potColor: String = "",
     accessories: Set<String> = emptySet(),
     animate: Boolean = true,
     species: FighterLook = FighterLook.KAI,

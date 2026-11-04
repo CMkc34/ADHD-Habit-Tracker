@@ -31,7 +31,8 @@ import kotlinx.serialization.Serializable
 data class AvatarSchema(
     val name: String = "",
     val purchases: List<PurchaseSchema> = emptyList(),
-    val potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
+    // since #7 the worn outfit, null for the colours chosen at setup; plant pot ids are ignored
+    val potColor: String? = null,
     val accessories: List<String> = emptyList(),
     val seenStage: Int = 0,
     val decorations: List<String> = emptyList(),
@@ -47,7 +48,7 @@ fun AvatarData.toAvatarSchema(): AvatarSchema {
     return AvatarSchema(
         name = name,
         purchases = purchases.map { PurchaseSchema(it.itemId, it.date.toString(), it.price) },
-        potColor = potColor,
+        potColor = outfit,
         accessories = accessories.sorted(),
         seenStage = seenStage,
         decorations = decorations.sorted(),
@@ -60,7 +61,7 @@ fun AvatarSchema.toAvatarData(): AvatarData {
     return AvatarData(
         name = name,
         purchases = purchases.map { Purchase(it.itemId, LocalDate.parse(it.date), it.price) },
-        potColor = potColor,
+        outfit = potColor?.takeIf(ShopCatalog::isOutfit),
         accessories = accessories.toSet(),
         seenStage = seenStage,
         decorations = decorations.toSet(),

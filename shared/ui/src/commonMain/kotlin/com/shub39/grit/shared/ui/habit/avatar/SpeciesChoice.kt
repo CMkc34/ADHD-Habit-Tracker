@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
-import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import grit.shared.ui.generated.resources.Res
@@ -80,7 +79,7 @@ fun SpeciesChoice(
     colors: SpeciesChoiceColors,
     modifier: Modifier = Modifier,
     stage: PlantStage = PlantStage.YOUNG_TREE,
-    potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
+    potColor: String = "",
     accessories: Set<String> = emptySet(),
 ) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {

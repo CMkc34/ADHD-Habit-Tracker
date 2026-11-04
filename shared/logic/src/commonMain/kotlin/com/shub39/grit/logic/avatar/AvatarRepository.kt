@@ -101,7 +101,11 @@ class AvatarRepository(
         if (item.id !in owned) return
 
         when (item.kind) {
-            ShopItemKind.OUTFIT -> if (worn) store.setPotColor(item.id)
+            ShopItemKind.OUTFIT ->
+                when {
+                    worn -> store.setOutfit(item.id)
+                    store.getAvatar().first().outfit == item.id -> store.setOutfit(null)
+                }
             ShopItemKind.GEAR -> store.setAccessory(item.id, worn)
             ShopItemKind.PROP -> store.setDecoration(item.id, worn)
         }
