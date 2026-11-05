@@ -16,7 +16,11 @@
  */
 package com.shub39.grit.shared.ui.habit.fighter
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import com.shub39.grit.core.fighter.FighterStat
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.fighter_stat_focus
@@ -65,3 +69,10 @@ fun FighterStat.icon(): DrawableResource =
         FighterStat.STAMINA -> Res.drawable.routine_icon_heart
         FighterStat.FOCUS -> Res.drawable.routine_icon_target
     }
+
+/** The stat's pixel icon from [StatPixels], in the fighter's style (#9). */
+@Composable
+fun StatIcon(stat: FighterStat, modifier: Modifier = Modifier) {
+    val image = remember(stat) { StatPixels.render(stat) }
+    Canvas(modifier = modifier.aspectRatio(1f)) { drawPixels(image) }
+}

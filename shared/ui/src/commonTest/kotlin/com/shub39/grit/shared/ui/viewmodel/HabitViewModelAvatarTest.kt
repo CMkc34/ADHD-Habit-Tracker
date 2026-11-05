@@ -31,10 +31,12 @@ import com.shub39.grit.shared.ui.fakes.FakeRoutineStatStore
 import com.shub39.grit.shared.ui.fakes.FakeRoutineStyleStore
 import com.shub39.grit.shared.ui.fakes.FakeSettingsDatastore
 import com.shub39.grit.shared.ui.habit.HabitsAction
+import com.shub39.grit.shared.ui.habit.avatar.FighterNotice
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -138,6 +140,33 @@ class HabitViewModelAvatarTest {
             viewModel.onAction(HabitsAction.DismissNewStatLevels)
 
             assertEquals(emptyMap(), viewModel.state.value.avatar?.newStatLevels)
+        }
+
+    @Test
+    fun `the app-wide notice shows the new rank, then the new levels, each once`() =
+        runTest(dispatcher) {
+            avatarRepo.data.value =
+                AvatarData(
+                    seenStage = FighterRank.TRAINEE.number,
+                    seenStatLevels = FighterStat.entries.associateWith { 1 },
+                )
+            avatarRepo.xp.value = mapOf(FighterStat.SPEED to 5)
+            activityRepo.report.value = activeDays(7)
+            val viewModel = viewModel()
+            backgroundScope.launch { viewModel.state.collect {} }
+
+            assertIs<FighterNotice.NewRank>(viewModel.fighterNotice.value)
+
+            viewModel.onAction(HabitsAction.DismissNewRank)
+
+            assertEquals(
+                mapOf(FighterStat.SPEED to 2),
+                assertIs<FighterNotice.NewStatLevels>(viewModel.fighterNotice.value).levels,
+            )
+
+            viewModel.onAction(HabitsAction.DismissNewStatLevels)
+
+            assertNull(viewModel.fighterNotice.value)
         }
 
     @Test

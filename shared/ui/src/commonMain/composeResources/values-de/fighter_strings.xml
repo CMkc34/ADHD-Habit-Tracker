@@ -70,6 +70,8 @@
     </plurals>
     <string name="fighter_rank_highest">%1$s · höchster Rang</string>
     <string name="fighter_stats_title">Werte</string>
+    <string name="fighter_stats_show">Werte zeigen</string>
+    <string name="fighter_stats_hide">Werte ausblenden</string>
     <string name="fighter_stat_level">Stufe %1$d</string>
     <string name="fighter_stat_xp">%1$d / %2$d XP</string>
     <string name="fighter_stat_no_routine">Noch keine Routine trainiert das</string>

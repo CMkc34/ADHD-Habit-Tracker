@@ -42,6 +42,7 @@ import com.shub39.grit.core.now
 import com.shub39.grit.core.stats.ForkStats
 import com.shub39.grit.shared.ui.habit.HabitState
 import com.shub39.grit.shared.ui.habit.HabitsAction
+import com.shub39.grit.shared.ui.habit.avatar.FighterNotice
 import com.shub39.grit.shared.ui.habit.motivation.BonusPopupState
 import com.shub39.grit.shared.ui.habit.motivation.DailyGreetingState
 import com.shub39.grit.shared.ui.habit.motivation.MotivationPopupState
@@ -137,6 +138,16 @@ class HabitViewModel(
             .map { it.nameSetup }
             .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
+    /**
+     * Rank-up or stat level-up notice, observed app-wide like [motivationPopup] so it appears right
+     * after the check-in that earned it, see [FighterNotice.of].
+     */
+    val fighterNotice: StateFlow<FighterNotice?> =
+        _state
+            .map { FighterNotice.of(it) }
+            .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /** Greeting on the first app start of a day, observed by the app-wide greeting host. */
     val dailyGreeting: StateFlow<DailyGreetingState?> =

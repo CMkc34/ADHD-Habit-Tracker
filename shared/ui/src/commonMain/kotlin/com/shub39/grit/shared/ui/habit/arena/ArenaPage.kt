@@ -91,7 +91,11 @@ private fun ArenaPagePreview() {
         avatar =
             AvatarState(
                 fighter =
-                    FighterState(activeDays = 20, rank = FighterRank.BRAWLER, mood = FighterMood.READY),
+                    FighterState(
+                        activeDays = 20,
+                        rank = FighterRank.BRAWLER,
+                        mood = FighterMood.READY,
+                    ),
                 energy = 0,
                 data = AvatarData(),
             )

@@ -17,7 +17,6 @@
 package com.shub39.grit.shared.ui.habit.avatar
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +25,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -43,11 +43,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,8 +61,10 @@ import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.Weather
+import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
@@ -68,13 +73,14 @@ import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.fighter.GROUND_ASPECT_RATIO
 import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundPixels
 import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
+import com.shub39.grit.shared.ui.habit.fighter.label
 import com.shub39.grit.shared.ui.habit.ui.component.WATER_MARK
 import com.shub39.grit.shared.ui.habit.ui.component.WaterText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
-import grit.shared.ui.generated.resources.avatar_stage_short_days
-import grit.shared.ui.generated.resources.avatar_stage_short_grown
-import grit.shared.ui.generated.resources.avatar_tired
+import grit.shared.ui.generated.resources.fighter_rank_highest
+import grit.shared.ui.generated.resources.fighter_rank_to_next
+import grit.shared.ui.generated.resources.fighter_tired
 import grit.shared.ui.generated.resources.shop_open
 import grit.shared.ui.generated.resources.shopping_bag
 import kotlinx.datetime.LocalDate
@@ -91,29 +97,47 @@ private val TOP_BAR_SPACE = 76.dp
 // the fighter is drawn bigger on the full page, but never bigger than half the scene's height
 private const val MAX_FIGHTER_SCALE = TrainingGroundPixels.MAX_FIGHTER_SCALE
 
+// the open stat sheet never covers more of the page than this
+private const val MAX_SHEET_SHARE = 0.75f
+
 /**
- * Own tab for the fighter: the training ground fills the whole page. On top sit the water balance,
- * the fighter's name with its progress (tap to rename) and the button to the shop, which has its
- * own page.
+ * The Fighter tab (#9): the training ground fills the page. On top sit the water balance, the
+ * fighter's name with its rank and progress (tap to rename) and the button to the shop, which has
+ * its own page. At the bottom the stat sheet shows the four stats and can be pulled up for details;
+ * the training ground ends behind its closed height, so the fighter always stays in view. Rank-up
+ * and level-up notices are shown app-wide by [FighterNoticeHost].
  */
 @Composable
 fun AvatarPage(
     avatar: AvatarState?,
+    routines: Map<FighterStat, List<String>>,
     onAction: (HabitsAction) -> Unit,
     onOpenShop: () -> Unit,
+    onOpenRoutines: () -> Unit,
     modifier: Modifier = Modifier,
+    initiallyExpanded: Boolean = false,
 ) {
     var showRename by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(initiallyExpanded) }
+    // height of the closed sheet, the training ground ends there
+    var closedSheetHeight by remember { mutableStateOf(0.dp) }
+    val density = LocalDensity.current
 
-    Box(modifier = modifier.fillMaxSize()) {
-        if (avatar == null) return@Box
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        if (avatar == null) return@BoxWithConstraints
 
-        val expanded = LocalWindowSizeClass.current.isExpanded()
+        val expandedWindow = LocalWindowSizeClass.current.isExpanded()
         val statusBar =
-            if (expanded) 0.dp else WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+            if (expandedWindow) 0.dp
+            else WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val pageHeight = maxHeight
 
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize().clipToBounds(),
+            modifier =
+                Modifier.fillMaxSize()
+                    // the scene runs on under the sheet's rounded corners
+                    .padding(bottom = maxOf(closedSheetHeight - SHEET_CORNER, 0.dp))
+                    .clipToBounds(),
             contentAlignment = Alignment.BottomCenter,
         ) {
             val width = minOf(maxWidth, MAX_SCENE_WIDTH)
@@ -156,7 +180,7 @@ fun AvatarPage(
                     color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
                 ) {
                     Text(
-                        text = stringResource(Res.string.avatar_tired),
+                        text = stringResource(Res.string.fighter_tired, avatar.name),
                         style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -164,6 +188,21 @@ fun AvatarPage(
                 }
             }
         }
+
+        FighterStatSheet(
+            fighter = avatar.fighter,
+            routines = routines,
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            onOpenRoutines = onOpenRoutines,
+            modifier =
+                Modifier.align(Alignment.BottomCenter)
+                    .widthIn(max = MAX_SCENE_WIDTH)
+                    .heightIn(max = pageHeight * MAX_SHEET_SHARE)
+                    .onSizeChanged {
+                        if (!expanded) closedSheetHeight = with(density) { it.height.toDp() }
+                    },
+        )
     }
 
     if (avatar != null && showRename) {
@@ -175,15 +214,6 @@ fun AvatarPage(
                 showRename = false
             },
             onDismiss = { showRename = false },
-        )
-    }
-
-    // placeholder until the rank-up notice of #9
-    avatar?.newRank?.let { rank ->
-        NewStageDialog(
-            avatar = avatar,
-            stage = rank.plantStage,
-            onDismiss = { onAction(HabitsAction.DismissNewRank) },
         )
     }
 }
@@ -224,16 +254,18 @@ private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenS
                     modifier = Modifier.fillMaxWidth().height(6.dp),
                 )
                 val daysToNext = fighter.daysToNextRank
+                val next = fighter.rank.next
                 Text(
                     text =
-                        if (daysToNext == null)
-                            stringResource(Res.string.avatar_stage_short_grown, fighter.rank.number)
+                        if (daysToNext == null || next == null)
+                            stringResource(Res.string.fighter_rank_highest, fighter.rank.label())
                         else
                             pluralStringResource(
-                                Res.plurals.avatar_stage_short_days,
+                                Res.plurals.fighter_rank_to_next,
                                 daysToNext,
-                                fighter.rank.number,
+                                fighter.rank.label(),
                                 daysToNext,
+                                next.label(),
                             ),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -268,6 +300,14 @@ internal fun WaterChip(energy: Int, modifier: Modifier = Modifier) {
     }
 }
 
+private val previewRoutines =
+    mapOf(
+        FighterStat.STRENGTH to listOf("Push-ups"),
+        FighterStat.SPEED to listOf("Morning walk"),
+        FighterStat.STAMINA to listOf("Drink water", "Sleep by 11"),
+        FighterStat.FOCUS to emptyList(),
+    )
+
 @PreviewWrapper(GritPreviewWrapper::class)
 @Preview
 @Composable
@@ -284,41 +324,80 @@ private fun AvatarPageFreshInstallPreview() {
                 energy = 0,
                 data = AvatarData(),
             ),
+        routines = FighterStat.entries.associateWith { emptyList() },
         onAction = {},
         onOpenShop = {},
+        onOpenRoutines = {},
+    )
+}
+
+private val trainedAvatar =
+    AvatarState(
+        fighter =
+            FighterState(
+                activeDays = 100,
+                rank = FighterRank.CHAMPION,
+                mood = FighterMood.READY,
+                weather = Weather.SUNNY,
+                xp =
+                    mapOf(
+                        FighterStat.STRENGTH to 48,
+                        FighterStat.SPEED to 17,
+                        FighterStat.STAMINA to 80,
+                    ),
+            ),
+        energy = 30,
+        data =
+            AvatarData(
+                name = "Fridolin",
+                purchases =
+                    listOf(
+                        Purchase(FighterItems.GI_BLUE, LocalDate(2026, 10, 1), 40),
+                        Purchase(FighterItems.SWEATBAND, LocalDate(2026, 10, 2), 15),
+                        Purchase(FighterItems.MAT, LocalDate(2026, 10, 3), 20),
+                    ),
+                outfit = FighterItems.GI_BLUE,
+                accessories = setOf(FighterItems.SWEATBAND),
+                decorations = setOf(FighterItems.MAT),
+            ),
+    )
+
+@PreviewWrapper(GritPreviewWrapper::class)
+@Preview
+@Composable
+private fun AvatarPageTrainedPreview() {
+    AvatarPage(
+        avatar = trainedAvatar,
+        routines = previewRoutines,
+        onAction = {},
+        onOpenShop = {},
+        onOpenRoutines = {},
     )
 }
 
 @PreviewWrapper(GritPreviewWrapper::class)
 @Preview
 @Composable
-private fun AvatarPageWithPurchasesPreview() {
+private fun AvatarPageStatsOpenPreview() {
     AvatarPage(
-        avatar =
-            AvatarState(
-                fighter =
-                    FighterState(
-                        activeDays = 100,
-                        rank = FighterRank.CHAMPION,
-                        mood = FighterMood.READY,
-                        weather = Weather.SUNNY,
-                    ),
-                energy = 30,
-                data =
-                    AvatarData(
-                        name = "Fridolin",
-                        purchases =
-                            listOf(
-                                Purchase("pot_blue", LocalDate(2026, 10, 1), 10),
-                                Purchase("acc_ladybug", LocalDate(2026, 10, 2), 15),
-                                Purchase("deco_rabbit", LocalDate(2026, 10, 3), 30),
-                            ),
-                        outfit = "pot_blue",
-                        accessories = setOf("acc_ladybug"),
-                        decorations = setOf("deco_rabbit"),
-                    ),
-            ),
+        avatar = trainedAvatar,
+        routines = previewRoutines,
         onAction = {},
         onOpenShop = {},
+        onOpenRoutines = {},
+        initiallyExpanded = true,
+    )
+}
+
+@PreviewWrapper(GritPreviewWrapper::class)
+@Preview(widthDp = 1000, heightDp = 700)
+@Composable
+private fun AvatarPageTabletPreview() {
+    AvatarPage(
+        avatar = trainedAvatar,
+        routines = previewRoutines,
+        onAction = {},
+        onOpenShop = {},
+        onOpenRoutines = {},
     )
 }

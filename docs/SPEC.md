@@ -690,6 +690,19 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   - Leiste mit Wasser, Namensschild mit Rang und Fortschritt, Shop-Knopf.
   - Darunter die vier Werte mit Stufe, XP-Balken und den trainierenden Routinen.
   - Hinweise bei neuem Rang und neuer Stufe.
+  - Entschieden am 2026-11-05: Der Trainingsplatz bleibt ganzseitig, die Werte liegen in einer
+    **Leiste zum Hochziehen** am unteren Rand (`FighterStatSheet`). Zu zeigt sie je Wert Symbol,
+    Stufe und Fortschritt, aufgezogen (Ziehen oder Tippen) Name, Stufe, XP-Balken, „x / y XP“ und
+    die trainierenden Routinen (`StatRoutines`); Tippen auf die Routinen-Zeile öffnet die Routinen.
+    Der Trainingsplatz endet hinter der geschlossenen Leiste, der Kämpfer bleibt immer sichtbar.
+  - Wert-Symbole in Pixel-Art im Stil der Kämpfer (`StatPixels`, `StatIcon`): Faust (Kraft), Blitz
+    (Tempo), Herz (Ausdauer), Auge (Fokus).
+  - Die Hinweise erscheinen **auf jedem Reiter**, gleich nach dem Häkchen, das sie ausgelöst hat
+    (`FighterNoticeHost`, `FighterNotice`), aber erst wenn Motivations-Pop-up, Bonus, Begrüßung und
+    Namensfrage weg sind. Erst der Rang (Kämpfer in der Pose „Ki laden“ mit neuem Gürtel), danach
+    die neuen Stufen gesammelt in einem kleineren Dialog.
+  - Reiter-Symbole: `sports_martial_arts` (Kämpfer) und `swords` (Arena); bis #14 zeigt der
+    Arena-Reiter „Die Arena öffnet bald“ mit dem Kämpfer.
 - Arena-Reiter (#14): Tickets, Leiter, Vergleich vor dem Kampf, Kampfbildschirm mit HP, Ladungen und
   drei Aktionen.
 - Routinen-Formular und -Karte zeigen den trainierten Wert (#4).
