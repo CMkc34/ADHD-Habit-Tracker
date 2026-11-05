@@ -26,7 +26,6 @@ import com.shub39.grit.core.arena.CheckInReward
 import com.shub39.grit.core.arena.TrainingSnapshot
 import com.shub39.grit.core.avatar.AvatarRepo
 import com.shub39.grit.core.avatar.UserName
-import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.fighter.statOf
 import com.shub39.grit.core.habits.Habit
@@ -301,10 +300,16 @@ class HabitViewModel(
                     }
                 }
 
+                is HabitsAction.ChooseFighter -> {
+                    // the choice is final: only the first start setup may make it
+                    if (_state.value.nameSetup) {
+                        avatarRepo.chooseFighter(action.character, action.colors)
+                    }
+                }
+
                 is HabitsAction.FinishNameSetup -> {
                     val name = UserName.clean(action.name)
                     if (name.isNotEmpty()) avatarRepo.setUserName(name)
-                    if (action.look != FighterLook.DEFAULT) avatarRepo.setLook(action.look)
                     motivationSettings.setSetupDone()
                     _state.update { it.copy(nameSetup = false) }
                     checkDailyGreeting()

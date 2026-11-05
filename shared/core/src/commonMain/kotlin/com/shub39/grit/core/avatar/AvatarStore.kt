@@ -16,6 +16,8 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.FighterStat
 import kotlinx.coroutines.flow.Flow
@@ -43,14 +45,33 @@ data class AvatarData(
     val seenStage: Int = 0,
     /** How the fighter calls the user (#139); empty while the user has not given a name. */
     val userName: String = "",
-    /** Who trains with the user, stored where the plant species was. */
+    /**
+     * The look from before the character choice, stored where the plant species was. Only used for
+     * users who never picked a [fighterCharacter] (SPEC 9.8).
+     */
     val look: FighterLook = FighterLook.DEFAULT,
     /**
      * Highest level of each stat the user has been told about. Empty until the levels are first
      * stored, which happens without announcing them (first run after the update, SPEC 9.8).
      */
     val seenStatLevels: Map<FighterStat, Int> = emptyMap(),
+    /** The fighter picked at setup (#26), `null` for users who set up the app before the choice. */
+    val fighterCharacter: FighterCharacter? = null,
+    /** The colours picked at setup (#26), `null` for the [character]'s default colours. */
+    val fighterColors: FighterColors? = null,
 ) {
+    /** Who trains with the user: the picked fighter, or the one that replaces the old [look]. */
+    val character: FighterCharacter
+        get() = fighterCharacter ?: FighterCharacter.of(look)
+
+    /** The colours the fighter wears without a bought outfit. */
+    val colors: FighterColors
+        get() = fighterColors ?: character.defaultColors
+
+    /** The fighter's name: the one the user gave, or the [character]'s default name. */
+    val displayName: String
+        get() = name.ifBlank { character.defaultName }
+
     /**
      * Combines the current record with a restored backup: purchases are joined (the earlier one
      * wins), and the backup fills in what is still at its default here.
@@ -73,6 +94,9 @@ data class AvatarData(
                 (seenStatLevels.keys + backup.seenStatLevels.keys).associateWith {
                     maxOf(seenStatLevels[it] ?: 0, backup.seenStatLevels[it] ?: 0)
                 },
+            fighterCharacter = fighterCharacter ?: backup.fighterCharacter,
+            // the colours belong to the fighter they were picked for
+            fighterColors = if (fighterCharacter != null) fighterColors else backup.fighterColors,
         )
 }
 
@@ -83,7 +107,8 @@ interface AvatarStore {
 
     suspend fun setUserName(name: String)
 
-    suspend fun setLook(look: FighterLook)
+    /** Stores the fighter and colours picked at setup (#26). */
+    suspend fun setFighter(character: FighterCharacter, colors: FighterColors)
 
     suspend fun addPurchase(purchase: Purchase)
 

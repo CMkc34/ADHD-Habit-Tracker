@@ -37,6 +37,8 @@ class ForkTranslationTest {
             "stats_strings.xml",
             "avatar_strings.xml",
             "fighter_strings.xml",
+            "greeting_strings.xml",
+            "arena_strings.xml",
         )
 
     private fun forkStrings(valuesDir: String): List<Document> =
@@ -77,6 +79,34 @@ class ForkTranslationTest {
     @Test
     fun `german and english offer the same plurals`() {
         assertEquals(plurals("values"), plurals("values-de"))
+    }
+
+    /** Every text the user sees: strings and plural items. */
+    private fun texts(valuesDir: String): List<String> =
+        forkStrings(valuesDir).flatMap { doc ->
+            (doc.elements("string") + doc.elements("item")).map { it.textContent }
+        }
+
+    @Test
+    fun `no text talks about the plant any more`() {
+        // since #16 the fighter speaks; water stays water
+        val plantWords =
+            mapOf(
+                "values" to
+                    Regex(
+                        """\b(plants?|trees?|seeds?|sprouts?|meadows?|blossoms?)\b""",
+                        RegexOption.IGNORE_CASE,
+                    ),
+                "values-de" to
+                    Regex(
+                        """\b(pflanze\w*|b[aä]um\w*|samen|wiese|spross|blüte\w*)\b""",
+                        RegexOption.IGNORE_CASE,
+                    ),
+            )
+        plantWords.forEach { (dir, words) ->
+            val found = texts(dir).filter { words.containsMatchIn(it) }
+            assertTrue(found.isEmpty(), "$dir still mentions the plant: $found")
+        }
     }
 
     @Test

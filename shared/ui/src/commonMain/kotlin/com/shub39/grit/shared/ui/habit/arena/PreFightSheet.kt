@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.arena.ArenaState
 import com.shub39.grit.core.arena.Opponent
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.fighter.FighterCharacter
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.shared.ui.components.GritBottomSheet
 import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
@@ -80,7 +79,8 @@ fun PreFightSheet(
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 FighterAvatar(
-                    character = FighterCharacter.of(avatar.data.look),
+                    character = avatar.data.character,
+                    colors = avatar.data.colors,
                     rank = avatar.fighter.rank,
                     mood = FighterMood.READY,
                     outfit = avatar.data.outfit,

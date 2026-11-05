@@ -17,7 +17,6 @@
 package com.shub39.grit.shared.ui.setting
 
 import androidx.compose.ui.graphics.Color
-import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.theme.AppTheme
 import com.shub39.grit.core.theme.Fonts
 import com.shub39.grit.core.theme.PaletteStyle
@@ -52,14 +51,17 @@ sealed interface SettingsAction {
 
     data class ChangeMotivationPopup(val pref: Boolean) : SettingsAction
 
-    /** fork: switch the plant's daily greeting on or off */
+    /** fork: switch the fighter's daily greeting on or off */
     data class ChangeDailyGreeting(val pref: Boolean) : SettingsAction
 
-    /** fork (#139): change how the plant calls the user; empty removes the name */
+    /** fork (#139): change how the fighter calls the user; empty removes the name */
     data class ChangeUserName(val name: String) : SettingsAction
 
-    /** fork (#140): switch the fighter's look; rank, stats, water and purchases stay */
-    data class ChangeFighterLook(val look: FighterLook) : SettingsAction
+    /**
+     * fork (#16): give the fighter a new name, blank brings back the default. The fighter itself
+     * and its colours are picked once at setup and cannot be changed (#26).
+     */
+    data class RenameFighter(val name: String) : SettingsAction
 
     data object OnSettingsOpened : SettingsAction
 

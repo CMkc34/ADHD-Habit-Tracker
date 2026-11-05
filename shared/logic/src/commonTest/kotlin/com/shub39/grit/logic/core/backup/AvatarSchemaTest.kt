@@ -19,6 +19,8 @@ package com.shub39.grit.logic.core.backup
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.Shop
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterLook
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -52,6 +54,8 @@ class AvatarSchemaTest {
                 decorations = setOf("prop_gong"),
                 userName = "Lena",
                 look = FighterLook.MIRA,
+                fighterCharacter = FighterCharacter.SHADOW_RUNNER,
+                fighterColors = FighterColors(skin = 2, hair = 4, main = 1, accent = 3),
             )
 
         val exported = Json.encodeToString(schema(data.toAvatarSchema()))
@@ -111,5 +115,43 @@ class AvatarSchemaTest {
         val old = """{"habits":[],"habitStatus":[],"tasks":[],"categories":[],"subTasks":[]}"""
 
         assertNull(json.decodeFromString<ExportSchema>(old).avatar)
+    }
+
+    @Test
+    fun `the fighter choice is stored with its colours`() {
+        val data =
+            AvatarData(
+                fighterCharacter = FighterCharacter.KARATEKA,
+                fighterColors = FighterColors(skin = 0, hair = 1, main = 2, accent = 3),
+            )
+
+        val schema = data.toAvatarSchema()
+
+        assertEquals("karateka", schema.fighterCharacter)
+        assertEquals("0|1|2|3", schema.fighterColors)
+    }
+
+    @Test
+    fun `a backup from before the fighter choice keeps the old look`() {
+        val old = """{"habits":[],"habitStatus":[],"avatar":{"name":"","species":"cherry"}}"""
+
+        val avatar = json.decodeFromString<ExportSchema>(old).avatar!!.toAvatarData()
+
+        assertNull(avatar.fighterCharacter)
+        assertNull(avatar.fighterColors)
+        assertEquals(FighterCharacter.SPARK_PRODIGY, avatar.character)
+        assertFalse("fighterCharacter" in Json.encodeToString(schema(avatar.toAvatarSchema())))
+    }
+
+    @Test
+    fun `broken fighter colours in a backup fall back to the defaults`() {
+        val old =
+            """{"habits":[],"habitStatus":[],"avatar":{"fighterCharacter":"street_brawler",""" +
+                """"fighterColors":"9|x"}}"""
+
+        val avatar = json.decodeFromString<ExportSchema>(old).avatar!!.toAvatarData()
+
+        assertEquals(FighterCharacter.STREET_BRAWLER, avatar.character)
+        assertEquals(FighterCharacter.STREET_BRAWLER.defaultColors, avatar.colors)
     }
 }

@@ -16,7 +16,8 @@
  */
 package com.shub39.grit.core.avatar
 
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.FighterState
@@ -34,9 +35,9 @@ data class AvatarState(
     val owned: Set<String>
         get() = Shop.owned(data.purchases)
 
-    /** The fighter's name: the one the user gave, otherwise the name of its look. */
+    /** The fighter's name: the one the user gave, otherwise the default name of its character. */
     val name: String
-        get() = data.name.ifBlank { data.look.defaultName }
+        get() = data.displayName
 
     /**
      * A rank reached since the user last looked, `null` when there is nothing new. The rank number
@@ -95,8 +96,11 @@ interface AvatarRepo {
     /** Stores how the fighter calls the user, see [UserName.clean]. */
     suspend fun setUserName(name: String)
 
-    /** Switches the fighter's look; rank, stats, water and purchases stay. */
-    suspend fun setLook(look: FighterLook)
+    /**
+     * Stores the fighter and colours picked at setup (#26). Only the setup calls this: afterwards
+     * the choice is final.
+     */
+    suspend fun chooseFighter(character: FighterCharacter, colors: FighterColors)
 
     /**
      * Puts an owned item on or takes it off (a prop is shown or hidden in the training ground).

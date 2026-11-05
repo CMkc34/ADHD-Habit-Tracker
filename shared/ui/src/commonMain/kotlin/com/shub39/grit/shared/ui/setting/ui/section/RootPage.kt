@@ -50,17 +50,16 @@ import com.shub39.grit.shared.ui.components.endItemShape
 import com.shub39.grit.shared.ui.components.leadingItemShape
 import com.shub39.grit.shared.ui.components.listItemColors
 import com.shub39.grit.shared.ui.components.middleItemShape
-import com.shub39.grit.shared.ui.habit.avatar.defaultFighterName
-import com.shub39.grit.shared.ui.habit.avatar.plantStage
+import com.shub39.grit.shared.ui.habit.avatar.RenameAvatarDialog
+import com.shub39.grit.shared.ui.habit.fighter.characterName
 import com.shub39.grit.shared.ui.setting.SettingsAction
 import com.shub39.grit.shared.ui.setting.SettingsState
-import com.shub39.grit.shared.ui.setting.ui.component.AvatarSpeciesSheet
 import com.shub39.grit.shared.ui.setting.ui.component.LocalePickerSheet
 import com.shub39.grit.shared.ui.setting.ui.component.UserNameDialog
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.*
-import grit.shared.ui.generated.resources.avatar_species_setting
-import grit.shared.ui.generated.resources.avatar_species_setting_hint
+import grit.shared.ui.generated.resources.fighter_setting
+import grit.shared.ui.generated.resources.fighter_setting_hint
 import grit.shared.ui.generated.resources.user_name_setting
 import grit.shared.ui.generated.resources.user_name_setting_empty
 import kotlinx.datetime.DayOfWeek
@@ -82,7 +81,7 @@ fun RootPage(
     PageFill(modifier = modifier.fillMaxSize()) {
         var showLocalePicker by rememberSaveable { mutableStateOf(false) }
         var showUserName by rememberSaveable { mutableStateOf(false) }
-        var showAvatarSpecies by rememberSaveable { mutableStateOf(false) }
+        var showFighterName by rememberSaveable { mutableStateOf(false) }
 
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
         Column(
@@ -211,24 +210,25 @@ fun RootPage(
                                 Modifier.clip(middleItemShape()).clickable { showUserName = true },
                         )
 
-                        // fork (#140): which plant grows on the meadow
+                        // fork (#16): the fighter's name; the fighter itself is final (#26)
                         ListItem(
                             headlineContent = {
-                                Text(text = stringResource(Res.string.avatar_species_setting))
+                                Text(text = stringResource(Res.string.fighter_setting))
                             },
                             supportingContent = {
                                 Text(
                                     text =
                                         stringResource(
-                                            Res.string.avatar_species_setting_hint,
-                                            defaultFighterName(state.avatar.look),
+                                            Res.string.fighter_setting_hint,
+                                            state.avatar.displayName,
+                                            characterName(state.avatar.character),
                                         )
                                 )
                             },
                             colors = listItemColors(),
                             modifier =
                                 Modifier.clip(middleItemShape()).clickable {
-                                    showAvatarSpecies = true
+                                    showFighterName = true
                                 },
                         )
 
@@ -410,12 +410,15 @@ fun RootPage(
                 )
             }
 
-            if (showAvatarSpecies) {
-                AvatarSpeciesSheet(
-                    avatar = state.avatar,
-                    stage = state.avatarRank.plantStage,
-                    onSelect = { onAction(SettingsAction.ChangeFighterLook(it)) },
-                    onDismiss = { showAvatarSpecies = false },
+            if (showFighterName) {
+                RenameAvatarDialog(
+                    currentName = state.avatar.name,
+                    defaultName = state.avatar.character.defaultName,
+                    onSave = {
+                        onAction(SettingsAction.RenameFighter(it))
+                        showFighterName = false
+                    },
+                    onDismiss = { showFighterName = false },
                 )
             }
         }

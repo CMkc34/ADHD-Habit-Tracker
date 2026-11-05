@@ -16,7 +16,8 @@
  */
 package com.shub39.grit.shared.ui.habit
 
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.style.RoutineStyle
@@ -78,15 +79,21 @@ sealed interface HabitsAction {
     /** close the popup for the daily bonus */
     data object DismissBonusPopup : HabitsAction
 
-    /** show the plant's greeting if it was not shown today yet, sent when the app comes up */
+    /** show the fighter's greeting if it was not shown today yet, sent when the app comes up */
     data object CheckDailyGreeting : HabitsAction
 
     /** close the daily greeting; the welcome greeting opens the add sheet afterwards */
     data object DismissDailyGreeting : HabitsAction
 
-    /** finish the first start setup with the user's [name] (empty skips it, #139) and [look] */
-    data class FinishNameSetup(val name: String, val look: FighterLook = FighterLook.DEFAULT) :
+    /**
+     * pick the fighter and its colours on the first start (#26); ignored outside the setup, because
+     * the choice is final
+     */
+    data class ChooseFighter(val character: FighterCharacter, val colors: FighterColors) :
         HabitsAction
+
+    /** finish the first start setup with the user's [name] (empty skips it, #139) */
+    data class FinishNameSetup(val name: String) : HabitsAction
 
     /** close the freeze notice and remember its freezes as seen */
     data object DismissFreezeNotice : HabitsAction

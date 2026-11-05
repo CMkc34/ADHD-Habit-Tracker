@@ -96,4 +96,26 @@
     <!-- Motivation pop-up after a check-in (#15) -->
     <string name="fighter_popup_xp">+1 %1$s XP</string>
     <string name="fighter_popup_ticket">+1 🎟 fight ticket</string>
+
+    <!-- The five fighters and the picker at setup (#26). The names (Kai, Rook, …) are in the code. -->
+    <string name="fighter_character_wind_monk">Wind Monk</string>
+    <string name="fighter_character_wind_monk_desc">calm and light on their feet, with a flowing scarf</string>
+    <string name="fighter_character_street_brawler">Street Brawler</string>
+    <string name="fighter_character_street_brawler_desc">hoodie, gloves and a lot of heart</string>
+    <string name="fighter_character_shadow_runner">Shadow Runner</string>
+    <string name="fighter_character_shadow_runner_desc">masked, quick and quiet</string>
+    <string name="fighter_character_spark_prodigy">Spark Prodigy</string>
+    <string name="fighter_character_spark_prodigy_desc">goggles, wild hair and bright ideas</string>
+    <string name="fighter_character_karateka">Karateka</string>
+    <string name="fighter_character_karateka_desc">a classic gi and clean technique</string>
+    <string name="fighter_slot_skin">Skin</string>
+    <string name="fighter_slot_hair">Hair</string>
+    <string name="fighter_slot_main">Main colour</string>
+    <string name="fighter_slot_accent">Accent</string>
+    <string name="fighter_picker_previous">Previous fighter</string>
+    <string name="fighter_picker_next">Next fighter</string>
+    <string name="fighter_picker_random">Random colours</string>
+    <string name="fighter_picker_reset">Reset colours</string>
+    <!-- %1$s = slot name, %2$d = number of the colour, %3$d = number of colours -->
+    <string name="fighter_picker_swatch">%1$s, colour %2$d of %3$d</string>
 </resources>

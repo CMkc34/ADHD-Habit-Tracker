@@ -19,6 +19,8 @@ package com.shub39.grit.logic.core.backup
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterLook
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -40,6 +42,11 @@ data class AvatarSchema(
     val userName: String = "",
     // #140: which plant grows; since phase 6 the FighterLook id, which keeps the plant ids
     val species: String = FighterLook.DEFAULT.id,
+    // #26: the fighter picked at setup (FighterCharacter.id) and its colours
+    // (skin|hair|main|accent),
+    // null in backups from before the choice
+    val fighterCharacter: String? = null,
+    val fighterColors: String? = null,
 )
 
 @Serializable data class PurchaseSchema(val itemId: String, val date: String, val price: Int)
@@ -54,10 +61,13 @@ fun AvatarData.toAvatarSchema(): AvatarSchema {
         decorations = decorations.sorted(),
         userName = userName,
         species = look.id,
+        fighterCharacter = fighterCharacter?.id,
+        fighterColors = fighterCharacter?.let { colors.encode() },
     )
 }
 
 fun AvatarSchema.toAvatarData(): AvatarData {
+    val character = FighterCharacter.fromIdOrNull(fighterCharacter)
     return AvatarData(
         name = name,
         purchases = purchases.map { Purchase(it.itemId, LocalDate.parse(it.date), it.price) },
@@ -67,5 +77,7 @@ fun AvatarSchema.toAvatarData(): AvatarData {
         decorations = decorations.toSet(),
         userName = userName,
         look = FighterLook.fromId(species),
+        fighterCharacter = character,
+        fighterColors = character?.let { FighterColors.decode(fighterColors, it.defaultColors) },
     )
 }

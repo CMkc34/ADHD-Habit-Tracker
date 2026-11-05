@@ -40,6 +40,12 @@
     <string name="energy_rule_frozen_day">Ein gefrorener Tag hält deine Serie, zählt aber nicht mit.</string>
     <string name="energy_rule_break">Reißt die Serie trotzdem, bleibt dein Wasser erhalten.</string>
     <string name="energy_rule_auto_freeze">Mit dem Schalter „Freezes automatisch einsetzen“ kannst du Freezes ausschalten, um Wasser für den Shop zu sparen.</string>
+    <!-- So wird der Kämpfer stärker (#16); %1$d = Anzahl der Ränge / Kampf-Tickets pro Tag -->
+    <string name="energy_fighter_rules_title">So wird dein Kämpfer stärker</string>
+    <string name="energy_fighter_rule_stats">Jede Routine trainiert einen Wert: Kraft, Tempo, Ausdauer oder Fokus. Jedes Häkchen gibt diesem Wert XP.</string>
+    <string name="energy_fighter_rule_rank">Aktive Tage bringen deinen Kämpfer im Rang nach oben, bis Rang %1$d. Ein Rang geht nie verloren.</string>
+    <string name="energy_fighter_rule_tickets">Jede Routine, die du heute schaffst, gibt ein Kampf-Ticket für die Arena, bis zu %1$d am Tag. Tickets verfallen um Mitternacht.</string>
+    <string name="energy_fighter_rule_water">Wasser kauft Ausrüstung im Shop, stärker machen deinen Kämpfer aber nur deine Routinen.</string>
     <!-- Schalter für automatische Freezes -->
     <string name="energy_auto_freeze_title">Freezes automatisch einsetzen</string>
     <string name="energy_auto_freeze_on">Verpasste Tage werden mit Wasser gerettet, wenn es reicht.</string>
@@ -65,6 +71,6 @@
     <!-- Bonus-Pop-up nach dem Eintrag, der den Tagesbonus bringt: reason: %1$d = nötige Routinen; balance: %1$d = Wasser jetzt -->
     <string name="bonus_popup_header">Tagesbonus</string>
     <string name="bonus_popup_reason">%1$d Routinen an einem Tag!</string>
-    <string name="bonus_popup_text">Extra-Wasser für deine Pflanze.</string>
+    <string name="bonus_popup_text">Extra-Wasser für den Shop.</string>
     <string name="bonus_popup_balance">Du hast jetzt 💧 %1$d</string>
 </resources>

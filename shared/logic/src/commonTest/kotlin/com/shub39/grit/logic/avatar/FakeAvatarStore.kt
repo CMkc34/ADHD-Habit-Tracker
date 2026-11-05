@@ -19,7 +19,8 @@ package com.shub39.grit.logic.avatar
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarStore
 import com.shub39.grit.core.avatar.Purchase
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterStat
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,8 +39,8 @@ class FakeAvatarStore(initial: AvatarData = AvatarData()) : AvatarStore {
         data.update { it.copy(userName = name) }
     }
 
-    override suspend fun setLook(look: FighterLook) {
-        data.update { it.copy(look = look) }
+    override suspend fun setFighter(character: FighterCharacter, colors: FighterColors) {
+        data.update { it.copy(fighterCharacter = character, fighterColors = colors) }
     }
 
     override suspend fun addPurchase(purchase: Purchase) {

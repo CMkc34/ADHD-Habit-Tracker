@@ -40,6 +40,12 @@
     <string name="energy_rule_frozen_day">A frozen day keeps your streak alive but does not count towards it.</string>
     <string name="energy_rule_break">If your streak breaks anyway, you keep your water.</string>
     <string name="energy_rule_auto_freeze">Turn off “Use freezes automatically” to save water for the shop.</string>
+    <!-- How the fighter gets stronger (#16); %1$d = number of ranks / fight tickets per day -->
+    <string name="energy_fighter_rules_title">How your fighter gets stronger</string>
+    <string name="energy_fighter_rule_stats">Every routine trains one stat: Strength, Speed, Stamina or Focus. Each check-off gives that stat XP.</string>
+    <string name="energy_fighter_rule_rank">Active days raise your fighter’s rank, up to rank %1$d. A rank is never lost.</string>
+    <string name="energy_fighter_rule_tickets">Every routine you finish today gives a fight ticket for the arena, up to %1$d a day. Tickets run out at midnight.</string>
+    <string name="energy_fighter_rule_water">Water buys gear in the shop, but only your routines make your fighter stronger.</string>
     <!-- Switch for automatic freezes -->
     <string name="energy_auto_freeze_title">Use freezes automatically</string>
     <string name="energy_auto_freeze_on">Missed days are saved with water when there is enough.</string>
@@ -65,6 +71,6 @@
     <!-- Bonus pop-up after the check-in that earns the daily bonus: reason: %1$d = routines needed; balance: %1$d = water now -->
     <string name="bonus_popup_header">Daily bonus</string>
     <string name="bonus_popup_reason">%1$d routines in one day!</string>
-    <string name="bonus_popup_text">Extra water for your plant.</string>
+    <string name="bonus_popup_text">Extra water for the shop.</string>
     <string name="bonus_popup_balance">You now have 💧 %1$d</string>
 </resources>

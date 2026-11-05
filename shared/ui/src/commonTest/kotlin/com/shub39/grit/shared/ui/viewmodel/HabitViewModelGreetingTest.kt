@@ -17,7 +17,8 @@
 package com.shub39.grit.shared.ui.viewmodel
 
 import com.shub39.grit.core.avatar.AvatarData
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.motivation.GreetingKind
 import com.shub39.grit.core.now
@@ -135,21 +136,60 @@ class HabitViewModelGreetingTest {
             viewModel.onAction(HabitsAction.FinishNameSetup(""))
 
             assertEquals("", avatarRepo.data.value.userName)
-            assertEquals(FighterLook.KAI, avatarRepo.data.value.look)
+            assertNull(avatarRepo.data.value.fighterCharacter)
             assertTrue(motivationSettings.setupDone.value)
             assertNotNull(viewModel.dailyGreeting.value)
         }
 
     @Test
-    fun `the look chosen in the setup is stored`() =
+    fun `the fighter chosen in the setup is stored with its colours`() =
         runTest(dispatcher) {
             val viewModel = viewModel(habits = emptyList())
+            val colors = FighterColors(skin = 1, hair = 2, main = 3, accent = 4)
 
             viewModel.onAction(HabitsAction.CheckDailyGreeting)
-            viewModel.onAction(HabitsAction.FinishNameSetup("Lena", FighterLook.MIRA))
+            viewModel.onAction(HabitsAction.ChooseFighter(FighterCharacter.SHADOW_RUNNER, colors))
+            viewModel.onAction(HabitsAction.FinishNameSetup("Lena"))
 
-            assertEquals(FighterLook.MIRA, avatarRepo.data.value.look)
+            assertEquals(FighterCharacter.SHADOW_RUNNER, avatarRepo.data.value.character)
+            assertEquals(colors, avatarRepo.data.value.colors)
             assertNotNull(viewModel.dailyGreeting.value)
+        }
+
+    @Test
+    fun `the fighter cannot be changed after the setup`() =
+        runTest(dispatcher) {
+            val viewModel = viewModel(habits = emptyList())
+            val colors = FighterColors(skin = 1, hair = 2, main = 3, accent = 4)
+
+            viewModel.onAction(HabitsAction.CheckDailyGreeting)
+            viewModel.onAction(HabitsAction.ChooseFighter(FighterCharacter.KARATEKA, colors))
+            viewModel.onAction(HabitsAction.FinishNameSetup(""))
+            viewModel.onAction(
+                HabitsAction.ChooseFighter(
+                    FighterCharacter.STREET_BRAWLER,
+                    FighterCharacter.STREET_BRAWLER.defaultColors,
+                )
+            )
+
+            assertEquals(FighterCharacter.KARATEKA, avatarRepo.data.value.character)
+            assertEquals(colors, avatarRepo.data.value.colors)
+        }
+
+    @Test
+    fun `an install already in use cannot choose a fighter`() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+
+            viewModel.onAction(HabitsAction.CheckDailyGreeting)
+            viewModel.onAction(
+                HabitsAction.ChooseFighter(
+                    FighterCharacter.STREET_BRAWLER,
+                    FighterCharacter.STREET_BRAWLER.defaultColors,
+                )
+            )
+
+            assertNull(avatarRepo.data.value.fighterCharacter)
         }
 
     @Test

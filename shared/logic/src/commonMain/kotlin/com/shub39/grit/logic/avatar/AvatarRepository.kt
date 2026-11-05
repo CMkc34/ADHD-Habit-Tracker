@@ -26,7 +26,8 @@ import com.shub39.grit.core.avatar.Shop
 import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.avatar.ShopItemKind
 import com.shub39.grit.core.avatar.UserName
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.FighterState
@@ -93,7 +94,8 @@ class AvatarRepository(
 
     override suspend fun setUserName(name: String) = store.setUserName(UserName.clean(name))
 
-    override suspend fun setLook(look: FighterLook) = store.setLook(look)
+    override suspend fun chooseFighter(character: FighterCharacter, colors: FighterColors) =
+        store.setFighter(character, colors)
 
     override suspend fun wear(itemId: String, worn: Boolean) {
         val item = ShopCatalog.byId(itemId) ?: return

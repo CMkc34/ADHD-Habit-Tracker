@@ -216,7 +216,7 @@ class SettingsViewModel(
 
                 is SettingsAction.ChangeUserName -> avatarRepo.setUserName(action.name)
 
-                is SettingsAction.ChangeFighterLook -> avatarRepo.setLook(action.look)
+                is SettingsAction.RenameFighter -> avatarRepo.rename(action.name.trim())
 
                 OnSettingsOpened -> {
                     analytics.trackEvent(AnalyticsEvent.SETTINGS_OPENED, emptyMap())
