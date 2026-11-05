@@ -50,6 +50,7 @@ import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.ShopItem
 import com.shub39.grit.core.avatar.ShopItemKind
+import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterState
@@ -57,14 +58,15 @@ import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
 import com.shub39.grit.shared.ui.habit.HabitsAction
+import com.shub39.grit.shared.ui.habit.fighter.FighterShopScene
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.nav_arrow_back
-import grit.shared.ui.generated.resources.shop_accessories
-import grit.shared.ui.generated.resources.shop_decorations
-import grit.shared.ui.generated.resources.shop_pot_colors
+import grit.shared.ui.generated.resources.shop_gear
+import grit.shared.ui.generated.resources.shop_outfits
 import grit.shared.ui.generated.resources.shop_seasonal
 import grit.shared.ui.generated.resources.shop_title
+import grit.shared.ui.generated.resources.shop_training_ground
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -72,25 +74,24 @@ import org.jetbrains.compose.resources.vectorResource
 
 /** The tabs of the shop page; seasonal items get their own tab, whatever kind they are. */
 private enum class ShopTab(val title: StringResource) {
-    POTS(Res.string.shop_pot_colors),
-    ACCESSORIES(Res.string.shop_accessories),
-    DECORATIONS(Res.string.shop_decorations),
+    OUTFITS(Res.string.shop_outfits),
+    GEAR(Res.string.shop_gear),
+    TRAINING_GROUND(Res.string.shop_training_ground),
     SEASON(Res.string.shop_seasonal);
 
     fun items(offered: List<ShopItem>): List<ShopItem> =
         when (this) {
-            POTS -> offered.filter { it.season == null && it.kind == ShopItemKind.POT_COLOR }
-            ACCESSORIES -> offered.filter { it.season == null && it.kind == ShopItemKind.ACCESSORY }
-            DECORATIONS ->
-                offered.filter { it.season == null && it.kind == ShopItemKind.DECORATION }
+            OUTFITS -> offered.filter { it.season == null && it.kind == ShopItemKind.OUTFIT }
+            GEAR -> offered.filter { it.season == null && it.kind == ShopItemKind.GEAR }
+            TRAINING_GROUND -> offered.filter { it.season == null && it.kind == ShopItemKind.PROP }
             SEASON -> offered.filter { it.season != null }
         }
 }
 
 /**
- * Own page for the shop, opened from the Avatar tab: the meadow on top shows at once what the plant
- * wears, below it one tab per kind of item. The "Season" tab only shows while seasonal items are
- * for sale or after some were bought.
+ * Own page for the shop, opened from the Avatar tab: the fighter on top shows at once what it
+ * wears, below it one tab per kind of item (#7). The "Season" tab only shows while seasonal items
+ * are for sale or after some were bought.
  */
 @Composable
 fun AvatarShopPage(
@@ -100,7 +101,7 @@ fun AvatarShopPage(
     modifier: Modifier = Modifier,
 ) {
     val windowSizeClass = LocalWindowSizeClass.current
-    var selected by rememberSaveable { mutableIntStateOf(ShopTab.POTS.ordinal) }
+    var selected by rememberSaveable { mutableIntStateOf(ShopTab.OUTFITS.ordinal) }
     var itemToBuy by remember { mutableStateOf<ShopItem?>(null) }
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -138,7 +139,7 @@ fun AvatarShopPage(
 
         val offered = avatar.offered
         val tabs = ShopTab.entries.filter { it != ShopTab.SEASON || it.items(offered).isNotEmpty() }
-        val current = tabs.firstOrNull { it.ordinal == selected } ?: ShopTab.POTS
+        val current = tabs.firstOrNull { it.ordinal == selected } ?: ShopTab.OUTFITS
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
@@ -147,14 +148,10 @@ fun AvatarShopPage(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                MeadowScene(
-                    stage = avatar.fighter.rank.plantStage,
-                    mood = avatar.fighter.mood.plantMood,
-                    potColor = avatar.data.potColor,
-                    accessories = avatar.data.accessories,
-                    decorations = avatar.data.decorations,
-                    weather = avatar.fighter.weather,
-                    species = avatar.data.look,
+                FighterShopScene(
+                    data = avatar.data,
+                    rank = avatar.fighter.rank,
+                    mood = avatar.fighter.mood,
                     modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth(),
                 )
             }
@@ -218,11 +215,11 @@ private fun AvatarShopPagePreview() {
                     AvatarData(
                         purchases =
                             listOf(
-                                Purchase("pot_blue", LocalDate(2026, 10, 1), 10),
-                                Purchase("acc_ladybug", LocalDate(2026, 10, 2), 15),
+                                Purchase(FighterItems.GI_BLUE, LocalDate(2026, 10, 1), 10),
+                                Purchase(FighterItems.SWEATBAND, LocalDate(2026, 10, 2), 10),
                             ),
-                        potColor = "pot_blue",
-                        accessories = setOf("acc_ladybug"),
+                        outfit = FighterItems.GI_BLUE,
+                        accessories = setOf(FighterItems.SWEATBAND),
                     ),
             ),
         onAction = {},

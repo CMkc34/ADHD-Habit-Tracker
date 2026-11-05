@@ -28,7 +28,11 @@ data class AvatarData(
      * but are neither owned nor charged (SPEC 9.8).
      */
     val purchases: List<Purchase> = emptyList(),
-    val potColor: String = ShopCatalog.DEFAULT_POT_COLOR,
+    /**
+     * The worn outfit ([ShopItemKind.OUTFIT]), `null` while the fighter wears the colours chosen at
+     * setup. Stored where the plant's pot colour was.
+     */
+    val outfit: String? = null,
     val accessories: Set<String> = emptySet(),
     /** Bought decorations that are shown in the scene. */
     val decorations: Set<String> = emptySet(),
@@ -59,7 +63,7 @@ data class AvatarData(
                     .groupBy { it.itemId }
                     .map { (_, sameItem) -> sameItem.minBy { it.date } }
                     .sortedBy { it.date },
-            potColor = if (potColor == ShopCatalog.DEFAULT_POT_COLOR) backup.potColor else potColor,
+            outfit = outfit ?: backup.outfit,
             accessories = accessories.ifEmpty { backup.accessories },
             decorations = decorations.ifEmpty { backup.decorations },
             seenStage = maxOf(seenStage, backup.seenStage),
@@ -83,7 +87,8 @@ interface AvatarStore {
 
     suspend fun addPurchase(purchase: Purchase)
 
-    suspend fun setPotColor(itemId: String)
+    /** Puts on the outfit [itemId], or takes the outfit off with `null`. */
+    suspend fun setOutfit(itemId: String?)
 
     suspend fun setAccessory(itemId: String, worn: Boolean)
 

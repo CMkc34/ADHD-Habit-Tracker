@@ -121,7 +121,7 @@ fun AvatarPage(
             MeadowScene(
                 stage = avatar.fighter.rank.plantStage,
                 mood = avatar.fighter.mood.plantMood,
-                potColor = avatar.data.potColor,
+                potColor = avatar.data.outfit.orEmpty(),
                 accessories = avatar.data.accessories,
                 decorations = avatar.data.decorations,
                 weather = avatar.fighter.weather,
@@ -312,7 +312,7 @@ private fun AvatarPageWithPurchasesPreview() {
                                 Purchase("acc_ladybug", LocalDate(2026, 10, 2), 15),
                                 Purchase("deco_rabbit", LocalDate(2026, 10, 3), 30),
                             ),
-                        potColor = "pot_blue",
+                        outfit = "pot_blue",
                         accessories = setOf("acc_ladybug"),
                         decorations = setOf("deco_rabbit"),
                     ),

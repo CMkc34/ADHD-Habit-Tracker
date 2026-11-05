@@ -167,7 +167,7 @@ class HabitViewModelGreetingTest {
     @Test
     fun `greeting shows the current plant`() =
         runTest(dispatcher) {
-            avatarRepo.data.value = AvatarData(name = "Fritz", potColor = "pot_blue")
+            avatarRepo.data.value = AvatarData(name = "Fritz", outfit = "gi_blue")
             activityRepo.markActive(yesterday)
             val viewModel = viewModel()
 
@@ -176,7 +176,7 @@ class HabitViewModelGreetingTest {
             val greeting = assertNotNull(viewModel.dailyGreeting.value)
             assertEquals(GreetingKind.GROWING, greeting.kind)
             assertEquals("Fritz", greeting.avatar.data.name)
-            assertEquals("pot_blue", greeting.avatar.data.potColor)
+            assertEquals("gi_blue", greeting.avatar.data.outfit)
             assertEquals(1, greeting.activityStreak)
 
             viewModel.onAction(HabitsAction.DismissDailyGreeting)

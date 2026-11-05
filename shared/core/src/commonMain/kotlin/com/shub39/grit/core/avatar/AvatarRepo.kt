@@ -70,17 +70,17 @@ data class AvatarState(
 
     fun isWorn(item: ShopItem): Boolean =
         when (item.kind) {
-            ShopItemKind.POT_COLOR -> data.potColor == item.id
-            ShopItemKind.ACCESSORY -> item.id in data.accessories
-            ShopItemKind.DECORATION -> item.id in data.decorations
+            ShopItemKind.OUTFIT -> data.outfit == item.id
+            ShopItemKind.GEAR -> item.id in data.accessories
+            ShopItemKind.PROP -> item.id in data.decorations
         }
 
     /** What the fighter would look like with [item] on, for the preview before buying. */
     fun tryOn(item: ShopItem): AvatarData =
         when (item.kind) {
-            ShopItemKind.POT_COLOR -> data.copy(potColor = item.id)
-            ShopItemKind.ACCESSORY -> data.copy(accessories = data.accessories + item.id)
-            ShopItemKind.DECORATION -> data.copy(decorations = data.decorations + item.id)
+            ShopItemKind.OUTFIT -> data.copy(outfit = item.id)
+            ShopItemKind.GEAR -> data.copy(accessories = data.accessories + item.id)
+            ShopItemKind.PROP -> data.copy(decorations = data.decorations + item.id)
         }
 }
 
@@ -99,8 +99,8 @@ interface AvatarRepo {
     suspend fun setLook(look: FighterLook)
 
     /**
-     * Puts an owned item on or takes it off (a decoration is shown or hidden in the scene); an
-     * outfit can only be replaced, not removed.
+     * Puts an owned item on or takes it off (a prop is shown or hidden in the training ground).
+     * Taking the outfit off brings back the colours chosen at setup.
      */
     suspend fun wear(itemId: String, worn: Boolean)
 

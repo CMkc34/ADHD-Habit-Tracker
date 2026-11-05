@@ -42,14 +42,14 @@ class AvatarSchemaTest {
                 name = "Fern",
                 purchases =
                     listOf(
-                        Purchase("pot_blue", LocalDate(2026, 10, 20), 10),
-                        Purchase("acc_ladybug", LocalDate(2026, 10, 22), 15),
-                        Purchase("deco_pond", LocalDate(2026, 10, 29), 50),
+                        Purchase("gi_blue", LocalDate(2026, 10, 20), 10),
+                        Purchase("gear_sweatband", LocalDate(2026, 10, 22), 10),
+                        Purchase("prop_gong", LocalDate(2026, 10, 29), 60),
                     ),
-                potColor = "pot_blue",
-                accessories = setOf("acc_ladybug"),
+                outfit = "gi_blue",
+                accessories = setOf("gear_sweatband"),
                 seenStage = 5,
-                decorations = setOf("deco_pond"),
+                decorations = setOf("prop_gong"),
                 userName = "Lena",
                 look = FighterLook.MIRA,
             )
@@ -58,6 +58,22 @@ class AvatarSchemaTest {
         val imported = json.decodeFromString<ExportSchema>(exported)
 
         assertEquals(data, imported.avatar?.toAvatarData())
+    }
+
+    @Test
+    fun `no outfit is left out of the backup and comes back as none`() {
+        val exported = Json.encodeToString(schema(AvatarData(name = "Fern").toAvatarSchema()))
+
+        assertFalse("potColor" in exported)
+        assertNull(json.decodeFromString<ExportSchema>(exported).avatar?.toAvatarData()?.outfit)
+    }
+
+    @Test
+    fun `a plant pot colour in an old backup is no outfit`() {
+        val old =
+            """{"habits":[],"habitStatus":[],"avatar":{"name":"Fern","potColor":"pot_blue"}}"""
+
+        assertNull(json.decodeFromString<ExportSchema>(old).avatar?.toAvatarData()?.outfit)
     }
 
     @Test

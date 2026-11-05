@@ -16,16 +16,21 @@
  */
 package com.shub39.grit.core.avatar
 
+import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterRank
 import kotlinx.datetime.LocalDate
 
 enum class ShopItemKind {
-    /** Exactly one is worn at a time. */
-    POT_COLOR,
-    /** Any number can be worn. */
-    ACCESSORY,
-    /** Stands on its own fixed spot in the scene; any number can be shown. */
-    DECORATION,
+    /**
+     * A gi colour. At most one is worn; it replaces the main colour chosen at setup, and taking it
+     * off brings that colour back. None is free: after setup the look only changes with bought
+     * items.
+     */
+    OUTFIT,
+    /** Worn by the fighter; any number at the same time. */
+    GEAR,
+    /** Stands on its own fixed spot in the training ground; any number can be shown. */
+    PROP,
 }
 
 data class ShopItem(
@@ -47,38 +52,40 @@ data class ShopItem(
  */
 data class Purchase(val itemId: String, val date: LocalDate, val price: Int)
 
-/** Everything the avatar can wear. The ids are stored with each purchase, so they never change. */
+/**
+ * Everything the shop sells (SPEC 9.7, #7). Purely cosmetic: water never buys stats. The ids are
+ * stored with each purchase, so they never change; prices and ranks live only here.
+ */
 object ShopCatalog {
-    const val DEFAULT_POT_COLOR = "pot_terracotta"
-
     val items: List<ShopItem> =
         listOf(
-            ShopItem(DEFAULT_POT_COLOR, ShopItemKind.POT_COLOR, 0, FighterRank.ROOKIE),
-            ShopItem("pot_blue", ShopItemKind.POT_COLOR, 10, FighterRank.ROOKIE),
-            ShopItem("pot_yellow", ShopItemKind.POT_COLOR, 10, FighterRank.ROOKIE),
-            ShopItem("pot_green", ShopItemKind.POT_COLOR, 10, FighterRank.ROOKIE),
-            ShopItem("pot_purple", ShopItemKind.POT_COLOR, 15, FighterRank.SPARRING_PARTNER),
-            ShopItem("pot_gold", ShopItemKind.POT_COLOR, 40, FighterRank.FIGHTER),
-            ShopItem("acc_watering_can", ShopItemKind.ACCESSORY, 25, FighterRank.ROOKIE),
-            ShopItem("acc_ladybug", ShopItemKind.ACCESSORY, 15, FighterRank.TRAINEE),
-            ShopItem("acc_butterfly", ShopItemKind.ACCESSORY, 20, FighterRank.BRAWLER),
-            ShopItem("acc_blossoms", ShopItemKind.ACCESSORY, 30, FighterRank.CONTENDER),
-            ShopItem("acc_bird", ShopItemKind.ACCESSORY, 40, FighterRank.VETERAN),
-            ShopItem("acc_birdhouse", ShopItemKind.ACCESSORY, 50, FighterRank.CHAMPION),
-            ShopItem("acc_fruits", ShopItemKind.ACCESSORY, 60, FighterRank.MASTER),
-            ShopItem("acc_fairy_lights", ShopItemKind.ACCESSORY, 70, FighterRank.MASTER),
-            ShopItem("acc_swing", ShopItemKind.ACCESSORY, 80, FighterRank.GRANDMASTER),
-            ShopItem("deco_mushrooms", ShopItemKind.DECORATION, 10, FighterRank.ROOKIE),
-            ShopItem("deco_fence", ShopItemKind.DECORATION, 15, FighterRank.TRAINEE),
-            ShopItem("deco_snail", ShopItemKind.DECORATION, 15, FighterRank.SPARRING_PARTNER),
-            ShopItem("deco_hedgehog", ShopItemKind.DECORATION, 25, FighterRank.CONTENDER),
-            ShopItem("deco_rabbit", ShopItemKind.DECORATION, 30, FighterRank.FIGHTER),
-            ShopItem("deco_bench", ShopItemKind.DECORATION, 40, FighterRank.VETERAN),
-            ShopItem("deco_pond", ShopItemKind.DECORATION, 50, FighterRank.CHAMPION),
-            ShopItem("deco_lantern", ShopItemKind.DECORATION, 45, FighterRank.MASTER),
+            ShopItem(FighterItems.GI_WHITE, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.GI_BLUE, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.GI_RED, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.GI_BLACK, ShopItemKind.OUTFIT, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.GI_PURPLE, ShopItemKind.OUTFIT, 15, FighterRank.SPARRING_PARTNER),
+            ShopItem(FighterItems.GI_GOLD, ShopItemKind.OUTFIT, 40, FighterRank.FIGHTER),
+            ShopItem(FighterItems.SWEATBAND, ShopItemKind.GEAR, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.GLOVES, ShopItemKind.GEAR, 20, FighterRank.TRAINEE),
+            ShopItem(FighterItems.SNEAKERS, ShopItemKind.GEAR, 25, FighterRank.BRAWLER),
+            ShopItem(FighterItems.SUNGLASSES, ShopItemKind.GEAR, 30, FighterRank.CONTENDER),
+            ShopItem(FighterItems.CAPE, ShopItemKind.GEAR, 40, FighterRank.FIGHTER),
+            ShopItem(FighterItems.CHAMPION_BELT, ShopItemKind.GEAR, 70, FighterRank.CHAMPION),
+            ShopItem(FighterItems.CROWN, ShopItemKind.GEAR, 80, FighterRank.GRANDMASTER),
+            ShopItem(FighterItems.MAT, ShopItemKind.PROP, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.WATER_BOTTLE, ShopItemKind.PROP, 10, FighterRank.ROOKIE),
+            ShopItem(FighterItems.PUNCHING_BAG, ShopItemKind.PROP, 25, FighterRank.TRAINEE),
+            ShopItem(FighterItems.DUMBBELLS, ShopItemKind.PROP, 25, FighterRank.SPARRING_PARTNER),
+            ShopItem(FighterItems.WOODEN_DUMMY, ShopItemKind.PROP, 35, FighterRank.CONTENDER),
+            ShopItem(FighterItems.BANNER, ShopItemKind.PROP, 40, FighterRank.CHALLENGER),
+            ShopItem(FighterItems.TROPHY_SHELF, ShopItemKind.PROP, 50, FighterRank.CHAMPION),
+            ShopItem(FighterItems.GONG, ShopItemKind.PROP, 60, FighterRank.MASTER),
         )
 
     fun byId(id: String): ShopItem? = items.firstOrNull { it.id == id }
+
+    /** Whether [id] is an outfit of the catalog; older ids (the plant's pot colours) are not. */
+    fun isOutfit(id: String?): Boolean = id != null && byId(id)?.kind == ShopItemKind.OUTFIT
 }
 
 enum class PurchaseCheck {

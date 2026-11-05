@@ -18,6 +18,7 @@ package com.shub39.grit.core.avatar
 
 import com.shub39.grit.core.activity.ActivityPlanner
 import com.shub39.grit.core.activity.DayStatus
+import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterRank
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,10 +41,36 @@ class ShopTest {
         )
 
     @Test
-    fun `catalog ids are unique and the default pot is free`() {
+    fun `catalog ids are unique and nothing is free`() {
         assertEquals(ShopCatalog.items.size, ShopCatalog.items.map { it.id }.toSet().size)
-        assertEquals(0, ShopCatalog.byId(ShopCatalog.DEFAULT_POT_COLOR)?.price)
-        assertTrue(ShopCatalog.DEFAULT_POT_COLOR in Shop.owned(emptyList()))
+        assertTrue(ShopCatalog.items.all { it.price > 0 })
+        assertEquals(emptySet(), Shop.owned(emptyList()))
+    }
+
+    @Test
+    fun `the catalog sells the fighter's items`() {
+        fun ids(kind: ShopItemKind) = ShopCatalog.items.filter { it.kind == kind }.map { it.id }
+
+        assertEquals(FighterItems.outfits, ids(ShopItemKind.OUTFIT))
+        assertEquals(FighterItems.gear.toSet(), ids(ShopItemKind.GEAR).toSet())
+        assertEquals(FighterItems.props, ids(ShopItemKind.PROP))
+        assertTrue(ShopCatalog.isOutfit(FighterItems.GI_GOLD))
+        assertFalse(ShopCatalog.isOutfit(FighterItems.CAPE))
+        assertFalse(ShopCatalog.isOutfit("pot_terracotta"))
+        assertFalse(ShopCatalog.isOutfit(null))
+    }
+
+    @Test
+    fun `ranks and prices follow the issue table`() {
+        fun item(id: String) = ShopCatalog.byId(id)!!
+
+        assertEquals(10, item(FighterItems.GI_WHITE).price)
+        assertEquals(FighterRank.SPARRING_PARTNER, item(FighterItems.GI_PURPLE).minRank)
+        assertEquals(FighterRank.FIGHTER, item(FighterItems.GI_GOLD).minRank)
+        assertEquals(FighterRank.GRANDMASTER, item(FighterItems.CROWN).minRank)
+        assertEquals(80, item(FighterItems.CROWN).price)
+        assertEquals(FighterRank.MASTER, item(FighterItems.GONG).minRank)
+        assertEquals(60, item(FighterItems.GONG).price)
     }
 
     @Test
@@ -128,9 +155,9 @@ class ShopTest {
 
     @Test
     fun `check refuses owned, locked and too expensive items`() {
-        val bird = ShopCatalog.byId("acc_bird")!!
-        val blue = ShopCatalog.byId("pot_blue")!!
-        val bought = listOf(Purchase("pot_blue", day(0), 10))
+        val cape = ShopCatalog.byId("gear_cape")!!
+        val blue = ShopCatalog.byId("gi_blue")!!
+        val bought = listOf(Purchase("gi_blue", day(0), 10))
 
         assertEquals(
             PurchaseCheck.ALREADY_OWNED,
@@ -139,8 +166,8 @@ class ShopTest {
         assertEquals(
             PurchaseCheck.RANK_TOO_LOW,
             Shop.check(
-                bird,
-                FighterRank.CHALLENGER,
+                cape,
+                FighterRank.CONTENDER,
                 energy = 100,
                 purchases = bought,
                 today = day(0),
@@ -148,20 +175,20 @@ class ShopTest {
         )
         assertEquals(
             PurchaseCheck.NOT_ENOUGH_ENERGY,
-            Shop.check(bird, FighterRank.VETERAN, energy = 39, purchases = bought, today = day(0)),
+            Shop.check(cape, FighterRank.FIGHTER, energy = 39, purchases = bought, today = day(0)),
         )
         assertEquals(
             PurchaseCheck.OK,
-            Shop.check(bird, FighterRank.VETERAN, energy = 40, purchases = bought, today = day(0)),
+            Shop.check(cape, FighterRank.FIGHTER, energy = 40, purchases = bought, today = day(0)),
         )
     }
 
     @Test
     fun `purchases of items no longer in the catalog are not owned`() {
-        val bought = listOf(Purchase("pot_blue", day(0), 10), Purchase("acc_gone", day(0), 25))
+        val bought = listOf(Purchase("gi_blue", day(0), 10), Purchase("acc_gone", day(0), 25))
 
         val owned = Shop.owned(bought)
-        assertTrue("pot_blue" in owned)
+        assertTrue("gi_blue" in owned)
         assertFalse("acc_gone" in owned)
         assertEquals(listOf(bought[0]), Shop.charged(bought))
     }
@@ -178,5 +205,5 @@ class ShopTest {
         )
     }
 
-    private fun buy(price: Int, onDay: Int) = Purchase("pot_blue", day(onDay), price)
+    private fun buy(price: Int, onDay: Int) = Purchase("gi_blue", day(onDay), price)
 }

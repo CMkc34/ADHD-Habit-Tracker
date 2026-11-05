@@ -29,9 +29,9 @@ class SaleWindowTest {
     private val winter = SaleWindow(fromMonth = 12, fromDay = 20, toMonth = 1, toDay = 6)
 
     private val pumpkin =
-        ShopItem("deco_pumpkin", ShopItemKind.DECORATION, 30, FighterRank.ROOKIE, season = autumn)
-    private val mushrooms = ShopCatalog.byId("deco_mushrooms")!!
-    private val items = listOf(mushrooms, pumpkin)
+        ShopItem("deco_pumpkin", ShopItemKind.PROP, 30, FighterRank.ROOKIE, season = autumn)
+    private val mat = ShopCatalog.byId("prop_mat")!!
+    private val items = listOf(mat, pumpkin)
 
     @Test
     fun `a window inside one year includes its first and last day`() {
@@ -51,7 +51,7 @@ class SaleWindowTest {
 
     @Test
     fun `items without a season are always for sale`() {
-        assertTrue(mushrooms.isForSale(LocalDate(2026, 3, 3)))
+        assertTrue(mat.isForSale(LocalDate(2026, 3, 3)))
         assertTrue(
             ShopCatalog.items
                 .filter { it.season == null }
@@ -61,18 +61,15 @@ class SaleWindowTest {
 
     @Test
     fun `the shop hides a seasonal item outside its window`() {
-        assertEquals(
-            listOf(mushrooms, pumpkin),
-            Shop.offered(LocalDate(2026, 11, 3), emptyList(), items),
-        )
-        assertEquals(listOf(mushrooms), Shop.offered(LocalDate(2026, 12, 3), emptyList(), items))
+        assertEquals(listOf(mat, pumpkin), Shop.offered(LocalDate(2026, 11, 3), emptyList(), items))
+        assertEquals(listOf(mat), Shop.offered(LocalDate(2026, 12, 3), emptyList(), items))
     }
 
     @Test
     fun `a bought seasonal item stays after its season`() {
         val bought = listOf(Purchase("deco_pumpkin", LocalDate(2026, 11, 3), 30))
 
-        assertEquals(listOf(mushrooms, pumpkin), Shop.offered(LocalDate(2027, 3, 1), bought, items))
+        assertEquals(listOf(mat, pumpkin), Shop.offered(LocalDate(2027, 3, 1), bought, items))
         assertEquals(
             PurchaseCheck.ALREADY_OWNED,
             Shop.check(pumpkin, FighterRank.ROOKIE, 100, bought, LocalDate(2027, 3, 1)),

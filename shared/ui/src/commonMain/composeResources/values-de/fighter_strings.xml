@@ -31,4 +31,32 @@
     <string name="routine_stat_title">Trainiert</string>
     <string name="routine_stat_moves_xp">Bisherige Check-ins zählen für den neuen Wert</string>
     <string name="routine_stat_description">Trainiert %1$s</string>
+
+    <!-- Shop (#7): Namen folgen den Ids in core.fighter.FighterItems -->
+    <string name="shop_outfits">Outfits</string>
+    <string name="shop_gear">Ausrüstung</string>
+    <string name="shop_training_ground">Trainingsplatz</string>
+    <string name="shop_from_rank">ab Rang %1$d</string>
+    <string name="shop_item_gi_white">Weißer Gi</string>
+    <string name="shop_item_gi_blue">Blauer Gi</string>
+    <string name="shop_item_gi_red">Roter Gi</string>
+    <string name="shop_item_gi_black">Schwarzer Gi</string>
+    <string name="shop_item_gi_purple">Lila Gi</string>
+    <string name="shop_item_gi_gold">Goldener Gi</string>
+    <string name="shop_item_gear_sweatband">Schweißband</string>
+    <string name="shop_item_gear_gloves">Boxhandschuhe</string>
+    <string name="shop_item_gear_sneakers">Turnschuhe</string>
+    <string name="shop_item_gear_cape">Umhang</string>
+    <string name="shop_item_gear_sunglasses">Sonnenbrille</string>
+    <string name="shop_item_gear_champion_belt">Meistergürtel</string>
+    <string name="shop_item_gear_crown">Krone</string>
+    <string name="shop_item_prop_mat">Trainingsmatte</string>
+    <string name="shop_item_prop_water_bottle">Trinkflasche</string>
+    <string name="shop_item_prop_punching_bag">Boxsack</string>
+    <string name="shop_item_prop_dumbbells">Hanteln</string>
+    <string name="shop_item_prop_wooden_dummy">Holzpuppe</string>
+    <string name="shop_item_prop_banner">Banner</string>
+    <string name="shop_item_prop_trophy_shelf">Pokalregal</string>
+    <string name="shop_item_prop_gong">Gong</string>
+    <string name="shop_preview_rank">So sieht es ab Rang %1$d aus. Dein Kämpfer ist auf Rang %2$d.</string>
 </resources>

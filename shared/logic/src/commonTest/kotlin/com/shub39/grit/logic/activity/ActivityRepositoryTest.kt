@@ -125,7 +125,7 @@ class ActivityRepositoryTest {
                 ActivityData(startDate = daysAgo(4), activeDays = (0..4).map(::daysAgo).toSet())
             )
         val avatarStore =
-            FakeAvatarStore(AvatarData(purchases = listOf(Purchase("pot_blue", daysAgo(1), 3))))
+            FakeAvatarStore(AvatarData(purchases = listOf(Purchase("gi_blue", daysAgo(1), 3))))
 
         val report = ActivityRepository(store, avatarStore, noBonus).getActivityReport().first()
 

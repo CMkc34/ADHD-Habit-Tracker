@@ -17,6 +17,7 @@
 package com.shub39.grit.shared.ui.habit.avatar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
@@ -56,50 +58,51 @@ import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.avatar.ShopItem
 import com.shub39.grit.core.avatar.ShopItemKind
 import com.shub39.grit.core.avatar.preview
+import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.components.GritDialog
+import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
+import com.shub39.grit.shared.ui.habit.fighter.FighterShopScene
+import com.shub39.grit.shared.ui.habit.fighter.PropIcon
 import com.shub39.grit.shared.ui.habit.ui.component.WaterText
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.avatar_cancel
 import grit.shared.ui.generated.resources.shop_buy
 import grit.shared.ui.generated.resources.shop_buy_for
 import grit.shared.ui.generated.resources.shop_choose
-import grit.shared.ui.generated.resources.shop_chosen
 import grit.shared.ui.generated.resources.shop_close
 import grit.shared.ui.generated.resources.shop_confirm_text
 import grit.shared.ui.generated.resources.shop_confirm_title
-import grit.shared.ui.generated.resources.shop_from_stage
-import grit.shared.ui.generated.resources.shop_item_acc_bird
-import grit.shared.ui.generated.resources.shop_item_acc_birdhouse
-import grit.shared.ui.generated.resources.shop_item_acc_blossoms
-import grit.shared.ui.generated.resources.shop_item_acc_butterfly
-import grit.shared.ui.generated.resources.shop_item_acc_fairy_lights
-import grit.shared.ui.generated.resources.shop_item_acc_fruits
-import grit.shared.ui.generated.resources.shop_item_acc_ladybug
-import grit.shared.ui.generated.resources.shop_item_acc_swing
-import grit.shared.ui.generated.resources.shop_item_acc_watering_can
-import grit.shared.ui.generated.resources.shop_item_deco_bench
-import grit.shared.ui.generated.resources.shop_item_deco_fence
-import grit.shared.ui.generated.resources.shop_item_deco_hedgehog
-import grit.shared.ui.generated.resources.shop_item_deco_lantern
-import grit.shared.ui.generated.resources.shop_item_deco_mushrooms
-import grit.shared.ui.generated.resources.shop_item_deco_pond
-import grit.shared.ui.generated.resources.shop_item_deco_rabbit
-import grit.shared.ui.generated.resources.shop_item_deco_snail
-import grit.shared.ui.generated.resources.shop_item_pot_blue
-import grit.shared.ui.generated.resources.shop_item_pot_gold
-import grit.shared.ui.generated.resources.shop_item_pot_green
-import grit.shared.ui.generated.resources.shop_item_pot_purple
-import grit.shared.ui.generated.resources.shop_item_pot_terracotta
-import grit.shared.ui.generated.resources.shop_item_pot_yellow
+import grit.shared.ui.generated.resources.shop_from_rank
+import grit.shared.ui.generated.resources.shop_item_gear_cape
+import grit.shared.ui.generated.resources.shop_item_gear_champion_belt
+import grit.shared.ui.generated.resources.shop_item_gear_crown
+import grit.shared.ui.generated.resources.shop_item_gear_gloves
+import grit.shared.ui.generated.resources.shop_item_gear_sneakers
+import grit.shared.ui.generated.resources.shop_item_gear_sunglasses
+import grit.shared.ui.generated.resources.shop_item_gear_sweatband
+import grit.shared.ui.generated.resources.shop_item_gi_black
+import grit.shared.ui.generated.resources.shop_item_gi_blue
+import grit.shared.ui.generated.resources.shop_item_gi_gold
+import grit.shared.ui.generated.resources.shop_item_gi_purple
+import grit.shared.ui.generated.resources.shop_item_gi_red
+import grit.shared.ui.generated.resources.shop_item_gi_white
+import grit.shared.ui.generated.resources.shop_item_prop_banner
+import grit.shared.ui.generated.resources.shop_item_prop_dumbbells
+import grit.shared.ui.generated.resources.shop_item_prop_gong
+import grit.shared.ui.generated.resources.shop_item_prop_mat
+import grit.shared.ui.generated.resources.shop_item_prop_punching_bag
+import grit.shared.ui.generated.resources.shop_item_prop_trophy_shelf
+import grit.shared.ui.generated.resources.shop_item_prop_water_bottle
+import grit.shared.ui.generated.resources.shop_item_prop_wooden_dummy
 import grit.shared.ui.generated.resources.shop_low_energy
 import grit.shared.ui.generated.resources.shop_out_of_season
 import grit.shared.ui.generated.resources.shop_preview
 import grit.shared.ui.generated.resources.shop_preview_missing
-import grit.shared.ui.generated.resources.shop_preview_stage
+import grit.shared.ui.generated.resources.shop_preview_rank
 import grit.shared.ui.generated.resources.shop_preview_title
 import grit.shared.ui.generated.resources.shop_preview_with
 import grit.shared.ui.generated.resources.shop_preview_without
@@ -115,54 +118,43 @@ import org.jetbrains.compose.resources.stringResource
 
 private fun ShopItem.nameRes(): StringResource? =
     when (id) {
-        "pot_terracotta" -> Res.string.shop_item_pot_terracotta
-        "pot_blue" -> Res.string.shop_item_pot_blue
-        "pot_yellow" -> Res.string.shop_item_pot_yellow
-        "pot_green" -> Res.string.shop_item_pot_green
-        "pot_purple" -> Res.string.shop_item_pot_purple
-        "pot_gold" -> Res.string.shop_item_pot_gold
-        "acc_watering_can" -> Res.string.shop_item_acc_watering_can
-        "acc_ladybug" -> Res.string.shop_item_acc_ladybug
-        "acc_butterfly" -> Res.string.shop_item_acc_butterfly
-        "acc_blossoms" -> Res.string.shop_item_acc_blossoms
-        "acc_bird" -> Res.string.shop_item_acc_bird
-        "acc_birdhouse" -> Res.string.shop_item_acc_birdhouse
-        "acc_fruits" -> Res.string.shop_item_acc_fruits
-        "acc_fairy_lights" -> Res.string.shop_item_acc_fairy_lights
-        "acc_swing" -> Res.string.shop_item_acc_swing
-        "deco_mushrooms" -> Res.string.shop_item_deco_mushrooms
-        "deco_fence" -> Res.string.shop_item_deco_fence
-        "deco_snail" -> Res.string.shop_item_deco_snail
-        "deco_hedgehog" -> Res.string.shop_item_deco_hedgehog
-        "deco_rabbit" -> Res.string.shop_item_deco_rabbit
-        "deco_bench" -> Res.string.shop_item_deco_bench
-        "deco_pond" -> Res.string.shop_item_deco_pond
-        "deco_lantern" -> Res.string.shop_item_deco_lantern
+        FighterItems.GI_WHITE -> Res.string.shop_item_gi_white
+        FighterItems.GI_BLUE -> Res.string.shop_item_gi_blue
+        FighterItems.GI_RED -> Res.string.shop_item_gi_red
+        FighterItems.GI_BLACK -> Res.string.shop_item_gi_black
+        FighterItems.GI_PURPLE -> Res.string.shop_item_gi_purple
+        FighterItems.GI_GOLD -> Res.string.shop_item_gi_gold
+        FighterItems.SWEATBAND -> Res.string.shop_item_gear_sweatband
+        FighterItems.GLOVES -> Res.string.shop_item_gear_gloves
+        FighterItems.SNEAKERS -> Res.string.shop_item_gear_sneakers
+        FighterItems.CAPE -> Res.string.shop_item_gear_cape
+        FighterItems.SUNGLASSES -> Res.string.shop_item_gear_sunglasses
+        FighterItems.CHAMPION_BELT -> Res.string.shop_item_gear_champion_belt
+        FighterItems.CROWN -> Res.string.shop_item_gear_crown
+        FighterItems.MAT -> Res.string.shop_item_prop_mat
+        FighterItems.WATER_BOTTLE -> Res.string.shop_item_prop_water_bottle
+        FighterItems.PUNCHING_BAG -> Res.string.shop_item_prop_punching_bag
+        FighterItems.DUMBBELLS -> Res.string.shop_item_prop_dumbbells
+        FighterItems.WOODEN_DUMMY -> Res.string.shop_item_prop_wooden_dummy
+        FighterItems.BANNER -> Res.string.shop_item_prop_banner
+        FighterItems.TROPHY_SHELF -> Res.string.shop_item_prop_trophy_shelf
+        FighterItems.GONG -> Res.string.shop_item_prop_gong
         else -> null
     }
 
 @Composable
 private fun itemName(item: ShopItem): String = item.nameRes()?.let { stringResource(it) } ?: item.id
 
+/** Gear has no pixel icon of its own yet; it is drawn on the fighter in the preview. */
 private fun ShopItem.emoji(): String =
     when (id) {
-        "acc_watering_can" -> "💧"
-        "acc_ladybug" -> "🐞"
-        "acc_butterfly" -> "🦋"
-        "acc_blossoms" -> "🌸"
-        "acc_bird" -> "🐦"
-        "acc_birdhouse" -> "🏠"
-        "acc_fruits" -> "🍎"
-        "acc_fairy_lights" -> "✨"
-        "acc_swing" -> "🪢"
-        "deco_mushrooms" -> "🍄"
-        "deco_fence" -> "🪵"
-        "deco_snail" -> "🐌"
-        "deco_hedgehog" -> "🦔"
-        "deco_rabbit" -> "🐇"
-        "deco_bench" -> "🪑"
-        "deco_pond" -> "🪷"
-        "deco_lantern" -> "🏮"
+        FighterItems.SWEATBAND -> "🎽"
+        FighterItems.GLOVES -> "🥊"
+        FighterItems.SNEAKERS -> "👟"
+        FighterItems.CAPE -> "🦸"
+        FighterItems.SUNGLASSES -> "🕶️"
+        FighterItems.CHAMPION_BELT -> "🥇"
+        FighterItems.CROWN -> "👑"
         else -> "🎁"
     }
 
@@ -232,19 +224,19 @@ private fun ShopRow(
         when (check) {
             PurchaseCheck.ALREADY_OWNED ->
                 when {
-                    item.kind == ShopItemKind.POT_COLOR && worn ->
-                        OutlinedButton(onClick = {}, enabled = false) {
-                            Text(stringResource(Res.string.shop_chosen))
+                    item.kind == ShopItemKind.OUTFIT && worn ->
+                        OutlinedButton(onClick = { onWear(false) }) {
+                            Text(stringResource(Res.string.shop_take_off))
                         }
-                    item.kind == ShopItemKind.POT_COLOR ->
+                    item.kind == ShopItemKind.OUTFIT ->
                         FilledTonalButton(onClick = { onWear(true) }) {
                             Text(stringResource(Res.string.shop_choose))
                         }
-                    item.kind == ShopItemKind.DECORATION && worn ->
+                    item.kind == ShopItemKind.PROP && worn ->
                         OutlinedButton(onClick = { onWear(false) }) {
                             Text(stringResource(Res.string.shop_put_away))
                         }
-                    item.kind == ShopItemKind.DECORATION ->
+                    item.kind == ShopItemKind.PROP ->
                         FilledTonalButton(onClick = { onWear(true) }) {
                             Text(stringResource(Res.string.shop_set_up))
                         }
@@ -259,7 +251,7 @@ private fun ShopRow(
                 }
             PurchaseCheck.RANK_TOO_LOW ->
                 Text(
-                    text = "🔒 " + stringResource(Res.string.shop_from_stage, item.minRank.number),
+                    text = "🔒 " + stringResource(Res.string.shop_from_rank, item.minRank.number),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -285,21 +277,26 @@ private fun ShopRow(
 private fun ItemIcon(item: ShopItem) {
     Box(modifier = Modifier.size(32.dp), contentAlignment = Alignment.Center) {
         when (item.kind) {
-            ShopItemKind.POT_COLOR ->
+            ShopItemKind.OUTFIT ->
                 Box(
                     modifier =
-                        Modifier.size(24.dp).background(potColorOf(item.id), shape = CircleShape)
+                        Modifier.size(24.dp)
+                            .background(
+                                Color(FighterPixels.outfitColor(item.id) ?: 0),
+                                shape = CircleShape,
+                            )
+                            .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
                 )
-            ShopItemKind.ACCESSORY,
-            ShopItemKind.DECORATION ->
+            ShopItemKind.GEAR ->
                 Text(text = item.emoji(), style = MaterialTheme.typography.titleLarge)
+            ShopItemKind.PROP -> PropIcon(item.id, Modifier.size(32.dp))
         }
     }
 }
 
 /**
- * Shows the meadow without and with [item] before buying it. Items that cannot be bought yet are
- * previewed too: a locked item on the plant grown to its stage, with a hint why buying is not
+ * Shows the fighter without and with [item] before buying it. Items that cannot be bought yet are
+ * previewed too: a locked item on the fighter at the rank it needs, with a hint why buying is not
  * possible. Warns when less than one freeze worth of energy would be left.
  */
 @Composable
@@ -315,14 +312,10 @@ fun BuyItemDialog(
     val shown = if (showWith) preview.with else preview.without
 
     GritDialog(onDismissRequest = onDismiss) {
-        MeadowScene(
-            stage = preview.rank.plantStage,
-            mood = avatar.fighter.mood.plantMood,
-            potColor = shown.potColor,
-            accessories = shown.accessories,
-            decorations = shown.decorations,
-            weather = avatar.fighter.weather,
-            species = avatar.data.look,
+        FighterShopScene(
+            data = shown,
+            rank = preview.rank,
+            mood = avatar.fighter.mood,
             modifier = Modifier.fillMaxWidth(),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -366,7 +359,7 @@ fun BuyItemDialog(
                     text =
                         "🔒 " +
                             stringResource(
-                                Res.string.shop_preview_stage,
+                                Res.string.shop_preview_rank,
                                 preview.rank.number,
                                 avatar.fighter.rank.number,
                             ),
@@ -410,11 +403,11 @@ private val previewAvatar =
             AvatarData(
                 purchases =
                     listOf(
-                        Purchase("pot_blue", LocalDate(2026, 10, 1), 10),
-                        Purchase("acc_ladybug", LocalDate(2026, 10, 2), 15),
+                        Purchase(FighterItems.GI_BLUE, LocalDate(2026, 10, 1), 10),
+                        Purchase(FighterItems.SWEATBAND, LocalDate(2026, 10, 2), 10),
                     ),
-                potColor = "pot_blue",
-                accessories = setOf("acc_ladybug"),
+                outfit = FighterItems.GI_BLUE,
+                accessories = setOf(FighterItems.SWEATBAND),
             ),
     )
 
@@ -424,7 +417,7 @@ private val previewAvatar =
 private fun ShopItemListPreview() {
     ShopItemList(
         avatar = previewAvatar,
-        items = ShopCatalog.items.filter { it.kind == ShopItemKind.ACCESSORY },
+        items = ShopCatalog.items.filter { it.kind == ShopItemKind.GEAR },
         onBuyClick = {},
         onWear = { _, _ -> },
     )
@@ -436,7 +429,7 @@ private fun ShopItemListPreview() {
 private fun BuyItemDialogPreview() {
     BuyItemDialog(
         avatar = previewAvatar,
-        item = ShopCatalog.byId("acc_blossoms")!!,
+        item = ShopCatalog.byId(FighterItems.GLOVES)!!,
         onConfirm = {},
         onDismiss = {},
     )
@@ -448,7 +441,7 @@ private fun BuyItemDialogPreview() {
 private fun LockedItemPreviewDialogPreview() {
     BuyItemDialog(
         avatar = previewAvatar,
-        item = ShopCatalog.byId("deco_pond")!!,
+        item = ShopCatalog.byId(FighterItems.TROPHY_SHELF)!!,
         onConfirm = {},
         onDismiss = {},
     )

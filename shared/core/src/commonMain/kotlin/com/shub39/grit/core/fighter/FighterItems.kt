@@ -37,6 +37,15 @@ object FighterItems {
     const val CHAMPION_BELT = "gear_champion_belt"
     const val CROWN = "gear_crown"
 
+    const val MAT = "prop_mat"
+    const val WATER_BOTTLE = "prop_water_bottle"
+    const val PUNCHING_BAG = "prop_punching_bag"
+    const val DUMBBELLS = "prop_dumbbells"
+    const val WOODEN_DUMMY = "prop_wooden_dummy"
+    const val BANNER = "prop_banner"
+    const val TROPHY_SHELF = "prop_trophy_shelf"
+    const val GONG = "prop_gong"
+
     /**
      * At most one is worn. It replaces the main colour the user picked at the start
      * ([FighterColors] are chosen only once); without an outfit the fighter wears its own colours.
@@ -46,4 +55,8 @@ object FighterItems {
     /** Any number can be worn at the same time. */
     val gear: List<String> =
         listOf(SWEATBAND, GLOVES, SNEAKERS, CAPE, SUNGLASSES, CHAMPION_BELT, CROWN)
+
+    /** Stand on their own fixed spot in the training ground (#8); any number can be shown. */
+    val props: List<String> =
+        listOf(MAT, WATER_BOTTLE, PUNCHING_BAG, DUMBBELLS, WOODEN_DUMMY, BANNER, TROPHY_SHELF, GONG)
 }

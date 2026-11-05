@@ -33,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.avatar.ShopCatalog
 import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
@@ -69,7 +68,7 @@ fun RoutinesEmptyState(
         PlantAvatar(
             stage = avatar?.fighter?.rank?.plantStage ?: PlantStage.SEED,
             mood = PlantMood.TIRED,
-            potColor = avatar?.data?.potColor ?: ShopCatalog.DEFAULT_POT_COLOR,
+            potColor = avatar?.data?.outfit.orEmpty(),
             accessories = avatar?.data?.accessories.orEmpty(),
             species = avatar?.data?.look ?: FighterLook.KAI,
             modifier = Modifier.size(150.dp),

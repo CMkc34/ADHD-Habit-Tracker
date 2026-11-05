@@ -41,7 +41,8 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
     companion object {
         private val nameKey = stringPreferencesKey("avatar_name")
         private val purchasesKey = stringSetPreferencesKey("avatar_purchases")
-        private val potColorKey = stringPreferencesKey("avatar_pot_color")
+        // the worn outfit; the key is the plant's pot colour, whose ids are no outfits
+        private val outfitKey = stringPreferencesKey("avatar_pot_color")
         private val accessoriesKey = stringSetPreferencesKey("avatar_accessories")
         private val decorationsKey = stringSetPreferencesKey("avatar_decorations")
         // the rank number; the key is the plant's, so ranks the plant had are not announced again
@@ -72,7 +73,7 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
                 name = prefs[nameKey].orEmpty(),
                 purchases =
                     prefs[purchasesKey].orEmpty().mapNotNull(::decodePurchase).sortedBy { it.date },
-                potColor = prefs[potColorKey] ?: ShopCatalog.DEFAULT_POT_COLOR,
+                outfit = prefs[outfitKey]?.takeIf(ShopCatalog::isOutfit),
                 accessories = prefs[accessoriesKey].orEmpty(),
                 decorations = prefs[decorationsKey].orEmpty(),
                 seenStage = prefs[seenStageKey] ?: 0,
@@ -98,8 +99,8 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
         datastore.edit { it[purchasesKey] = it[purchasesKey].orEmpty() + purchase.encode() }
     }
 
-    override suspend fun setPotColor(itemId: String) {
-        datastore.edit { it[potColorKey] = itemId }
+    override suspend fun setOutfit(itemId: String?) {
+        datastore.edit { if (itemId == null) it.remove(outfitKey) else it[outfitKey] = itemId }
     }
 
     override suspend fun setAccessory(itemId: String, worn: Boolean) {
@@ -136,7 +137,9 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
             it[nameKey] = data.name
             it[purchasesKey] =
                 data.purchases.mapTo(mutableSetOf()) { purchase -> purchase.encode() }
-            it[potColorKey] = data.potColor
+            data.outfit.let { outfit ->
+                if (outfit == null) it.remove(outfitKey) else it[outfitKey] = outfit
+            }
             it[accessoriesKey] = data.accessories
             it[decorationsKey] = data.decorations
             it[seenStageKey] = data.seenStage

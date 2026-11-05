@@ -662,10 +662,14 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 
 ### 9.7 Shop (#7)
 - Bestehende Shop-Mechanik (Preise, Mindestrang, Saison, Vorschau) bleibt. Neue Arten:
-  - **Outfit** (genau eins oder keins): ersetzt die bei der Einrichtung gewählte Hauptfarbe (`gi_*`)
+  - **Outfit** (genau eins oder keins): ersetzt die bei der Einrichtung gewählte Hauptfarbe (`gi_*`).
+    Kein Outfit ist gratis, auch der weiße Gi kostet; Ablegen bringt die Einrichtungsfarbe zurück
+    (entschieden am 2026-11-04: nach der Einrichtung ändert sich das Aussehen nur über Gekauftes).
   - **Ausrüstung** (beliebig viele)
   - **Trainingsplatz-Teile** (fester Platz)
 - Rein kosmetisch. Katalog und Preise stehen in #7 und nur in `ShopCatalog`.
+- Bis #8 zeigt der Shop den Kämpfer mit den Trainingsplatz-Teilen als Pixel-Symbole darunter
+  (`FighterShopScene`, `PropPixels`).
 
 ### 9.8 Datenhaltung und Umstieg (#5, #12)
 - Keine Änderung am Room-Schema. Neue Schlüssel in der bestehenden Preferences-Datei:

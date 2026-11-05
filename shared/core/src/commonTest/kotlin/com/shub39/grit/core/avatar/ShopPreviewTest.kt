@@ -22,25 +22,26 @@ import com.shub39.grit.core.fighter.FighterState
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class ShopPreviewTest {
 
-    private val bird = ShopCatalog.byId("acc_bird")!!
-    private val blue = ShopCatalog.byId("pot_blue")!!
+    private val cape = ShopCatalog.byId("gear_cape")!!
+    private val blue = ShopCatalog.byId("gi_blue")!!
 
     private fun state(rank: FighterRank, energy: Int, data: AvatarData = AvatarData()) =
         AvatarState(FighterState(rank.minActiveDays, rank, FighterMood.READY), energy, data)
 
     @Test
     fun `a buyable item is shown on the current fighter`() {
-        val preview = state(FighterRank.CHAMPION, 50).preview(bird)
+        val preview = state(FighterRank.CHAMPION, 50).preview(cape)
 
         assertTrue(preview.canBuy)
         assertFalse(preview.isFutureRank)
         assertEquals(FighterRank.CHAMPION, preview.rank)
         assertEquals(emptySet(), preview.without.accessories)
-        assertEquals(setOf("acc_bird"), preview.with.accessories)
+        assertEquals(setOf("gear_cape"), preview.with.accessories)
         assertEquals(0, preview.missingEnergy)
     }
 
@@ -51,17 +52,17 @@ class ShopPreviewTest {
         assertEquals(PurchaseCheck.NOT_ENOUGH_ENERGY, preview.check)
         assertFalse(preview.canBuy)
         assertEquals(6, preview.missingEnergy)
-        assertEquals(ShopCatalog.DEFAULT_POT_COLOR, preview.without.potColor)
-        assertEquals("pot_blue", preview.with.potColor)
+        assertNull(preview.without.outfit)
+        assertEquals("gi_blue", preview.with.outfit)
     }
 
     @Test
     fun `a locked item is shown at the rank it needs`() {
-        val preview = state(FighterRank.SPARRING_PARTNER, 100).preview(bird)
+        val preview = state(FighterRank.SPARRING_PARTNER, 100).preview(cape)
 
         assertEquals(PurchaseCheck.RANK_TOO_LOW, preview.check)
         assertTrue(preview.isFutureRank)
         assertFalse(preview.canBuy)
-        assertEquals(FighterRank.VETERAN, preview.rank)
+        assertEquals(FighterRank.FIGHTER, preview.rank)
     }
 }
