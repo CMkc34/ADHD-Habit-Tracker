@@ -18,6 +18,7 @@ package com.shub39.grit.shared.ui.habit.motivation
 
 import androidx.compose.runtime.Immutable
 import com.shub39.grit.core.avatar.AvatarState
+import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.motivation.MotivationQuote
 
 /**
@@ -34,4 +35,10 @@ data class MotivationPopupState(
     val quote: MotivationQuote,
     val activityStreak: Int? = null,
     val avatar: AvatarState? = null,
+    /** The stat that this check-in gave +1 XP, `null` when it added none (#15). */
+    val statGain: FighterStat? = null,
+    /** The new level of [statGain] when the check-in raised it. */
+    val newStatLevel: Int? = null,
+    /** Whether the check-in earned one of today's fight tickets. */
+    val ticketEarned: Boolean = false,
 )

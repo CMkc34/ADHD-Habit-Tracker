@@ -739,7 +739,15 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
     „Trainier noch ein bisschen und versuch es morgen wieder.“, Unentschieden „Gleich stark! Keiner
     ging zu Boden.“ Zurück während des Kampfs fragt „Aufgeben? Das zählt als Niederlage.“
 - Routinen-Formular und -Karte zeigen den trainierten Wert (#4).
-- Motivations-Pop-up (#15): „+1 Kraft-XP“, „Kraft Stufe 4!“, „+1 🎟“.
+- Motivations-Pop-up (#15): „+1 Kraft-XP“, „Kraft Stufe 4!“, „+1 🎟 Kampf-Ticket“. Entschieden am
+  2026-11-05:
+  - Jede Zeile ist eine eigene gelbe Pille unter „+1 💧“, sie springen nacheinander auf; XP und Stufe
+    mit dem Pixel-Symbol des Werts (`StatIcon`).
+  - Das Pop-up zeigt den Pixel-Kämpfer statt der Pflanze, bei neuer Stufe in der Pose „Ki laden“.
+  - Der Stufen-Dialog (#9) folgt trotzdem nach dem Schließen.
+  - `HabitViewModel` liest vor und nach dem Speichern `TrainingSnapshot` (XP des Werts, heute verdiente
+    Tickets) und vergleicht mit `CheckInReward.between` (`core.arena`). Erneutes Abhaken nach dem
+    Abwählen zeigt dieselbe Belohnung nicht noch einmal; gestern nachgetragen gibt XP, aber kein Ticket.
 - Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (fünf Kämpfer + Farben, #26), keine
   Pflanzen-Texte mehr.
 - Alles selbst gezeichnet (`Canvas`), Bewegung folgt „Animationen entfernen“.

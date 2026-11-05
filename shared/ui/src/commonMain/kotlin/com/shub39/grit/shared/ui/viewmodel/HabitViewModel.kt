@@ -22,10 +22,13 @@ import com.shub39.grit.core.AnalyticsEvent
 import com.shub39.grit.core.activity.ActivityRepo
 import com.shub39.grit.core.activity.DayStatus
 import com.shub39.grit.core.activity.FreezeNotice
+import com.shub39.grit.core.arena.CheckInReward
+import com.shub39.grit.core.arena.TrainingSnapshot
 import com.shub39.grit.core.avatar.AvatarRepo
 import com.shub39.grit.core.avatar.UserName
 import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.RoutineStatStore
+import com.shub39.grit.core.fighter.statOf
 import com.shub39.grit.core.habits.Habit
 import com.shub39.grit.core.habits.HabitRepo
 import com.shub39.grit.core.habits.HabitStatus
@@ -92,6 +95,10 @@ class HabitViewModel(
 
     // id of the last motivation quote, so the next popup shows a different one
     private var lastQuoteId: String? = null
+
+    // check-ins whose XP and ticket were already shown, so un-checking and checking again does
+    // not celebrate the same reward twice
+    private val rewardedCheckIns = mutableSetOf<Pair<Long, LocalDate>>()
 
     // set while the daily greeting is being prepared, so two quick resumes show it once
     private var checkingGreeting = false
@@ -468,9 +475,11 @@ class HabitViewModel(
             analytics.trackEvent(AnalyticsEvent.HABIT_COMPLETED, emptyMap())
             val firstOfDay = !isTodayActive()
             val hadBonus = hasBonus(date)
+            val before = trainingSnapshot(habit)
             repo.insertHabitStatus(HabitStatus(habitId = habit.id, date = date))
             val bonusEarned = !hadBonus && hasBonus(date)
-            showMotivationPopup(habit, date, firstOfDay)
+            val reward = CheckInReward.between(before, trainingSnapshot(habit))
+            showMotivationPopup(habit, date, firstOfDay, reward)
             if (bonusEarned) showBonusPopup(date)
         }
     }
@@ -482,6 +491,8 @@ class HabitViewModel(
                 ?.statuses
                 ?.any { it.date == date } ?: false
 
+        // read before the old value is removed, so a correction never counts as new XP
+        val before = trainingSnapshot(habit)
         if (isStatusAdded) repo.deleteHabitStatus(habit.id, date)
         if (value <= 0.0) {
             repo.deleteHabitStatus(habit.id, date)
@@ -493,13 +504,32 @@ class HabitViewModel(
         repo.insertHabitStatus(HabitStatus(habitId = habit.id, date = date, value = value))
         val bonusEarned = !hadBonus && hasBonus(date)
         // only the first value of a day is a check-in, corrections stay silent
-        if (!isStatusAdded) showMotivationPopup(habit, date, firstOfDay)
+        if (!isStatusAdded) {
+            val reward = CheckInReward.between(before, trainingSnapshot(habit))
+            showMotivationPopup(habit, date, firstOfDay, reward)
+        }
         if (bonusEarned) showBonusPopup(date)
     }
 
     /** Whether [date] currently earns the daily bonus for two or more routines. */
     private suspend fun hasBonus(date: LocalDate): Boolean =
         date in activityRepo.getActivityReport().first().bonusDays
+
+    /**
+     * XP of the stat that [habit] trains and today's earned tickets, read before and after saving a
+     * check-in to find what it earned (#15).
+     */
+    private suspend fun trainingSnapshot(habit: Habit): TrainingSnapshot {
+        val habits = repo.getHabitsWithAnalytics().first()
+        val stats = routineStatStore.getStats().first()
+        return TrainingSnapshot.of(
+            habits = habits.map { it.habit },
+            statuses = habits.flatMap { it.statuses },
+            stat = stats.statOf(habit.id),
+            statOf = stats::statOf,
+            today = LocalDate.now(),
+        )
+    }
 
     /** Whether today already has a check-in, read before saving the next one. */
     private suspend fun isTodayActive(): Boolean =
@@ -510,9 +540,15 @@ class HabitViewModel(
      * Only check-ins for today or yesterday are celebrated; catching up on older days stays silent,
      * as does a check-in that does not extend an active streak (streak 0), and every check-in while
      * the popup is turned off in the settings. The first check-in of the day ([firstOfDay]) also
-     * shows the activity streak that it extended, as it earns the day's energy.
+     * shows the activity streak that it extended, as it earns the day's energy. [reward] adds the
+     * XP, level-up and fight ticket lines.
      */
-    private suspend fun showMotivationPopup(habit: Habit, date: LocalDate, firstOfDay: Boolean) {
+    private suspend fun showMotivationPopup(
+        habit: Habit,
+        date: LocalDate,
+        firstOfDay: Boolean,
+        reward: CheckInReward,
+    ) {
         if (!motivationSettings.getPopupEnabled().first()) return
         if (date < LocalDate.now().minus(1, DateTimeUnit.DAY)) return
         val streak =
@@ -523,12 +559,30 @@ class HabitViewModel(
         val activityStreak =
             if (firstOfDay) activityRepo.getActivityReport().first().currentStreak else null
         val avatar = avatarRepo.getAvatarState().first()
+        val shownReward = rewardOnce(habit, date, reward)
         _state.update {
             it.copy(
                 motivationPopup =
-                    MotivationPopupState(habit.title, streak, quote, activityStreak, avatar)
+                    MotivationPopupState(
+                        habitTitle = habit.title,
+                        activeDays = streak,
+                        quote = quote,
+                        activityStreak = activityStreak,
+                        avatar = avatar,
+                        statGain = shownReward.statGain,
+                        newStatLevel = shownReward.newStatLevel,
+                        ticketEarned = shownReward.ticketEarned,
+                    )
             )
         }
+    }
+
+    /** [reward] the first time the check-in of [habit] for [date] earns one, afterwards nothing. */
+    private fun rewardOnce(habit: Habit, date: LocalDate, reward: CheckInReward): CheckInReward {
+        val checkIn = habit.id to date
+        if (checkIn in rewardedCheckIns) return CheckInReward.NONE
+        if (reward != CheckInReward.NONE) rewardedCheckIns += checkIn
+        return reward
     }
 
     /**

@@ -93,5 +93,7 @@
     <string name="fighter_belt_black_two_stripes">black belt with two gold stripes</string>
     <string name="fighter_belt_gold">gold belt</string>
 
-    <!-- Arena tab, placeholder until #14 -->
+    <!-- Motivation pop-up after a check-in (#15) -->
+    <string name="fighter_popup_xp">+1 %1$s XP</string>
+    <string name="fighter_popup_ticket">+1 🎟 fight ticket</string>
 </resources>

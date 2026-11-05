@@ -16,7 +16,9 @@
  */
 package com.shub39.grit.shared.ui.habit.ui.component
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,16 +34,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
+import com.shub39.grit.core.fighter.FighterCharacter
 import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
+import com.shub39.grit.core.fighter.FighterStat
+import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.core.motivation.MotivationQuote
 import com.shub39.grit.core.motivation.QuoteTone
 import com.shub39.grit.core.motivation.StreakTier
 import com.shub39.grit.shared.ui.GritPreviewWrapper
-import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
-import com.shub39.grit.shared.ui.habit.avatar.PlantMood
-import com.shub39.grit.shared.ui.habit.avatar.PlantStage
-import com.shub39.grit.shared.ui.habit.avatar.plantStage
+import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
+import com.shub39.grit.shared.ui.habit.fighter.FighterPose
+import com.shub39.grit.shared.ui.habit.fighter.StatIcon
+import com.shub39.grit.shared.ui.habit.fighter.label
 import com.shub39.grit.shared.ui.habit.motivation.CelebrationStage
 import com.shub39.grit.shared.ui.habit.motivation.CheckInStageColors
 import com.shub39.grit.shared.ui.habit.motivation.StagePill
@@ -52,6 +60,9 @@ import com.shub39.grit.shared.ui.habit.motivation.textResource
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.energy_popup_line
+import grit.shared.ui.generated.resources.fighter_new_stat_level
+import grit.shared.ui.generated.resources.fighter_popup_ticket
+import grit.shared.ui.generated.resources.fighter_popup_xp
 import grit.shared.ui.generated.resources.motivation_header_motivating
 import grit.shared.ui.generated.resources.motivation_header_motivating_named
 import grit.shared.ui.generated.resources.motivation_header_sarcastic
@@ -61,10 +72,12 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Full screen celebration after a habit check-in: the user's plant, the streak counting up and the
- * quote. Closes by tapping anywhere or the back key. [activityStreak] adds the "+1 💧" pill for the
- * first check-in of the day; the daily bonus gets its own [BonusPopup] afterwards. Without [avatar]
- * a seed is shown.
+ * Full screen celebration after a habit check-in: the user's pixel fighter, the streak counting up
+ * and the quote. Closes by tapping anywhere or the back key. [activityStreak] adds the "+1 💧" pill
+ * for the first check-in of the day; the daily bonus gets its own [BonusPopup] afterwards. The
+ * training pills follow (#15): "+1 Strength XP" for [statGain], "Strength level 4!" for
+ * [newStatLevel] (the fighter then gathers ki) and "+1 🎟 fight ticket" for [ticketEarned]. Without
+ * [avatar] a rookie in the default look is shown.
  */
 @Composable
 fun HabitMotivationPopup(
@@ -75,6 +88,9 @@ fun HabitMotivationPopup(
     avatar: AvatarState?,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    statGain: FighterStat? = null,
+    newStatLevel: Int? = null,
+    ticketEarned: Boolean = false,
 ) {
     CelebrationStage(colors = CheckInStageColors, onDismiss = onDismiss, modifier = modifier) {
         // the user's name in the header when they gave one (#139)
@@ -104,17 +120,24 @@ fun HabitMotivationPopup(
             textAlign = TextAlign.Center,
         )
 
-        val plantScale = rememberPopIn(delayMillis = 150)
-        PlantAvatar(
-            stage = avatar?.fighter?.rank?.plantStage ?: PlantStage.SEED,
-            mood = PlantMood.HAPPY,
-            potColor = avatar?.data?.outfit.orEmpty(),
-            accessories = avatar?.data?.accessories.orEmpty(),
-            species = avatar?.data?.look ?: FighterLook.KAI,
+        // the pixel fighter; it gathers ki when the check-in raised a stat level, and it shrinks a
+        // little when many pills follow, so everything fits on small phones
+        val pills =
+            listOf(activityStreak != null, statGain != null, newStatLevel != null, ticketEarned)
+                .count { it }
+        val fighterSize = if (pills > 2) 140.dp else 170.dp
+        val fighterScale = rememberPopIn(delayMillis = 150)
+        FighterAvatar(
+            character = FighterCharacter.of(avatar?.data?.look ?: FighterLook.DEFAULT),
+            rank = avatar?.fighter?.rank ?: FighterRank.ROOKIE,
+            mood = FighterMood.READY,
+            outfit = avatar?.data?.outfit,
+            gear = avatar?.data?.accessories.orEmpty(),
+            pose = if (newStatLevel != null) FighterPose.CHARGE else FighterPose.STANCE,
             modifier =
-                Modifier.size(170.dp).graphicsLayer {
-                    scaleX = plantScale
-                    scaleY = plantScale
+                Modifier.widthIn(max = fighterSize).fillMaxWidth().graphicsLayer {
+                    scaleX = fighterScale
+                    scaleY = fighterScale
                 },
         )
 
@@ -148,18 +171,55 @@ fun HabitMotivationPopup(
             color = Color.White,
             textAlign = TextAlign.Center,
         )
+        // the reward pills pop in one after another, each a little later
+        var pillDelay = 1000L
         activityStreak?.let {
-            val pillScale = rememberPopIn(delayMillis = 1000)
-            StagePill(
+            RewardPill(
                 text = pluralStringResource(Res.plurals.energy_popup_line, it, it),
-                modifier =
-                    Modifier.graphicsLayer {
-                        scaleX = pillScale
-                        scaleY = pillScale
-                    },
+                delayMillis = pillDelay,
+            )
+            pillDelay += PILL_STEP_MILLIS
+        }
+        statGain?.let { stat ->
+            RewardPill(
+                text = stringResource(Res.string.fighter_popup_xp, stat.label()),
+                delayMillis = pillDelay,
+                stat = stat,
+            )
+            pillDelay += PILL_STEP_MILLIS
+            newStatLevel?.let { level ->
+                RewardPill(
+                    text = stringResource(Res.string.fighter_new_stat_level, stat.label(), level),
+                    delayMillis = pillDelay,
+                    stat = stat,
+                )
+                pillDelay += PILL_STEP_MILLIS
+            }
+        }
+        if (ticketEarned) {
+            RewardPill(
+                text = stringResource(Res.string.fighter_popup_ticket),
+                delayMillis = pillDelay,
             )
         }
     }
+}
+
+private const val PILL_STEP_MILLIS = 250L
+
+/** A [StagePill] that pops in after [delayMillis], with the pixel icon of [stat] if given. */
+@Composable
+private fun RewardPill(text: String, delayMillis: Long, stat: FighterStat? = null) {
+    val scale = rememberPopIn(delayMillis = delayMillis)
+    StagePill(
+        text = text,
+        icon = stat?.let { { StatIcon(stat = it, modifier = Modifier.size(20.dp)) } },
+        modifier =
+            Modifier.graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            },
+    )
 }
 
 @PreviewWrapper(GritPreviewWrapper::class)
@@ -173,6 +233,34 @@ private fun MotivatingPreview() {
             MotivationQuote("quote_starter_motivating_1", QuoteTone.MOTIVATING, StreakTier.STARTER),
         activityStreak = 13,
         avatar = null,
+        onDismiss = {},
+    )
+}
+
+@PreviewWrapper(GritPreviewWrapper::class)
+@Preview
+@Composable
+private fun RewardPreview() {
+    HabitMotivationPopup(
+        habitTitle = "Push-ups",
+        activeDays = 4,
+        quote =
+            MotivationQuote("quote_starter_motivating_1", QuoteTone.MOTIVATING, StreakTier.STARTER),
+        activityStreak = 13,
+        avatar =
+            AvatarState(
+                fighter =
+                    FighterState(
+                        activeDays = 14,
+                        rank = FighterRank.BRAWLER,
+                        mood = FighterMood.READY,
+                    ),
+                energy = 0,
+                data = AvatarData(name = "Kai"),
+            ),
+        statGain = FighterStat.STRENGTH,
+        newStatLevel = 4,
+        ticketEarned = true,
         onDismiss = {},
     )
 }
