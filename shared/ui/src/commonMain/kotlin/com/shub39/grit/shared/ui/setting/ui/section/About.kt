@@ -226,7 +226,7 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.sprout_icon),
+                            imageVector = vectorResource(Res.drawable.ki_check_icon),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.size(32.dp),
