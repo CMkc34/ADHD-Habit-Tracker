@@ -19,6 +19,8 @@ package com.shub39.grit.logic.core.backup
 import com.shub39.grit.core.GritLogger
 import com.shub39.grit.core.activity.ActivityData
 import com.shub39.grit.core.activity.ActivityStore
+import com.shub39.grit.core.arena.ArenaStore
+import com.shub39.grit.core.arena.FightLog
 import com.shub39.grit.core.avatar.AvatarStore
 import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.HabitRepo
@@ -48,6 +50,7 @@ class RestoreImpl(
     private val avatarStore: AvatarStore,
     private val routineStyleStore: RoutineStyleStore,
     private val routineStatStore: RoutineStatStore,
+    private val arenaStore: ArenaStore,
 ) : RestoreRepo {
     override suspend fun restoreData(): RestoreResult {
         return try {
@@ -100,6 +103,13 @@ class RestoreImpl(
             }
             jsonDeserialized.routineStats?.forEach {
                 routineStatStore.setStat(it.habitId, it.toFighterStat())
+            }
+
+            // fights from both sides are kept, so the ladder progress is the best of both
+            jsonDeserialized.arena?.let { backup ->
+                arenaStore.replaceAll(
+                    FightLog.merge(arenaStore.getFights().first(), backup.toFightRecords())
+                )
             }
 
             RestoreResult.Success

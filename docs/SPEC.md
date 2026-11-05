@@ -683,8 +683,12 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 - Keine Änderung am Room-Schema. Neue Schlüssel in der bestehenden Preferences-Datei:
   - `routine_stats`
   - `avatar_seen_stat_levels`
-  - `arena_fights` (`datum|gegnerId|ergebnis`)
-- Backup: optionale Felder `routineStats` und `arena`; ältere Backups bleiben importierbar, Import
+  - `arena_fights` (`datum|gegnerId|ergebnis|startzeit`, #12): die Startzeit (Epoch-ms) unterscheidet
+    zwei Kämpfe gegen denselben Gegner am selben Tag und findet den Eintrag, der am Kampfende das echte
+    Ergebnis bekommt. Ein Kampf wird beim Start als `LOSS` geschrieben; Leiter-Fortschritt und heute
+    benutzte Tickets werden aus dem Log berechnet (`FightLog`, `ArenaState`, `ArenaRepo`).
+- Backup: optionale Felder `routineStats` und `arena` (`ArenaSchema`: Liste der Kämpfe; Import vereinigt
+  beide Logs, derselbe Kampf behält das bessere Ergebnis); ältere Backups bleiben importierbar, Import
   führt zusammen.
 - Umstieg:
   - Rang = bisherige Pflanzenstufe (`avatar_seen_stage` bleibt), keine Hinweise beim ersten Start.
