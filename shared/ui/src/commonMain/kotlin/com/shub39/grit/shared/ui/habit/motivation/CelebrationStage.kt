@@ -61,7 +61,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.shub39.grit.shared.ui.habit.ui.component.WaterText
+import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.motivation_tap_to_continue
 import kotlin.math.PI
@@ -93,7 +93,7 @@ val FreezeStageColors =
         rays = Color(0x29E3F4FF),
     )
 
-/** Gold stage for the daily bonus, behind the blue water coin. */
+/** Gold stage for the daily bonus, behind the shake coin. */
 val BonusStageColors =
     StageColors(
         center = Color(0xFFF2B33D),
@@ -250,7 +250,7 @@ fun rememberCountUp(target: Int): Int {
     return value.value.toInt()
 }
 
-/** Yellow pill, e.g. for the day's "+1 💧", with an optional [icon] in front of the text. */
+/** Yellow pill, e.g. for the day's "+1 🥤", with an optional [icon] in front of the text. */
 @Composable
 fun StagePill(text: String, modifier: Modifier = Modifier, icon: (@Composable () -> Unit)? = null) {
     Row(
@@ -262,7 +262,7 @@ fun StagePill(text: String, modifier: Modifier = Modifier, icon: (@Composable ()
                 .padding(horizontal = 14.dp, vertical = 6.dp),
     ) {
         icon?.invoke()
-        WaterText(
+        ShakeText(
             text = text,
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Black),
             color = StageInk,

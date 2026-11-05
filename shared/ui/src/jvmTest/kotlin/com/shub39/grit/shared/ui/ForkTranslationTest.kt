@@ -89,7 +89,7 @@ class ForkTranslationTest {
 
     @Test
     fun `no text talks about the plant any more`() {
-        // since #16 the fighter speaks; water stays water
+        // since #16 the fighter speaks
         val plantWords =
             mapOf(
                 "values" to
@@ -106,6 +106,20 @@ class ForkTranslationTest {
         plantWords.forEach { (dir, words) ->
             val found = texts(dir).filter { words.containsMatchIn(it) }
             assertTrue(found.isEmpty(), "$dir still mentions the plant: $found")
+        }
+    }
+
+    @Test
+    fun `the currency is protein shakes, not water`() {
+        // since #17; the shop's water bottle is an item, not the currency
+        val waterWords =
+            mapOf(
+                "values" to Regex("""\bwater\b(?! bottle)""", RegexOption.IGNORE_CASE),
+                "values-de" to Regex("""\bwasser\b""", RegexOption.IGNORE_CASE),
+            )
+        waterWords.forEach { (dir, words) ->
+            val found = texts(dir).filter { words.containsMatchIn(it) || "💧" in it }
+            assertTrue(found.isEmpty(), "$dir still talks about water: $found")
         }
     }
 

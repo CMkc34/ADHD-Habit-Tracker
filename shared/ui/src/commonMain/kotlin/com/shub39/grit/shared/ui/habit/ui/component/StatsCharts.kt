@@ -165,7 +165,7 @@ fun StatsLegend(items: List<Pair<Color, String>>, modifier: Modifier = Modifier)
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Box(Modifier.size(12.dp).background(color, MaterialTheme.shapes.extraSmall))
-                WaterText(text = label, style = MaterialTheme.typography.bodySmall)
+                ShakeText(text = label, style = MaterialTheme.typography.bodySmall)
             }
         }
     }

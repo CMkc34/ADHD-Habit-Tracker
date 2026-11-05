@@ -6,8 +6,8 @@
 <resources>
     <!-- Energie-Seite -->
     <string name="stats_active_days_per_month">Aktive Tage pro Monat</string>
-    <string name="stats_energy_per_month">Wasser pro Monat</string>
-    <string name="stats_energy_earned">💧 verdient</string>
+    <string name="stats_energy_per_month">Shakes pro Monat</string>
+    <string name="stats_energy_earned">🥤 verdient</string>
     <string name="stats_energy_spent">❄️ für Freezes</string>
 
     <!-- Gesamt-Statistik -->

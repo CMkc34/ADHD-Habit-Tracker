@@ -22,8 +22,8 @@
         <item quantity="other">Noch %1$d aktive Tage, dann erreiche ich Rang %2$d.</item>
     </plurals>
     <string name="greeting_growing_last">Ich bin jetzt eine Legende. Danke, dass du dranbleibst!</string>
-    <!-- 💧 wird als Wassermünze gezeichnet -->
-    <string name="greeting_water">Du hast %1$d 💧</string>
+    <!-- 🥤 wird als Shake-Münze gezeichnet -->
+    <string name="greeting_water">Du hast %1$d 🥤</string>
     <string name="greeting_start">Los geht’s</string>
     <string name="greeting_setting">Tägliche Begrüßung</string>
     <string name="greeting_setting_desc">Beim ersten Öffnen am Tag begrüßt dich dein Kämpfer</string>

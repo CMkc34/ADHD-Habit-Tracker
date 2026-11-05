@@ -72,7 +72,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Full screen celebration after a habit check-in: the user's pixel fighter, the streak counting up
- * and the quote. Closes by tapping anywhere or the back key. [activityStreak] adds the "+1 💧" pill
+ * and the quote. Closes by tapping anywhere or the back key. [activityStreak] adds the "+1 🥤" pill
  * for the first check-in of the day; the daily bonus gets its own [BonusPopup] afterwards. The
  * training pills follow (#15): "+1 Strength XP" for [statGain], "Strength level 4!" for
  * [newStatLevel] (the fighter then gathers ki) and "+1 🎟 fight ticket" for [ticketEarned]. Without

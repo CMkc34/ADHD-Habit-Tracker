@@ -74,8 +74,8 @@ import com.shub39.grit.shared.ui.habit.fighter.GROUND_ASPECT_RATIO
 import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundPixels
 import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
 import com.shub39.grit.shared.ui.habit.fighter.label
-import com.shub39.grit.shared.ui.habit.ui.component.WATER_MARK
-import com.shub39.grit.shared.ui.habit.ui.component.WaterText
+import com.shub39.grit.shared.ui.habit.ui.component.SHAKE_MARK
+import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.fighter_rank_highest
@@ -101,7 +101,7 @@ private const val MAX_FIGHTER_SCALE = TrainingGroundPixels.MAX_FIGHTER_SCALE
 private const val MAX_SHEET_SHARE = 0.75f
 
 /**
- * The Fighter tab (#9): the training ground fills the page. On top sit the water balance, the
+ * The Fighter tab (#9): the training ground fills the page. On top sit the shake balance, the
  * fighter's name with its rank and progress (tap to rename) and the button to the shop, which has
  * its own page. At the bottom the stat sheet shows the four stats and can be pulled up for details;
  * the training ground ends behind its closed height, so the fighter always stays in view. Rank-up
@@ -218,7 +218,7 @@ fun AvatarPage(
     }
 }
 
-/** Water on the left, the name sign in the middle, the shop button on the right. */
+/** Shakes on the left, the name sign in the middle, the shop button on the right. */
 @Composable
 private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenShop: () -> Unit) {
     val fighter = avatar.fighter
@@ -229,7 +229,7 @@ private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenS
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        WaterChip(energy = avatar.energy)
+        ShakeChip(energy = avatar.energy)
 
         Surface(
             onClick = onRenameClick,
@@ -284,16 +284,16 @@ private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenS
     }
 }
 
-/** The water balance as a small paper pill, for the Avatar and the shop page. */
+/** The shake balance as a small paper pill, for the Avatar and the shop page. */
 @Composable
-internal fun WaterChip(energy: Int, modifier: Modifier = Modifier) {
+internal fun ShakeChip(energy: Int, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
     ) {
-        WaterText(
-            text = "$WATER_MARK $energy",
+        ShakeText(
+            text = "$SHAKE_MARK $energy",
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         )

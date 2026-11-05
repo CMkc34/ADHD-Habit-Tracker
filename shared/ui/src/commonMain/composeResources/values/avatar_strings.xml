@@ -13,14 +13,14 @@
 
     <!-- Shop -->
     <string name="shop_title">Shop</string>
-    <string name="shop_balance">You have %1$d 💧</string>
-    <string name="shop_buy_for">%1$d 💧</string>
+    <string name="shop_balance">You have %1$d 🥤</string>
+    <string name="shop_buy_for">%1$d 🥤</string>
     <string name="shop_choose">Choose</string>
     <string name="shop_put_on">Put on</string>
     <string name="shop_take_off">Take off</string>
     <string name="shop_confirm_title">Buy %1$s?</string>
-    <string name="shop_confirm_text">Spend %1$d 💧? New balance: %2$d 💧</string>
-    <string name="shop_low_energy">Afterwards there is not enough water left for a freeze (%1$d 💧).</string>
+    <string name="shop_confirm_text">Spend %1$d 🥤? New balance: %2$d 🥤</string>
+    <string name="shop_low_energy">Afterwards there are not enough shakes left for a freeze (%1$d 🥤).</string>
     <string name="shop_buy">Buy</string>
     <string name="shop_set_up">Set up</string>
     <string name="shop_put_away">Put away</string>
@@ -28,7 +28,7 @@
     <string name="shop_preview_title">Preview: %1$s</string>
     <string name="shop_preview_without">Without</string>
     <string name="shop_preview_with">With</string>
-    <string name="shop_preview_missing">You still need %1$d 💧.</string>
+    <string name="shop_preview_missing">You still need %1$d 🥤.</string>
     <string name="shop_close">Close</string>
 
     <string name="shop_open">Open shop</string>

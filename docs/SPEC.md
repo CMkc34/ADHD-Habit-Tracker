@@ -214,6 +214,7 @@ Belohnt wird die **Nutzung der App**, nicht die Serie einzelner Routinen.
 ### 4.2 Energie und Freezes
 - **+1 ⚡** pro aktivem Tag, **keine Obergrenze** (Energie wird in Phase 4 für den Avatar ausgegeben).
 - **Anzeige als Wasser (#112):** In der App heißt die Energie „Wasser“ mit Symbol 💧 (passend zum Baum). Code, Schlüssel und Backup-Format behalten den Namen *energy*; ⚡ in dieser SPEC meint 💧.
+- **Protein-Shakes statt Wasser (#17):** Seit #17 heißt die Währung in der App „Protein-Shakes“ mit Symbol 🥤, gezeichnet als Pixel-Shaker (`ShakeCoin`, `ShakeText`, `SHAKE_MARK`). Wasser/💧 in älteren Abschnitten meint die Shakes; Code und Backup bleiben bei *energy*.
 - **Tagesbonus (#111):** +1 ⚡ zusätzlich an einem aktiven Tag, an dem mindestens 2 verschiedene Routinen für dieses Datum erledigt sind (messbare ab Zielwert). Höchstens 1 Bonus pro Tag. Wird wie die Tagesenergie aus den Einträgen berechnet (`DailyBonus`, `BonusDaySource`): Haken zurücknehmen nimmt den Bonus zurück, Backups bringen ihn mit.
 - **Bonus-Popup (#136):** Das Abhaken, das den Tagesbonus auslöst, zeigt nach dem Motivations-Popup ein eigenes goldenes Vollbild-Popup (`BonusPopup`, `BonusPopupHost`) mit Wassermünze, „+1“ und neuem Wasserstand. Gleiche Regeln wie das Motivations-Popup: nur heute/gestern, aus mit dem Popup-Schalter.
 - **Freeze = 7 ⚡**, überbrückt einen verpassten Tag der Aktiv-Serie, **max. 2 Tage am Stück**.
@@ -665,7 +666,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   Haken für gestern geben keine heutigen Tickets (`FightTickets`, `TicketStatus`). Solange weniger
   als 3 verdient sind: „Hak noch eine Routine ab, dann bekommst du ein Ticket“.
 - Ein Kampf kostet das Ticket beim Start; Verlassen zählt als Niederlage.
-- Optional (#17): erster Sieg gegen Gegner n gibt einmalig 5·n 💧. `ActivityPlanner` bucht das als
+- Optional (#17): erster Sieg gegen Gegner n gibt einmalig 5·n 🥤. `ActivityPlanner` bucht das als
   berechnete Einnahme, der Kontostand bleibt berechnet.
 
 ### 9.7 Shop (#7)
@@ -834,7 +835,7 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 | #14 | Arena-Reiter und Kampfbildschirm |
 | #15 | Pop-up: XP, Stufe, Ticket |
 | #16 | Einrichtung und Texte |
-| #17 | Optional: Wasser für erste Siege |
+| #17 | Optional: Shakes für erste Siege (Währung heißt jetzt Protein-Shakes) |
 | #18 | Abnahme auf dem Gerät |
 | #26 | Kämpfer und Farben bei der Einrichtung wählen und speichern |
 

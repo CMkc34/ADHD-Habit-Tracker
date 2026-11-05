@@ -103,7 +103,7 @@ fun DailyGreetingHost() {
 
 /**
  * Full screen greeting on the first app start of a day: the plant on its meadow exactly as it is
- * now, a line fitting its state and the water balance. Closes by the button, tapping anywhere or
+ * now, a line fitting its state and the shake balance. Closes by the button, tapping anywhere or
  * the back key.
  */
 @Composable

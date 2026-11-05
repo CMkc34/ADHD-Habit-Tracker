@@ -52,8 +52,8 @@ import grit.shared.ui.generated.resources.bonus_popup_text
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Full screen gold stage for the daily bonus: a big bouncing water coin, "+1", why it was earned
- * and the new water balance ([energy], left out when unknown). Closes like the motivation popup.
+ * Full screen gold stage for the daily bonus: a big bouncing shake coin, "+1", why it was earned
+ * and the new shake balance ([energy], left out when unknown). Closes like the motivation popup.
  */
 @Composable
 fun BonusPopup(energy: Int?, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
@@ -74,7 +74,7 @@ fun BonusPopup(energy: Int?, onDismiss: () -> Unit, modifier: Modifier = Modifie
                     animationSpec = infiniteRepeatable(tween(1200), RepeatMode.Reverse),
                     label = "bob",
                 )
-        WaterCoin(
+        ShakeCoin(
             modifier =
                 Modifier.size(150.dp).graphicsLayer {
                     scaleX = coinScale
