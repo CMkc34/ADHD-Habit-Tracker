@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.fighter.FighterCharacter
-import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
@@ -77,7 +76,7 @@ import org.jetbrains.compose.resources.stringResource
  * for the first check-in of the day; the daily bonus gets its own [BonusPopup] afterwards. The
  * training pills follow (#15): "+1 Strength XP" for [statGain], "Strength level 4!" for
  * [newStatLevel] (the fighter then gathers ki) and "+1 🎟 fight ticket" for [ticketEarned]. Without
- * [avatar] a rookie in the default look is shown.
+ * [avatar] a rookie as the default fighter is shown.
  */
 @Composable
 fun HabitMotivationPopup(
@@ -128,7 +127,8 @@ fun HabitMotivationPopup(
         val fighterSize = if (pills > 2) 140.dp else 170.dp
         val fighterScale = rememberPopIn(delayMillis = 150)
         FighterAvatar(
-            character = FighterCharacter.of(avatar?.data?.look ?: FighterLook.DEFAULT),
+            character = avatar?.data?.character ?: FighterCharacter.DEFAULT,
+            colors = avatar?.data?.colors ?: FighterCharacter.DEFAULT.defaultColors,
             rank = avatar?.fighter?.rank ?: FighterRank.ROOKIE,
             mood = FighterMood.READY,
             outfit = avatar?.data?.outfit,

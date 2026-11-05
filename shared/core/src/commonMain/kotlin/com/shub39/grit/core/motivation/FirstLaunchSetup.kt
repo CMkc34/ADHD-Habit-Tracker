@@ -19,12 +19,13 @@ package com.shub39.grit.core.motivation
 import kotlinx.datetime.LocalDate
 
 /**
- * The one-time setup on the very first start (#139): the plant asks for the user's name before its
- * welcome greeting. Installs that were already in use never see it.
+ * The one-time setup on the very first start (#139, #26): the user picks their fighter and its
+ * colours, then the fighter asks for the user's name before its welcome greeting. Installs that
+ * were already in use never see it and keep their fighter.
  */
 object FirstLaunchSetup {
     /**
-     * Whether the setup is due: not done yet, the plant has never greeted and there are no
+     * Whether the setup is due: not done yet, the fighter has never greeted and there are no
      * routines, so this is a fresh install. Once it is not due, it is marked done and never comes
      * back.
      */

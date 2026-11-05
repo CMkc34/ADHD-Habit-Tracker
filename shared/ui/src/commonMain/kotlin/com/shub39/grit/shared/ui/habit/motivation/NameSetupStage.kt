@@ -16,11 +16,16 @@
  */
 package com.shub39.grit.shared.ui.habit.motivation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -46,35 +52,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.shub39.grit.core.avatar.UserName
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.HabitsAction
-import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
-import com.shub39.grit.shared.ui.habit.avatar.PlantMood
-import com.shub39.grit.shared.ui.habit.avatar.PlantStage
-import com.shub39.grit.shared.ui.habit.avatar.SpeciesChoice
-import com.shub39.grit.shared.ui.habit.avatar.SpeciesChoiceColors
+import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
+import com.shub39.grit.shared.ui.habit.fighter.FighterPicker
+import com.shub39.grit.shared.ui.habit.fighter.FighterPose
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import com.shub39.grit.shared.ui.viewmodel.HabitViewModel
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.greeting_header_welcome
+import grit.shared.ui.generated.resources.setup_fighter_choose
+import grit.shared.ui.generated.resources.setup_fighter_confirm_back
+import grit.shared.ui.generated.resources.setup_fighter_confirm_text
+import grit.shared.ui.generated.resources.setup_fighter_confirm_title
+import grit.shared.ui.generated.resources.setup_fighter_confirm_yes
+import grit.shared.ui.generated.resources.setup_fighter_final
+import grit.shared.ui.generated.resources.setup_fighter_title
 import grit.shared.ui.generated.resources.setup_name_hint
 import grit.shared.ui.generated.resources.setup_name_label
 import grit.shared.ui.generated.resources.setup_name_next
 import grit.shared.ui.generated.resources.setup_name_skip
 import grit.shared.ui.generated.resources.setup_name_text
 import grit.shared.ui.generated.resources.setup_name_title
-import grit.shared.ui.generated.resources.setup_species_header
-import grit.shared.ui.generated.resources.setup_species_header_named
-import grit.shared.ui.generated.resources.setup_species_later
-import grit.shared.ui.generated.resources.setup_species_start
-import grit.shared.ui.generated.resources.setup_species_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
- * Shows the name setup on the very first start (#139), app-wide like the [DailyGreetingHost]. The
- * greeting is asked for by the greeting host and waits until this is finished or skipped.
+ * Shows the first start setup (#139, #26) app-wide like the [DailyGreetingHost]. The greeting is
+ * asked for by the greeting host and waits until this is finished.
  */
 @Composable
 fun NameSetupHost() {
@@ -83,153 +92,115 @@ fun NameSetupHost() {
 
     if (!shown) return
     NameSetupStage(
-        onFinish = { name, species ->
-            viewModel.onAction(HabitsAction.FinishNameSetup(name, species))
-        }
+        onChooseFighter = { character, colors ->
+            viewModel.onAction(HabitsAction.ChooseFighter(character, colors))
+        },
+        onFinish = { name -> viewModel.onAction(HabitsAction.FinishNameSetup(name)) },
     )
 }
 
 /**
- * Full screen stage on the very first start, in two steps: the seed asks for the user's name, then
- * the user picks which plant grows with them (#140). [onFinish] gets the name, or an empty one when
- * skipped, and the chosen species. The back key skips the name, and on the second step keeps the
- * plant that is selected.
+ * Full screen stage on the very first start, in two steps. First the user picks their fighter and
+ * its colours (#26); a confirm dialog says the choice is final, then [onChooseFighter] stores it.
+ * Then the fighter asks for the user's name (#139); [onFinish] gets the name, or an empty one when
+ * skipped. The back key does nothing while picking, so the choice is never made by accident, and
+ * skips the name on the second step.
  */
 @Composable
 fun NameSetupStage(
-    onFinish: (String, FighterLook) -> Unit,
+    onChooseFighter: (FighterCharacter, FighterColors) -> Unit,
+    onFinish: (String) -> Unit,
     modifier: Modifier = Modifier,
-    startWithSpecies: Boolean = false,
+    startWithName: Boolean = false,
 ) {
     var name by rememberSaveable { mutableStateOf("") }
-    var choosing by rememberSaveable { mutableStateOf(startWithSpecies) }
-    var species by rememberSaveable { mutableStateOf(FighterLook.KAI) }
+    var picked by rememberSaveable { mutableStateOf(startWithName) }
+    var confirming by rememberSaveable { mutableStateOf(false) }
+    var characterId by rememberSaveable { mutableStateOf(FighterCharacter.DEFAULT.id) }
+    val character = FighterCharacter.fromId(characterId)
+    var colorsCode by rememberSaveable { mutableStateOf(character.defaultColors.encode()) }
+    val colors = FighterColors.decode(colorsCode, character.defaultColors)
 
     CelebrationStage(
         colors = CheckInStageColors,
-        onDismiss = {
-            if (choosing) onFinish(name, species)
-            else {
-                name = ""
-                choosing = true
-            }
-        },
+        onDismiss = { if (picked) onFinish("") },
         tapToDismiss = false,
         modifier = modifier,
     ) {
-        if (choosing) {
-            SpeciesStep(
-                userName = UserName.clean(name),
-                species = species,
-                onSelect = { species = it },
-                onStart = { onFinish(name, species) },
-            )
-            return@CelebrationStage
-        }
-
-        Text(
-            text = stringResource(Res.string.greeting_header_welcome).uppercase(),
-            style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 3.sp),
-            color = StageYellow,
-            textAlign = TextAlign.Center,
-        )
-
-        val plantScale = rememberPopIn(delayMillis = 150)
-        PlantAvatar(
-            stage = PlantStage.SEED,
-            mood = PlantMood.HAPPY,
-            modifier =
-                Modifier.widthIn(max = 160.dp).fillMaxWidth().graphicsLayer {
-                    scaleX = plantScale
-                    scaleY = plantScale
-                },
-        )
-
-        Text(
-            text = stringResource(Res.string.setup_name_title),
-            style =
-                MaterialTheme.typography.headlineMedium.copy(
-                    fontFamily = flexFontEmphasis(),
-                    fontWeight = FontWeight.Black,
-                ),
-            color = Color.White,
-            textAlign = TextAlign.Center,
-        )
-        Text(
-            text = stringResource(Res.string.setup_name_text),
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White.copy(alpha = 0.9f),
-            textAlign = TextAlign.Center,
-        )
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it.take(UserName.MAX_LENGTH) },
-            singleLine = true,
-            label = { Text(stringResource(Res.string.setup_name_label)) },
-            supportingText = { Text(stringResource(Res.string.setup_name_hint)) },
-            keyboardOptions =
-                KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
-                    imeAction = ImeAction.Done,
-                ),
-            keyboardActions = KeyboardActions(onDone = { choosing = true }),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedBorderColor = StageYellow,
-                    unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
-                    focusedLabelColor = StageYellow,
-                    unfocusedLabelColor = Color.White.copy(alpha = 0.8f),
-                    cursorColor = StageYellow,
-                    focusedSupportingTextColor = Color.White.copy(alpha = 0.8f),
-                    unfocusedSupportingTextColor = Color.White.copy(alpha = 0.8f),
-                ),
-            modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth().padding(top = 8.dp),
-        )
-
-        Button(
-            onClick = { choosing = true },
-            colors =
-                ButtonDefaults.buttonColors(containerColor = StageYellow, contentColor = StageInk),
-            modifier = Modifier.padding(top = 8.dp),
+        Column(
+            modifier = Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Text(
-                text = stringResource(Res.string.setup_name_next),
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
-            )
-        }
-        TextButton(
-            onClick = {
-                name = ""
-                choosing = true
+            if (picked) {
+                NameStep(
+                    character = character,
+                    colors = colors,
+                    name = name,
+                    onNameChange = { name = it.take(UserName.MAX_LENGTH) },
+                    onNext = { onFinish(name) },
+                    onSkip = { onFinish("") },
+                )
+            } else {
+                FighterStep(
+                    character = character,
+                    colors = colors,
+                    onCharacterChange = {
+                        // a new fighter starts in its own colours
+                        characterId = it.id
+                        colorsCode = it.defaultColors.encode()
+                    },
+                    onColorsChange = { colorsCode = it.encode() },
+                    onChoose = { confirming = true },
+                )
             }
-        ) {
-            Text(text = stringResource(Res.string.setup_name_skip), color = Color.White)
         }
+    }
+
+    if (confirming) {
+        AlertDialog(
+            onDismissRequest = { confirming = false },
+            title = {
+                Text(stringResource(Res.string.setup_fighter_confirm_title, character.defaultName))
+            },
+            text = { Text(stringResource(Res.string.setup_fighter_confirm_text)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        confirming = false
+                        picked = true
+                        onChooseFighter(character, colors)
+                    }
+                ) {
+                    Text(stringResource(Res.string.setup_fighter_confirm_yes))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirming = false }) {
+                    Text(stringResource(Res.string.setup_fighter_confirm_back))
+                }
+            },
+        )
     }
 }
 
-/** The second step: two cards to pick the plant, and a button to start. */
+/** The first step: "Who trains with you?", the picker and a note that the choice is final. */
 @Composable
-private fun SpeciesStep(
-    userName: String,
-    species: FighterLook,
-    onSelect: (FighterLook) -> Unit,
-    onStart: () -> Unit,
+private fun FighterStep(
+    character: FighterCharacter,
+    colors: FighterColors,
+    onCharacterChange: (FighterCharacter) -> Unit,
+    onColorsChange: (FighterColors) -> Unit,
+    onChoose: () -> Unit,
 ) {
     Text(
-        text =
-            if (userName.isBlank()) stringResource(Res.string.setup_species_header)
-            else stringResource(Res.string.setup_species_header_named, userName),
-        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
+        text = stringResource(Res.string.greeting_header_welcome).uppercase(),
+        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 3.sp),
         color = StageYellow,
         textAlign = TextAlign.Center,
     )
     Text(
-        text = stringResource(Res.string.setup_species_title),
+        text = stringResource(Res.string.setup_fighter_title),
         style =
             MaterialTheme.typography.headlineMedium.copy(
                 fontFamily = flexFontEmphasis(),
@@ -238,47 +209,136 @@ private fun SpeciesStep(
         color = Color.White,
         textAlign = TextAlign.Center,
     )
-    SpeciesChoice(
-        selected = species,
-        onSelect = onSelect,
-        colors =
-            SpeciesChoiceColors(
-                card = Color.White.copy(alpha = 0.14f),
-                content = Color.White,
-                selected = StageYellow,
-                onSelected = StageInk,
-            ),
-        modifier = Modifier.widthIn(max = 420.dp).fillMaxWidth().padding(top = 8.dp),
+    FighterPicker(
+        character = character,
+        colors = colors,
+        onCharacterChange = onCharacterChange,
+        onColorsChange = onColorsChange,
+        contentColor = Color.White,
+        selectedColor = StageYellow,
+        modifier = Modifier.widthIn(max = 420.dp).fillMaxWidth(),
     )
     Text(
-        text = stringResource(Res.string.setup_species_later),
+        text = stringResource(Res.string.setup_fighter_final),
         style = MaterialTheme.typography.bodyMedium,
         color = Color.White.copy(alpha = 0.85f),
         textAlign = TextAlign.Center,
+        modifier = Modifier.widthIn(max = 360.dp),
     )
     Button(
-        onClick = onStart,
+        onClick = onChoose,
         colors = ButtonDefaults.buttonColors(containerColor = StageYellow, contentColor = StageInk),
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = Modifier.padding(top = 4.dp),
     ) {
         Text(
-            text = stringResource(Res.string.setup_species_start),
+            text = stringResource(Res.string.setup_fighter_choose, character.defaultName),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
         )
     }
 }
 
-@PreviewWrapper(GritPreviewWrapper::class)
-@Preview
+/** The second step: the picked fighter asks for the user's name. */
 @Composable
-private fun NameSetupStagePreview() {
-    NameSetupStage(onFinish = { _, _ -> })
+private fun NameStep(
+    character: FighterCharacter,
+    colors: FighterColors,
+    name: String,
+    onNameChange: (String) -> Unit,
+    onNext: () -> Unit,
+    onSkip: () -> Unit,
+) {
+    Text(
+        text = stringResource(Res.string.greeting_header_welcome).uppercase(),
+        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 3.sp),
+        color = StageYellow,
+        textAlign = TextAlign.Center,
+    )
+
+    val fighterScale = rememberPopIn(delayMillis = 150)
+    FighterAvatar(
+        character = character,
+        rank = FighterRank.ROOKIE,
+        mood = FighterMood.READY,
+        colors = colors,
+        pose = FighterPose.CHARGE,
+        modifier =
+            Modifier.widthIn(max = 160.dp).fillMaxWidth().graphicsLayer {
+                scaleX = fighterScale
+                scaleY = fighterScale
+            },
+    )
+
+    Text(
+        text = stringResource(Res.string.setup_name_title),
+        style =
+            MaterialTheme.typography.headlineMedium.copy(
+                fontFamily = flexFontEmphasis(),
+                fontWeight = FontWeight.Black,
+            ),
+        color = Color.White,
+        textAlign = TextAlign.Center,
+    )
+    Text(
+        text = stringResource(Res.string.setup_name_text, character.defaultName),
+        style = MaterialTheme.typography.titleMedium,
+        color = Color.White.copy(alpha = 0.9f),
+        textAlign = TextAlign.Center,
+    )
+
+    OutlinedTextField(
+        value = name,
+        onValueChange = onNameChange,
+        singleLine = true,
+        label = { Text(stringResource(Res.string.setup_name_label)) },
+        supportingText = { Text(stringResource(Res.string.setup_name_hint)) },
+        keyboardOptions =
+            KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Done,
+            ),
+        keyboardActions = KeyboardActions(onDone = { onNext() }),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedBorderColor = StageYellow,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.7f),
+                focusedLabelColor = StageYellow,
+                unfocusedLabelColor = Color.White.copy(alpha = 0.8f),
+                cursorColor = StageYellow,
+                focusedSupportingTextColor = Color.White.copy(alpha = 0.8f),
+                unfocusedSupportingTextColor = Color.White.copy(alpha = 0.8f),
+            ),
+        modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth().padding(top = 8.dp),
+    )
+
+    Button(
+        onClick = onNext,
+        colors = ButtonDefaults.buttonColors(containerColor = StageYellow, contentColor = StageInk),
+        modifier = Modifier.padding(top = 8.dp),
+    ) {
+        Text(
+            text = stringResource(Res.string.setup_name_next),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+        )
+    }
+    TextButton(onClick = onSkip) {
+        Text(text = stringResource(Res.string.setup_name_skip), color = Color.White)
+    }
 }
 
 @PreviewWrapper(GritPreviewWrapper::class)
 @Preview
 @Composable
-private fun SpeciesStepPreview() {
-    NameSetupStage(onFinish = { _, _ -> }, startWithSpecies = true)
+private fun FighterStepPreview() {
+    NameSetupStage(onChooseFighter = { _, _ -> }, onFinish = {})
+}
+
+@PreviewWrapper(GritPreviewWrapper::class)
+@Preview
+@Composable
+private fun NameStepPreview() {
+    NameSetupStage(onChooseFighter = { _, _ -> }, onFinish = {}, startWithName = true)
 }

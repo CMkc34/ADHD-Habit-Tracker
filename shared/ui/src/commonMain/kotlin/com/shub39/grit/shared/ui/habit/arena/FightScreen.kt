@@ -84,7 +84,6 @@ import com.shub39.grit.core.arena.BattleEvent
 import com.shub39.grit.core.arena.Outcome
 import com.shub39.grit.core.arena.Side
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.fighter.FighterCharacter
 import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
 import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
 import com.shub39.grit.shared.ui.habit.fighter.KiBlast
@@ -346,7 +345,7 @@ private fun FightStage(fight: FightState, scene: FightScene, avatar: AvatarState
         remember(fight.stage, fight.lighting) {
             ArenaStagePixels.render(fight.stage, fight.lighting)
         }
-    val character = FighterCharacter.of(avatar.data.look)
+    val character = avatar.data.character
     val ratio = ArenaStagePixels.WIDTH.toFloat() / ArenaStagePixels.HEIGHT
     val top = (ArenaStagePixels.FOOT_Y - FighterPixels.SIZE).toFloat()
 
@@ -361,6 +360,7 @@ private fun FightStage(fight: FightState, scene: FightScene, avatar: AvatarState
             character = character,
             rank = avatar.fighter.rank,
             mood = scene.playerMood,
+            colors = avatar.data.colors,
             outfit = avatar.data.outfit,
             gear = avatar.data.accessories,
             pose = scene.playerPose,

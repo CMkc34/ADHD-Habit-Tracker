@@ -105,7 +105,7 @@ val BonusStageColors =
 /** Yellow of the energy pill and the header, the same as the plant's flowers. */
 val StageYellow = Color(0xFFFFD45C)
 
-/** Dark outline color of the plant, used for text on [StageYellow]. */
+/** Dark ink for text on [StageYellow]. */
 val StageInk = Color(0xFF2B3A2C)
 
 private const val RAY_COUNT = 16

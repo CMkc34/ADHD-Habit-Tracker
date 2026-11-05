@@ -23,7 +23,8 @@ import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarRepo
 import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.avatar.PurchaseCheck
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
@@ -58,7 +59,7 @@ private class FakeAvatarRepo : AvatarRepo {
 
     override suspend fun setUserName(name: String) = Unit
 
-    override suspend fun setLook(look: FighterLook) = Unit
+    override suspend fun chooseFighter(character: FighterCharacter, colors: FighterColors) = Unit
 
     override suspend fun wear(itemId: String, worn: Boolean) = Unit
 

@@ -32,15 +32,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
+import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.fighter.FighterLook
+import com.shub39.grit.core.fighter.FighterMood
+import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.shared.ui.GritPreviewWrapper
-import com.shub39.grit.shared.ui.habit.avatar.PlantAvatar
-import com.shub39.grit.shared.ui.habit.avatar.PlantMood
-import com.shub39.grit.shared.ui.habit.avatar.PlantStage
-import com.shub39.grit.shared.ui.habit.avatar.defaultFighterName
-import com.shub39.grit.shared.ui.habit.avatar.fighterName
-import com.shub39.grit.shared.ui.habit.avatar.plantStage
+import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.greeting_empty_button
@@ -49,7 +46,7 @@ import grit.shared.ui.generated.resources.greeting_empty_title
 import org.jetbrains.compose.resources.stringResource
 
 /**
- * Shown on the routine page while there is no routine: the user's plant sleeps and waits for the
+ * Shown on the routine page while there is no routine: the user's fighter dozes and waits for the
  * first one. Replaces the plain "add something" hint (fork).
  */
 @Composable
@@ -58,19 +55,21 @@ fun RoutinesEmptyState(
     onAddRoutine: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val name = avatar?.let { fighterName(it.data) } ?: defaultFighterName(FighterLook.KAI)
+    val data = avatar?.data ?: AvatarData()
+    val name = data.displayName
 
     Column(
         modifier = modifier.fillMaxWidth().padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        PlantAvatar(
-            stage = avatar?.fighter?.rank?.plantStage ?: PlantStage.SEED,
-            mood = PlantMood.TIRED,
-            potColor = avatar?.data?.outfit.orEmpty(),
-            accessories = avatar?.data?.accessories.orEmpty(),
-            species = avatar?.data?.look ?: FighterLook.KAI,
+        FighterAvatar(
+            character = data.character,
+            rank = avatar?.fighter?.rank ?: FighterRank.ROOKIE,
+            mood = FighterMood.TIRED,
+            colors = data.colors,
+            outfit = data.outfit,
+            gear = data.accessories,
             modifier = Modifier.size(150.dp),
         )
         Text(

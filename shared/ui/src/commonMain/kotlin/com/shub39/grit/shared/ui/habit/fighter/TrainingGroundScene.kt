@@ -45,7 +45,6 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.Weather
-import com.shub39.grit.core.fighter.FighterCharacter
 import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
@@ -62,8 +61,7 @@ const val GROUND_ASPECT_RATIO = WIDTH.toFloat() / GROUND_HEIGHT
  * The fighter on its training ground (#8): an outdoor dojo floor with a low fence under a sky that
  * shows the [weather], drawn in the fighter's pixel art. The fighter wears the outfit and gear of
  * [data] and stands in the middle; the props of [data] stand on fixed spots left and right of it,
- * the mat under its feet. Until the character and colours are stored (#26), the fighter is the one
- * that replaces the old look ([FighterCharacter.of]) in its default colours. When the fighter is
+ * the mat under its feet, in the character and colours picked at setup (#26). When the fighter is
  * [FighterMood.TIRED] the ground turns a little grey and the sky stands still; otherwise the clouds
  * drift and the sun's rays turn, following the system's animation setting, and nothing moves when
  * [animate] is false.
@@ -109,7 +107,8 @@ fun TrainingGroundScene(
         }
         val px = maxWidth / WIDTH
         FighterAvatar(
-            character = FighterCharacter.of(data.look),
+            character = data.character,
+            colors = data.colors,
             rank = rank,
             mood = mood,
             outfit = data.outfit,

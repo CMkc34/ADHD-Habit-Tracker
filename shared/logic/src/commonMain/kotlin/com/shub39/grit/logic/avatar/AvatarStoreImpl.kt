@@ -26,6 +26,8 @@ import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarStore
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.avatar.ShopCatalog
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterColors
 import com.shub39.grit.core.fighter.FighterLook
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.StatLevelCodec
@@ -52,6 +54,9 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
         private val speciesKey = stringPreferencesKey("avatar_species")
         // "statKey|level" entries, see StatLevelCodec
         private val seenStatLevelsKey = stringSetPreferencesKey("avatar_seen_stat_levels")
+        // the fighter picked at setup (#26): FighterCharacter.id and FighterColors.encode()
+        private val fighterCharacterKey = stringPreferencesKey("fighter_character")
+        private val fighterColorsKey = stringPreferencesKey("fighter_colors")
 
         private const val SEPARATOR = "|"
 
@@ -69,6 +74,7 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
 
     override fun getAvatar(): Flow<AvatarData> =
         datastore.data.map { prefs ->
+            val character = FighterCharacter.fromIdOrNull(prefs[fighterCharacterKey])
             AvatarData(
                 name = prefs[nameKey].orEmpty(),
                 purchases =
@@ -80,6 +86,11 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
                 userName = prefs[userNameKey].orEmpty(),
                 look = FighterLook.fromId(prefs[speciesKey]),
                 seenStatLevels = StatLevelCodec.decodeAll(prefs[seenStatLevelsKey].orEmpty()),
+                fighterCharacter = character,
+                fighterColors =
+                    character?.let {
+                        FighterColors.decode(prefs[fighterColorsKey], it.defaultColors)
+                    },
             )
         }
 
@@ -91,8 +102,11 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
         datastore.edit { it[userNameKey] = name }
     }
 
-    override suspend fun setLook(look: FighterLook) {
-        datastore.edit { it[speciesKey] = look.id }
+    override suspend fun setFighter(character: FighterCharacter, colors: FighterColors) {
+        datastore.edit {
+            it[fighterCharacterKey] = character.id
+            it[fighterColorsKey] = colors.encode()
+        }
     }
 
     override suspend fun addPurchase(purchase: Purchase) {
@@ -146,6 +160,14 @@ class AvatarStoreImpl(private val datastore: DataStore<Preferences>) : AvatarSto
             it[userNameKey] = data.userName
             it[speciesKey] = data.look.id
             it[seenStatLevelsKey] = StatLevelCodec.encodeAll(data.seenStatLevels)
+            val character = data.fighterCharacter
+            if (character == null) {
+                it.remove(fighterCharacterKey)
+                it.remove(fighterColorsKey)
+            } else {
+                it[fighterCharacterKey] = character.id
+                it[fighterColorsKey] = (data.fighterColors ?: character.defaultColors).encode()
+            }
         }
     }
 }

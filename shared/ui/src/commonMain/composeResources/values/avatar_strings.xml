@@ -1,41 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Plant avatar (phase 4) on the energy page.
+  The fighter: renaming, the shop and the "Your fighter" setting (phase 4, phase 6).
   The fork's own file, the upstream strings.xml stays untouched.
 -->
 <resources>
-    <string name="avatar_stage_label">Stage %1$d of 12 · %2$s</string>
-    <plurals name="avatar_days_to_next">
-        <item quantity="one">%1$d more active day to the next stage</item>
-        <item quantity="other">%1$d more active days to the next stage</item>
-    </plurals>
-    <string name="avatar_fully_grown">Fully grown</string>
-    <string name="avatar_tired">Your plant is tired. A check-in today wakes it up again.</string>
 
     <!-- Rename -->
-    <string name="avatar_rename_title">Rename your plant</string>
-    <string name="avatar_rename_hint">Leave empty to use “Sprout”</string>
+    <string name="avatar_rename_title">Rename your fighter</string>
+    <string name="avatar_rename_hint">Leave empty to use “%1$s”</string>
     <string name="avatar_save">Save</string>
     <string name="avatar_cancel">Cancel</string>
-
-    <!-- New stage -->
-    <string name="avatar_new_stage_title">Your plant has grown!</string>
-    <string name="avatar_new_stage_text">%1$s reached stage %2$d: %3$s.</string>
-    <string name="avatar_new_stage_ok">Nice!</string>
-
-    <!-- Stage names -->
-    <string name="avatar_stage_1">Seed</string>
-    <string name="avatar_stage_2">Germ</string>
-    <string name="avatar_stage_3">Seedling</string>
-    <string name="avatar_stage_4">Sprout</string>
-    <string name="avatar_stage_5">Plantlet</string>
-    <string name="avatar_stage_6">Young plant</string>
-    <string name="avatar_stage_7">Sapling</string>
-    <string name="avatar_stage_8">Young tree</string>
-    <string name="avatar_stage_9">Tree</string>
-    <string name="avatar_stage_10">Big tree</string>
-    <string name="avatar_stage_11">Blossoming tree</string>
-    <string name="avatar_stage_12">Mighty tree</string>
 
     <!-- Shop -->
     <string name="shop_title">Shop</string>
@@ -57,22 +31,11 @@
     <string name="shop_preview_missing">You still need %1$d 💧.</string>
     <string name="shop_close">Close</string>
 
-    <!-- Avatar tab (Phase 5) -->
-    <string name="avatar_tab">Avatar</string>
-
-    <!-- Meadow page and own shop page (#138) -->
-    <plurals name="avatar_stage_short_days">
-        <item quantity="one">Stage %1$d · %2$d day to go</item>
-        <item quantity="other">Stage %1$d · %2$d days to go</item>
-    </plurals>
-    <string name="avatar_stage_short_grown">Stage %1$d · fully grown</string>
     <string name="shop_open">Open shop</string>
     <string name="shop_seasonal">Season</string>
     <string name="shop_out_of_season">Not on sale right now</string>
-    <!-- #140 second avatar -->
-    <string name="avatar_species_sprout_desc">Leafy green tree</string>
-    <string name="avatar_species_cherry_desc">Cherry tree with pink blossoms</string>
-    <string name="avatar_species_setting">Your avatar</string>
-    <string name="avatar_species_setting_hint">%1$s · tap to switch</string>
-    <string name="avatar_species_keep">Stage, water and bought items stay.</string>
+    <!-- Settings (#16): the fighter is picked once at setup, only its name can change -->
+    <string name="fighter_setting">Your fighter</string>
+    <!-- %1$s = fighter name, %2$s = kind of fighter -->
+    <string name="fighter_setting_hint">%1$s · %2$s · tap to rename</string>
 </resources>

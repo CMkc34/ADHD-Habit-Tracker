@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.core.fighter.FighterCharacter
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
@@ -86,7 +85,8 @@ fun FighterNoticeHost() {
 fun NewRankDialog(avatar: AvatarState, rank: FighterRank, onDismiss: () -> Unit) {
     GritDialog(onDismissRequest = onDismiss) {
         FighterAvatar(
-            character = FighterCharacter.of(avatar.data.look),
+            character = avatar.data.character,
+            colors = avatar.data.colors,
             rank = rank,
             mood = FighterMood.READY,
             outfit = avatar.data.outfit,

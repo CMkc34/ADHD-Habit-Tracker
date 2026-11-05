@@ -683,16 +683,20 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 - Keine Änderung am Room-Schema. Neue Schlüssel in der bestehenden Preferences-Datei:
   - `routine_stats`
   - `avatar_seen_stat_levels`
+  - `fighter_character` (`FighterCharacter.id`) und `fighter_colors` (`haut|haare|haupt|akzent`), beide
+    erst bei der Einrichtung geschrieben (#26)
   - `arena_fights` (`datum|gegnerId|ergebnis|startzeit`, #12): die Startzeit (Epoch-ms) unterscheidet
     zwei Kämpfe gegen denselben Gegner am selben Tag und findet den Eintrag, der am Kampfende das echte
     Ergebnis bekommt. Ein Kampf wird beim Start als `LOSS` geschrieben; Leiter-Fortschritt und heute
     benutzte Tickets werden aus dem Log berechnet (`FightLog`, `ArenaState`, `ArenaRepo`).
-- Backup: optionale Felder `routineStats` und `arena` (`ArenaSchema`: Liste der Kämpfe; Import vereinigt
+- Backup: optionale Felder `routineStats`, `fighterCharacter`, `fighterColors` und `arena` (`ArenaSchema`: Liste der Kämpfe; Import vereinigt
   beide Logs, derselbe Kampf behält das bessere Ergebnis); ältere Backups bleiben importierbar, Import
   führt zusammen.
 - Umstieg:
   - Rang = bisherige Pflanzenstufe (`avatar_seen_stage` bleibt), keine Hinweise beim ersten Start.
   - `avatar_species`: `sprout` → Kai, `cherry` → Mira; daraus Wind-Mönch bzw. Funken-Talent (#26).
+    Fehlt `fighter_character`, gilt dieser Kämpfer in seinen Standardfarben, ohne Auswahl und ohne
+    Hinweis (`AvatarData.character`, `AvatarData.colors`).
   - Gekaufte Pflanzen-Teile werden ignoriert, das Wasser ist wieder da.
 
 ### 9.9 UI
@@ -748,8 +752,26 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   - `HabitViewModel` liest vor und nach dem Speichern `TrainingSnapshot` (XP des Werts, heute verdiente
     Tickets) und vergleicht mit `CheckInReward.between` (`core.arena`). Erneutes Abhaken nach dem
     Abwählen zeigt dieselbe Belohnung nicht noch einmal; gestern nachgetragen gibt XP, aber kein Ticket.
-- Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (fünf Kämpfer + Farben, #26), keine
-  Pflanzen-Texte mehr.
+- Einrichtung und Texte (#16, #26, ein gemeinsamer PR). Entschieden am 2026-11-05:
+  - Erst die Auswahl „Wer trainiert mit dir?“ (`FighterPicker`): großer animierter Kämpfer, Wischen
+    oder Pfeile durch alle fünf, darunter Name und Art, vier Farbreihen (Haut, Haare, Hauptfarbe,
+    Akzent) mit Live-Vorschau, „Zufällige Farben“ und „Farben zurücksetzen“. Ein neuer Kämpfer
+    startet in seinen eigenen Farben. Hinweis, dass die Wahl endgültig ist, dann ein Bestätigungs-
+    Dialog; erst danach `HabitsAction.ChooseFighter`, das `HabitViewModel` nur während der Einrichtung
+    annimmt. Zurück tut bei der Auswahl nichts.
+  - Dann fragt der gewählte Kämpfer nach dem Namen: „Hallo, ich bin Kai! …“.
+  - Jeder Kämpfer hat einen eigenen Standardnamen (`FighterCharacter.defaultName`): Wind-Mönch Kai,
+    Straßenkämpfer Rook, Schattenläufer Nyx, Funken-Talent Mira, Karateka Haru. Umbenennen geht auf
+    dem Kämpfer-Reiter und in den Einstellungen.
+  - Der Kämpfer spricht als „ich“: „Hallo Lena, ich bin Kai! Jede Routine, die du schaffst, macht mich
+    stärker. Dann kämpfen wir zusammen in der Arena.“, „Noch 3 aktive Tage, dann erreiche ich Rang 5.“
+  - Einstellungen: „Dein Kämpfer“ zeigt Name und Art, Tippen benennt um. Kein Wechsel von Kämpfer
+    oder Farben mehr (`AvatarSpeciesSheet` entfernt).
+  - Energie-Seite: unter den Regeln „So wird dein Kämpfer stärker“ (Routinen → Werte, aktive Tage →
+    Rang, Routinen heute → Tickets, Wasser nur für den Shop).
+  - Pflanzen-Zeichnungen (`PlantAvatar`, `SpeciesChoice`) sind entfernt; die leere Routinen-Seite
+    zeigt den dösenden Kämpfer. `ForkTranslationTest` prüft, dass kein Text mehr von Pflanze, Baum,
+    Samen oder Wiese spricht. Das App-Symbol (Spross) bleibt vorerst.
 - Alles selbst gezeichnet (`Canvas`), Bewegung folgt „Animationen entfernen“.
 - Kämpfer (#6) in **Pixel-Art** (Wunsch vom 2026-11-04) statt Papier-/Sticker-Stil, eigene Designs:
   - **Fünf Kämpfer** zur Wahl (`FighterCharacter`): Wind-Mönch, Straßenkämpfer, Schattenläufer,

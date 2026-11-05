@@ -19,29 +19,43 @@ package com.shub39.grit.core.fighter
 /**
  * The five fighters the user can pick at the start (SPEC 9.9). Each one has its own silhouette and
  * ki colour; skin, hair and the two outfit colours are chosen with [FighterColors]. The [id] is
- * stored, so it never changes.
+ * stored, so it never changes. [defaultName] is what the fighter is called until the user renames
+ * it; Wind Monk and Spark Prodigy keep the names of the two looks they replace.
  */
-enum class FighterCharacter(val id: String, val defaultColors: FighterColors) {
+enum class FighterCharacter(
+    val id: String,
+    val defaultName: String,
+    val defaultColors: FighterColors,
+) {
     /** Topknot, flowing scarf, wrapped forearms, wide pants. Orange ki. */
-    WIND_MONK("wind_monk", FighterColors(skin = 3, hair = 0, main = 0, accent = 0)),
+    WIND_MONK("wind_monk", "Kai", FighterColors(skin = 3, hair = 0, main = 0, accent = 0)),
 
     /** Messy hair, open hoodie, fingerless gloves, high-tops. Mint ki. */
-    STREET_BRAWLER("street_brawler", FighterColors(skin = 1, hair = 3, main = 1, accent = 1)),
+    STREET_BRAWLER(
+        "street_brawler",
+        "Rook",
+        FighterColors(skin = 1, hair = 3, main = 1, accent = 1),
+    ),
 
     /** Hooded runner with a mask, long headband tails and arm guards. Violet ki. */
-    SHADOW_RUNNER("shadow_runner", FighterColors(skin = 4, hair = 0, main = 2, accent = 2)),
+    SHADOW_RUNNER("shadow_runner", "Nyx", FighterColors(skin = 4, hair = 0, main = 2, accent = 2)),
 
     /** Cloud hair, goggles, a cropped jacket over the gi. Blue ki. */
-    SPARK_PRODIGY("spark_prodigy", FighterColors(skin = 5, hair = 5, main = 3, accent = 3)),
+    SPARK_PRODIGY("spark_prodigy", "Mira", FighterColors(skin = 5, hair = 5, main = 3, accent = 3)),
 
     /** The classic karateka: short hair, a plain gi with rolled sleeves, the rank belt. Red ki. */
-    KARATEKA("karateka", FighterColors(skin = 2, hair = 1, main = 8, accent = 6));
+    KARATEKA("karateka", "Haru", FighterColors(skin = 2, hair = 1, main = 8, accent = 6));
 
     companion object {
         val DEFAULT = WIND_MONK
 
         /** The character stored as [id]; unknown or missing ids give [DEFAULT]. */
         fun fromId(id: String?): FighterCharacter = entries.firstOrNull { it.id == id } ?: DEFAULT
+
+        /**
+         * The character stored as [id], or `null` when nothing (or something unknown) is stored.
+         */
+        fun fromIdOrNull(id: String?): FighterCharacter? = entries.firstOrNull { it.id == id }
 
         /** The two looks from before the character choice (SPEC 9.8) map to the closest fighter. */
         fun of(look: FighterLook): FighterCharacter =

@@ -18,6 +18,8 @@ package com.shub39.grit.core.motivation
 
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.UserName
+import com.shub39.grit.core.fighter.FighterCharacter
+import com.shub39.grit.core.fighter.FighterLook
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -58,5 +60,25 @@ class FirstLaunchSetupTest {
             "Mia",
             AvatarData(userName = "Mia").mergedWith(AvatarData(userName = "Lena")).userName,
         )
+    }
+
+    @Test
+    fun `an install from before the picker skips it and keeps its fighter`() {
+        // it already greeted or has routines, so the setup with the picker is not due
+        assertFalse(
+            FirstLaunchSetup.isDue(
+                done = false,
+                lastGreeting = LocalDate(2026, 10, 1),
+                hasRoutines = true,
+            )
+        )
+        // Kai becomes the Wind Monk, Mira the Spark Prodigy, both in their default colours
+        val kai = AvatarData(look = FighterLook.KAI)
+        val mira = AvatarData(look = FighterLook.MIRA)
+        assertEquals(FighterCharacter.WIND_MONK, kai.character)
+        assertEquals(FighterCharacter.SPARK_PRODIGY, mira.character)
+        assertEquals(FighterCharacter.SPARK_PRODIGY.defaultColors, mira.colors)
+        assertEquals("Kai", kai.displayName)
+        assertEquals("Mira", mira.displayName)
     }
 }

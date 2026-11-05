@@ -17,8 +17,9 @@
 package com.shub39.grit.core.fighter
 
 /**
- * Who trains with the user (SPEC 9.8). Every look reaches the same ranks, wears the same shop items
- * and keeps rank, water and purchases when the user switches.
+ * The two looks from before the fighter choice (SPEC 9.8). Since #26 the user picks a
+ * [FighterCharacter] at setup; the look only tells which fighter an older install gets
+ * ([FighterCharacter.of]) and is no longer switched.
  *
  * [id] is stored under `avatar_species` and in the backup field `species`. It keeps the ids of the
  * plant species the look replaces, so older backups and older app versions stay compatible.

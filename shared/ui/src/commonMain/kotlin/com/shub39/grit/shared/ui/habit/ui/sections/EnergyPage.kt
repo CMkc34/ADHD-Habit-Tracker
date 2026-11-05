@@ -55,6 +55,8 @@ import com.shub39.grit.core.activity.ActivityPlanner
 import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.activity.DailyBonus
 import com.shub39.grit.core.activity.DayStatus
+import com.shub39.grit.core.arena.ArenaRules
+import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.stats.ForkStats
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
@@ -73,6 +75,11 @@ import grit.shared.ui.generated.resources.energy_auto_freeze_title
 import grit.shared.ui.generated.resources.energy_balance
 import grit.shared.ui.generated.resources.energy_current_streak
 import grit.shared.ui.generated.resources.energy_days
+import grit.shared.ui.generated.resources.energy_fighter_rule_rank
+import grit.shared.ui.generated.resources.energy_fighter_rule_stats
+import grit.shared.ui.generated.resources.energy_fighter_rule_tickets
+import grit.shared.ui.generated.resources.energy_fighter_rule_water
+import grit.shared.ui.generated.resources.energy_fighter_rules_title
 import grit.shared.ui.generated.resources.energy_last_days
 import grit.shared.ui.generated.resources.energy_legend_active
 import grit.shared.ui.generated.resources.energy_legend_before_start
@@ -99,8 +106,9 @@ private const val DAYS_SHOWN = 30
 private const val DAYS_PER_ROW = 10
 
 /**
- * Energy balance, activity streak, the last 30 days, monthly statistics and the rules. The plant
- * and its shop live on the [com.shub39.grit.shared.ui.habit.avatar.AvatarPage].
+ * Energy balance, activity streak, the last 30 days, monthly statistics, the rules and how the
+ * fighter gets stronger. The fighter and its shop live on the
+ * [com.shub39.grit.shared.ui.habit.avatar.AvatarPage].
  */
 @Composable
 fun EnergyPage(
@@ -192,6 +200,7 @@ fun EnergyPage(
             }
 
             item { RulesCard() }
+            item { FighterRulesCard() }
         }
     }
 }
@@ -387,25 +396,51 @@ private fun AutoFreezeCard(
 
 @Composable
 private fun RulesCard(modifier: Modifier = Modifier) {
-    val rules =
-        listOf(
-            stringResource(Res.string.energy_rule_active),
-            stringResource(Res.string.energy_rule_energy, ActivityPlanner.ENERGY_PER_ACTIVE_DAY),
-            stringResource(
-                Res.string.energy_rule_bonus,
-                DailyBonus.ENERGY,
-                DailyBonus.MIN_ROUTINES,
+    RulesList(
+        title = stringResource(Res.string.energy_rules_title),
+        rules =
+            listOf(
+                stringResource(Res.string.energy_rule_active),
+                stringResource(
+                    Res.string.energy_rule_energy,
+                    ActivityPlanner.ENERGY_PER_ACTIVE_DAY,
+                ),
+                stringResource(
+                    Res.string.energy_rule_bonus,
+                    DailyBonus.ENERGY,
+                    DailyBonus.MIN_ROUTINES,
+                ),
+                stringResource(
+                    Res.string.energy_rule_freeze,
+                    ActivityPlanner.FREEZE_COST,
+                    ActivityPlanner.MAX_FROZEN_DAYS_IN_A_ROW,
+                ),
+                stringResource(Res.string.energy_rule_frozen_day),
+                stringResource(Res.string.energy_rule_break),
+                stringResource(Res.string.energy_rule_auto_freeze),
             ),
-            stringResource(
-                Res.string.energy_rule_freeze,
-                ActivityPlanner.FREEZE_COST,
-                ActivityPlanner.MAX_FROZEN_DAYS_IN_A_ROW,
-            ),
-            stringResource(Res.string.energy_rule_frozen_day),
-            stringResource(Res.string.energy_rule_break),
-            stringResource(Res.string.energy_rule_auto_freeze),
-        )
+        modifier = modifier,
+    )
+}
 
+/** How routines, active days and check-offs today make the fighter stronger (#16). */
+@Composable
+private fun FighterRulesCard(modifier: Modifier = Modifier) {
+    RulesList(
+        title = stringResource(Res.string.energy_fighter_rules_title),
+        rules =
+            listOf(
+                stringResource(Res.string.energy_fighter_rule_stats),
+                stringResource(Res.string.energy_fighter_rule_rank, FighterRank.entries.size),
+                stringResource(Res.string.energy_fighter_rule_tickets, ArenaRules.TICKETS_PER_DAY),
+                stringResource(Res.string.energy_fighter_rule_water),
+            ),
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun RulesList(title: String, rules: List<String>, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.widthIn(max = 500.dp).fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
@@ -415,7 +450,7 @@ private fun RulesCard(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = stringResource(Res.string.energy_rules_title),
+                text = title,
                 fontFamily = flexFontRounded(),
                 style = MaterialTheme.typography.titleMedium,
             )

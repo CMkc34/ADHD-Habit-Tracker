@@ -208,7 +208,7 @@ fun AvatarPage(
     if (avatar != null && showRename) {
         RenameAvatarDialog(
             currentName = avatar.data.name,
-            species = avatar.data.look,
+            defaultName = avatar.data.character.defaultName,
             onSave = {
                 onAction(HabitsAction.RenameAvatar(it))
                 showRename = false

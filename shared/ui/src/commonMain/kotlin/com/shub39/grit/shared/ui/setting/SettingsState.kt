@@ -44,7 +44,7 @@ data class SettingsState(
     val dailyGreeting: Boolean = true,
     // fork (#139): how the plant calls the user, empty without a name
     val userName: String = "",
-    // fork (#140): the avatar, to pick its look
+    // fork (#16): the fighter, shown and renamed under "Your fighter"
     val avatar: AvatarData = AvatarData(),
     val avatarRank: FighterRank = FighterRank.ROOKIE,
 )

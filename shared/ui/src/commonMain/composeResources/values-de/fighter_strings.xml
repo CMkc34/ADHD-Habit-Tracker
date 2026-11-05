@@ -96,4 +96,26 @@
     <!-- Motivations-Pop-up nach dem Abhaken (#15) -->
     <string name="fighter_popup_xp">+1 %1$s-XP</string>
     <string name="fighter_popup_ticket">+1 🎟 Kampf-Ticket</string>
+
+    <!-- Die fünf Kämpfer und die Auswahl bei der Einrichtung (#26). Die Namen (Kai, Rook, …) stehen im Code. -->
+    <string name="fighter_character_wind_monk">Wind-Mönch</string>
+    <string name="fighter_character_wind_monk_desc">ruhig und leichtfüßig, mit wehendem Schal</string>
+    <string name="fighter_character_street_brawler">Straßenkämpfer</string>
+    <string name="fighter_character_street_brawler_desc">Hoodie, Handschuhe und viel Herz</string>
+    <string name="fighter_character_shadow_runner">Schattenläufer</string>
+    <string name="fighter_character_shadow_runner_desc">maskiert, schnell und leise</string>
+    <string name="fighter_character_spark_prodigy">Funken-Talent</string>
+    <string name="fighter_character_spark_prodigy_desc">Schutzbrille, wilde Haare und helle Ideen</string>
+    <string name="fighter_character_karateka">Karateka</string>
+    <string name="fighter_character_karateka_desc">klassischer Gi und saubere Technik</string>
+    <string name="fighter_slot_skin">Haut</string>
+    <string name="fighter_slot_hair">Haare</string>
+    <string name="fighter_slot_main">Hauptfarbe</string>
+    <string name="fighter_slot_accent">Akzent</string>
+    <string name="fighter_picker_previous">Vorheriger Kämpfer</string>
+    <string name="fighter_picker_next">Nächster Kämpfer</string>
+    <string name="fighter_picker_random">Zufällige Farben</string>
+    <string name="fighter_picker_reset">Farben zurücksetzen</string>
+    <!-- %1$s = Name der Reihe, %2$d = Nummer der Farbe, %3$d = Anzahl der Farben -->
+    <string name="fighter_picker_swatch">%1$s, Farbe %2$d von %3$d</string>
 </resources>
