@@ -59,4 +59,39 @@
     <string name="shop_item_prop_trophy_shelf">Pokalregal</string>
     <string name="shop_item_prop_gong">Gong</string>
     <string name="shop_preview_rank">So sieht es ab Rang %1$d aus. Dein Kämpfer ist auf Rang %2$d.</string>
+
+    <!-- Kämpfer-Reiter (#9) -->
+    <string name="fighter_tab">Kämpfer</string>
+    <string name="arena_tab">Arena</string>
+    <string name="fighter_tired">%1$s macht Pause. Ein Häkchen, und schon geht es weiter.</string>
+    <plurals name="fighter_rank_to_next">
+        <item quantity="one">%1$s · noch %2$d aktiver Tag bis %3$s</item>
+        <item quantity="other">%1$s · noch %2$d aktive Tage bis %3$s</item>
+    </plurals>
+    <string name="fighter_rank_highest">%1$s · höchster Rang</string>
+    <string name="fighter_stats_title">Werte</string>
+    <string name="fighter_stat_level">Stufe %1$d</string>
+    <string name="fighter_stat_xp">%1$d / %2$d XP</string>
+    <string name="fighter_stat_no_routine">Noch keine Routine trainiert das</string>
+    <string name="fighter_new_rank_title">%1$s ist jetzt %2$s! 🥋</string>
+    <string name="fighter_new_rank_text">Neuer Gürtel: %1$s. Jeder aktive Tag zählt.</string>
+    <string name="fighter_new_stat_level">%1$s Stufe %2$d!</string>
+    <string name="fighter_new_stat_text">Deine Routinen zahlen sich aus.</string>
+    <string name="fighter_notice_ok">Weiter geht’s!</string>
+    <string name="fighter_belt_white">weiß</string>
+    <string name="fighter_belt_yellow">gelb</string>
+    <string name="fighter_belt_orange">orange</string>
+    <string name="fighter_belt_green">grün</string>
+    <string name="fighter_belt_blue">blau</string>
+    <string name="fighter_belt_purple">lila</string>
+    <string name="fighter_belt_brown">braun</string>
+    <string name="fighter_belt_red">rot</string>
+    <string name="fighter_belt_black">schwarz</string>
+    <string name="fighter_belt_black_one_stripe">schwarz mit einem Goldstreifen</string>
+    <string name="fighter_belt_black_two_stripes">schwarz mit zwei Goldstreifen</string>
+    <string name="fighter_belt_gold">gold</string>
+
+    <!-- Arena-Reiter, Platzhalter bis #14 -->
+    <string name="arena_soon_title">Die Arena öffnet bald</string>
+    <string name="arena_soon_text">Trainier weiter. Bald trittst du hier gegen die Alltagsfeinde an.</string>
 </resources>

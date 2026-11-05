@@ -35,6 +35,7 @@ import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.app.MainAppState
 import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.activity.FreezeNoticeHost
+import com.shub39.grit.shared.ui.habit.arena.ArenaPage
 import com.shub39.grit.shared.ui.habit.avatar.AvatarPage
 import com.shub39.grit.shared.ui.habit.avatar.AvatarShopPage
 import com.shub39.grit.shared.ui.habit.motivation.BonusPopupHost
@@ -237,6 +238,13 @@ private fun EntryProviderScope<Routes>.habitsScreens(
             onOpenShop = { topLevelBackStack.add(PlantShop) },
             modifier = Modifier.paperBackground(),
         )
+    }
+
+    entry<Arena>(metadata = fadeTransitionMetadata()) {
+        val viewModel = koinViewModel<HabitViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        ArenaPage(avatar = state.avatar, modifier = Modifier.paperBackground())
     }
 
     entry<PlantShop>(metadata = horizontalTransitionMetadata()) {

@@ -59,4 +59,39 @@
     <string name="shop_item_prop_trophy_shelf">Trophy shelf</string>
     <string name="shop_item_prop_gong">Gong</string>
     <string name="shop_preview_rank">This is how it looks from rank %1$d. Your fighter is at rank %2$d.</string>
+
+    <!-- Fighter tab (#9) -->
+    <string name="fighter_tab">Fighter</string>
+    <string name="arena_tab">Arena</string>
+    <string name="fighter_tired">%1$s is resting. One check-in and they’re back on their feet.</string>
+    <plurals name="fighter_rank_to_next">
+        <item quantity="one">%1$s · %2$d active day to %3$s</item>
+        <item quantity="other">%1$s · %2$d active days to %3$s</item>
+    </plurals>
+    <string name="fighter_rank_highest">%1$s · highest rank</string>
+    <string name="fighter_stats_title">Stats</string>
+    <string name="fighter_stat_level">Level %1$d</string>
+    <string name="fighter_stat_xp">%1$d / %2$d XP</string>
+    <string name="fighter_stat_no_routine">No routine trains this yet</string>
+    <string name="fighter_new_rank_title">%1$s is now a %2$s! 🥋</string>
+    <string name="fighter_new_rank_text">New belt: %1$s. Every active day counts.</string>
+    <string name="fighter_new_stat_level">%1$s level %2$d!</string>
+    <string name="fighter_new_stat_text">Your routines are paying off.</string>
+    <string name="fighter_notice_ok">Let’s go!</string>
+    <string name="fighter_belt_white">white belt</string>
+    <string name="fighter_belt_yellow">yellow belt</string>
+    <string name="fighter_belt_orange">orange belt</string>
+    <string name="fighter_belt_green">green belt</string>
+    <string name="fighter_belt_blue">blue belt</string>
+    <string name="fighter_belt_purple">purple belt</string>
+    <string name="fighter_belt_brown">brown belt</string>
+    <string name="fighter_belt_red">red belt</string>
+    <string name="fighter_belt_black">black belt</string>
+    <string name="fighter_belt_black_one_stripe">black belt with a gold stripe</string>
+    <string name="fighter_belt_black_two_stripes">black belt with two gold stripes</string>
+    <string name="fighter_belt_gold">gold belt</string>
+
+    <!-- Arena tab, placeholder until #14 -->
+    <string name="arena_soon_title">The arena opens soon</string>
+    <string name="arena_soon_text">Keep training. Soon you can take on the everyday enemies here.</string>
 </resources>
