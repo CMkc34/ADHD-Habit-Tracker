@@ -109,7 +109,7 @@ fun KiBlast(
  * drawing, so a new frame repaints the canvas without recomposing.
  */
 @Composable
-private fun rememberPixelFrame(): State<Int> {
+internal fun rememberPixelFrame(): State<Int> {
     val transition = rememberInfiniteTransition(label = "fighter")
     val time =
         transition.animateFloat(

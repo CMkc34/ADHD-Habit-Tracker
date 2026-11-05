@@ -11,5 +11,10 @@
     <string name="arena_opponent_9">Überforderungs-Oger</string>
     <string name="arena_opponent_10">Aufschiebe-Drache</string>
 
+    <string name="arena_opponent_idle">%1$s, kampfbereit</string>
+    <string name="arena_opponent_hit">%1$s wird getroffen</string>
+    <string name="arena_opponent_ko">%1$s ist k.o. und schwindelig</string>
+    <string name="arena_opponent_locked">Gesperrter Gegner</string>
+
     <string name="arena_next_ticket_hint">Hak noch eine Routine ab, dann bekommst du ein Ticket</string>
 </resources>

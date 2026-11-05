@@ -15,5 +15,10 @@
     <string name="arena_opponent_9">Overwhelm Ogre</string>
     <string name="arena_opponent_10">Procrastination Dragon</string>
 
+    <string name="arena_opponent_idle">%1$s, ready to fight</string>
+    <string name="arena_opponent_hit">%1$s takes a hit</string>
+    <string name="arena_opponent_ko">%1$s is knocked out and dizzy</string>
+    <string name="arena_opponent_locked">Locked opponent</string>
+
     <string name="arena_next_ticket_hint">Check off one more routine for a ticket</string>
 </resources>
