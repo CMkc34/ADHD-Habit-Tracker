@@ -58,7 +58,7 @@ import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
 import com.shub39.grit.shared.ui.habit.HabitsAction
-import com.shub39.grit.shared.ui.habit.fighter.FighterShopScene
+import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.nav_arrow_back
@@ -148,10 +148,11 @@ fun AvatarShopPage(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                FighterShopScene(
+                TrainingGroundScene(
                     data = avatar.data,
                     rank = avatar.fighter.rank,
                     mood = avatar.fighter.mood,
+                    weather = avatar.fighter.weather,
                     modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth(),
                 )
             }

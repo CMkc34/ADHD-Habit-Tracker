@@ -668,8 +668,8 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   - **Ausrüstung** (beliebig viele)
   - **Trainingsplatz-Teile** (fester Platz)
 - Rein kosmetisch. Katalog und Preise stehen in #7 und nur in `ShopCatalog`.
-- Bis #8 zeigt der Shop den Kämpfer mit den Trainingsplatz-Teilen als Pixel-Symbole darunter
-  (`FighterShopScene`, `PropPixels`).
+- Shop-Kopf und Kauf-Vorschau zeigen den Kämpfer auf dem Trainingsplatz (#8); in der Liste stehen
+  die Trainingsplatz-Teile als Pixel-Symbole (`PropIcon`, `PropPixels`).
 
 ### 9.8 Datenhaltung und Umstieg (#5, #12)
 - Keine Änderung am Room-Schema. Neue Schlüssel in der bestehenden Preferences-Datei:
@@ -713,7 +713,19 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
     **Ki-Strahl** (Spezialangriff, #14). Dazu `KiBlast` als fliegendes Geschoss für die Arena.
   - Müde: sitzt im Schneidersitz, Augen zu, „z“.
   - Ausrüstung (`FighterItems`) sitzt auf den Skelett-Punkten und passt so auf alle Kämpfer.
-  - Trainingsplatz (#8) und Gegner (#13) sollten im selben Pixel-Stil gezeichnet werden.
+  - Gegner (#13) sollten im selben Pixel-Stil gezeichnet werden.
+- Trainingsplatz (#8, entschieden am 2026-11-05): `TrainingGroundScene` ersetzt `MeadowScene` auf dem
+  Kämpfer-Reiter, im Shop-Kopf, in der Kauf-Vorschau und in der Tagesbegrüßung.
+  - Alles in Pixel-Art (`TrainingGroundPixels`, reines Kotlin, getestet), auch Himmel, Sonne und
+    Wolken. Die Wetter-Logik bleibt gleich (`Weather` an der Aktiv-Serie, gleiche Wolken je Wetter,
+    Wolken ziehen hin und her, die Sonnenstrahlen drehen sich einmal pro Minute, in kleinen Schritten).
+  - Boden: Dojo-Boden aus Holzdielen unter freiem Himmel, dahinter ein niedriger Zaun und Hügel.
+    Grundfläche 160 × 80 Pixel, höhere Szenen bekommen mehr Himmel (`sceneHeight`, `skyTop`),
+    höchstens 600 dp breit. Kämpfer in der Mitte, bis 1,6-fach vergrößert (`fighterScale`).
+  - Die Matte liegt unter den Füßen des Kämpfers (Wunsch vom 2026-11-05); die übrigen 7 Teile stehen
+    auf festen Plätzen links und rechts in zwei Reihen und überdecken den Kämpfer nie (getestet für
+    alle Kämpfer bis 1,6-fach).
+  - Müde: Boden und Teile werden leicht grau, der Himmel steht still.
 
 ### 9.10 Issues
 | # | Inhalt |

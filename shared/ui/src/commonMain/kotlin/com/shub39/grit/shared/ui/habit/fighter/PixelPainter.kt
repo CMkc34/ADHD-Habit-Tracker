@@ -48,8 +48,8 @@ internal class Paint(val color: Int, val group: String = color.toString())
  * separated by dark inner lines, and the whole figure gets an ink outline. [face] pixels are put on
  * before the outline, [effect] pixels (ki, sleepy "z") after it.
  */
-internal class PixelPainter(val size: Int) {
-    private val region = IntArray(size * size) { -1 }
+internal class PixelPainter(val width: Int, val height: Int = width) {
+    private val region = IntArray(width * height) { -1 }
     private val paints = ArrayList<Paint>()
     private val order = ArrayList<Int>()
     private var step = 0
@@ -71,8 +71,8 @@ internal class PixelPainter(val size: Int) {
 
     private inline fun fill(paint: Paint, inside: (Float, Float) -> Boolean) {
         val id = id(paint)
-        for (y in 0 until size) for (x in 0 until size) {
-            if (inside(x + 0.5f, y + 0.5f)) region[y * size + x] = id
+        for (y in 0 until height) for (x in 0 until width) {
+            if (inside(x + 0.5f, y + 0.5f)) region[y * width + x] = id
         }
     }
 
@@ -122,7 +122,7 @@ internal class PixelPainter(val size: Int) {
         put(effect, x, y, rows, colors)
 
     fun effectPixel(x: Int, y: Int, color: Int) {
-        if (x in 0 until size && y in 0 until size) effect[y * size + x] = color
+        if (x in 0 until width && y in 0 until height) effect[y * width + x] = color
     }
 
     private fun put(
@@ -136,15 +136,15 @@ internal class PixelPainter(val size: Int) {
             row.forEachIndexed { dx, c ->
                 val px = x + dx
                 val py = y + dy
-                if (c != '.' && px in 0 until size && py in 0 until size) {
-                    into[py * size + px] = colors.getValue(c)
+                if (c != '.' && px in 0 until width && py in 0 until height) {
+                    into[py * width + px] = colors.getValue(c)
                 }
             }
         }
     }
 
     private fun regionAt(x: Int, y: Int): Int =
-        if (x in 0 until size && y in 0 until size) region[y * size + x] else -1
+        if (x in 0 until width && y in 0 until height) region[y * width + x] else -1
 
     /**
      * The finished picture. [halo] puts a one pixel glow around the outline (ki aura, golden aura);
@@ -155,8 +155,8 @@ internal class PixelPainter(val size: Int) {
         haloLit: (Int, Int) -> Boolean = { _, _ -> true },
         beforeEffects: (IntArray) -> Unit = {},
     ): IntArray {
-        val out = IntArray(size * size)
-        for (y in 0 until size) for (x in 0 until size) {
+        val out = IntArray(width * height)
+        for (y in 0 until height) for (x in 0 until width) {
             val r = regionAt(x, y)
             if (r < 0) continue
             val paint = paints[r]
@@ -173,25 +173,25 @@ internal class PixelPainter(val size: Int) {
                     c = mix(shade(paint.color), INK, 0.55f)
                 }
             }
-            out[y * size + x] = c
+            out[y * width + x] = c
         }
         for ((i, c) in face) out[i] = c
 
         fun filled(x: Int, y: Int) =
-            x in 0 until size && y in 0 until size && out[y * size + x] != 0
+            x in 0 until width && y in 0 until height && out[y * width + x] != 0
         val outline =
-            (0 until size * size).filter { i ->
-                val x = i % size
-                val y = i / size
+            (0 until width * height).filter { i ->
+                val x = i % width
+                val y = i / width
                 out[i] == 0 && NEIGHBOURS.any { (dx, dy) -> filled(x + dx, y + dy) }
             }
         for (i in outline) out[i] = INK
 
         if (halo != null) {
             val glow =
-                (0 until size * size).filter { i ->
-                    val x = i % size
-                    val y = i / size
+                (0 until width * height).filter { i ->
+                    val x = i % width
+                    val y = i / width
                     out[i] == 0 &&
                         AROUND.any { (dx, dy) -> filled(x + dx, y + dy) } &&
                         haloLit(x, y)

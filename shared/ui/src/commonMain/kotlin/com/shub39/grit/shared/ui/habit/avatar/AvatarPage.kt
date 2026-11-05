@@ -65,6 +65,9 @@ import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
 import com.shub39.grit.shared.ui.habit.HabitsAction
+import com.shub39.grit.shared.ui.habit.fighter.GROUND_ASPECT_RATIO
+import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundPixels
+import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
 import com.shub39.grit.shared.ui.habit.ui.component.WATER_MARK
 import com.shub39.grit.shared.ui.habit.ui.component.WaterText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
@@ -79,18 +82,19 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
-// the meadow never gets wider than this, on tablets it stands in the middle of the page
+// the training ground never gets wider than this, on tablets it stands in the middle of the page
 private val MAX_SCENE_WIDTH = 600.dp
 
 // room for the bar on top of the sky, the sun and the clouds start below it
 private val TOP_BAR_SPACE = 76.dp
 
-// the plant is drawn bigger on the full page, but never bigger than half the scene's height
-private const val MAX_PLANT_SCALE = 1.6f
+// the fighter is drawn bigger on the full page, but never bigger than half the scene's height
+private const val MAX_FIGHTER_SCALE = TrainingGroundPixels.MAX_FIGHTER_SCALE
 
 /**
- * Own tab for the plant: the meadow fills the whole page. On top sit the water balance, the plant's
- * name with its progress (tap to rename) and the button to the shop, which has its own page.
+ * Own tab for the fighter: the training ground fills the whole page. On top sit the water balance,
+ * the fighter's name with its progress (tap to rename) and the button to the shop, which has its
+ * own page.
  */
 @Composable
 fun AvatarPage(
@@ -113,20 +117,17 @@ fun AvatarPage(
             contentAlignment = Alignment.BottomCenter,
         ) {
             val width = minOf(maxWidth, MAX_SCENE_WIDTH)
-            // one meadow height, the unit MeadowScene draws in
-            val unit = width / MEADOW_ASPECT_RATIO
+            // one ground height, the unit TrainingGroundScene draws in
+            val unit = width / GROUND_ASPECT_RATIO
             val sceneHeight = maxHeight / unit
-            val plantScale = (sceneHeight / 2f).coerceIn(1f, MAX_PLANT_SCALE)
+            val fighterScale = (sceneHeight / 2f).coerceIn(1f, MAX_FIGHTER_SCALE)
 
-            MeadowScene(
-                stage = avatar.fighter.rank.plantStage,
-                mood = avatar.fighter.mood.plantMood,
-                potColor = avatar.data.outfit.orEmpty(),
-                accessories = avatar.data.accessories,
-                decorations = avatar.data.decorations,
+            TrainingGroundScene(
+                data = avatar.data,
+                rank = avatar.fighter.rank,
+                mood = avatar.fighter.mood,
                 weather = avatar.fighter.weather,
-                species = avatar.data.look,
-                plantScale = plantScale,
+                fighterScale = fighterScale,
                 sceneHeight = sceneHeight,
                 skyTop = (statusBar + TOP_BAR_SPACE) / unit,
                 shape = RectangleShape,

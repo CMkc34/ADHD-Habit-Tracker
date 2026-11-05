@@ -181,6 +181,24 @@ internal fun rememberSway(): Float {
     return sway
 }
 
+/** Seconds from 0 to 60, then again; they move the plant's accessories. */
+@Composable
+private fun rememberMeadowTime(): Float {
+    val transition = rememberInfiniteTransition(label = "meadow")
+    val time by
+        transition.animateFloat(
+            initialValue = 0f,
+            targetValue = 60f,
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(durationMillis = 60_000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart,
+                ),
+            label = "time",
+        )
+    return time
+}
+
 /** Size of a tree: trunk [height] and [trunk] half width at the ground, [crown] radius. */
 private class TreeShape(val height: Float, val trunk: Float, val crown: Float, val lobes: Int)
 

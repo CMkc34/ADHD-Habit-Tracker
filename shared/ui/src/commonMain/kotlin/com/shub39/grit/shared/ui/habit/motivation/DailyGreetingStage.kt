@@ -45,11 +45,8 @@ import com.shub39.grit.core.motivation.DayTime
 import com.shub39.grit.core.motivation.GreetingKind
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.HabitsAction
-import com.shub39.grit.shared.ui.habit.avatar.MeadowScene
-import com.shub39.grit.shared.ui.habit.avatar.PlantMood
 import com.shub39.grit.shared.ui.habit.avatar.fighterName
-import com.shub39.grit.shared.ui.habit.avatar.plantMood
-import com.shub39.grit.shared.ui.habit.avatar.plantStage
+import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import com.shub39.grit.shared.ui.viewmodel.HabitViewModel
 import grit.shared.ui.generated.resources.Res
@@ -76,8 +73,8 @@ import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
-// the same plant size as on the avatar card
-private const val GREETING_PLANT_SCALE = 1.3f
+// a little bigger than on the plain training ground
+private const val GREETING_FIGHTER_SCALE = 1.3f
 
 /**
  * Asks for the daily greeting whenever the app comes to the front and shows it app-wide. Waits
@@ -147,16 +144,13 @@ fun DailyGreetingStage(
         )
 
         val sceneScale = rememberPopIn(delayMillis = 150)
-        MeadowScene(
-            stage = fighter.rank.plantStage,
+        TrainingGroundScene(
+            data = avatar.data,
+            rank = fighter.rank,
             // a fighter without a single active day is new, not tired: it greets awake
-            mood = if (fighter.activeDays == 0) PlantMood.HAPPY else fighter.mood.plantMood,
-            potColor = avatar.data.outfit.orEmpty(),
-            accessories = avatar.data.accessories,
-            decorations = avatar.data.decorations,
+            mood = if (fighter.activeDays == 0) FighterMood.READY else fighter.mood,
             weather = fighter.weather,
-            species = avatar.data.look,
-            plantScale = GREETING_PLANT_SCALE,
+            fighterScale = GREETING_FIGHTER_SCALE,
             modifier =
                 Modifier.widthIn(max = 420.dp)
                     .fillMaxWidth()

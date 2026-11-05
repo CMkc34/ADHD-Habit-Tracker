@@ -133,6 +133,13 @@ internal fun DrawScope.drawPixels(image: PixelImage) {
     val px = min(size.width / image.width, size.height / image.height)
     val ox = (size.width - px * image.width) / 2f
     val oy = (size.height - px * image.height) / 2f
+    drawPixels(image, Offset(ox, oy), px)
+}
+
+/** Paints [image] with its top left corner at [topLeft], each pixel [px] canvas pixels wide. */
+internal fun DrawScope.drawPixels(image: PixelImage, topLeft: Offset, px: Float) {
+    val ox = topLeft.x
+    val oy = topLeft.y
     for (y in 0 until image.height) {
         val top = floor(oy + y * px)
         val bottom = floor(oy + (y + 1) * px)
