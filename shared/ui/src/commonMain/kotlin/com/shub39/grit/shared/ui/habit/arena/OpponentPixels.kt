@@ -215,8 +215,13 @@ object OpponentPixels {
             }
             when (pose) {
                 OpponentPose.IDLE -> {
-                    face(l, open, colors)
-                    face(r, open, colors)
+                    // mean look: glowing eyes under angry brows that slant down to the middle
+                    val glowing = colors + ('W' to EYE_GLOW)
+                    face(l, open, glowing)
+                    face(r, open, glowing)
+                    val up = open.size / 2f + 1.5f
+                    face(l + Pt(0f, -up), BROW_LEFT, colors)
+                    face(r + Pt(0f, -up), BROW_RIGHT, colors)
                 }
                 OpponentPose.HIT -> {
                     face(l, SQUEEZE_LEFT, colors)
@@ -236,10 +241,19 @@ object OpponentPixels {
         fun mouth(c: Pt, open: List<String> = SMILE) {
             val colors = mapOf('O' to if (eyeInk == INK) MOUTH else eyeInk, 'W' to WHITE)
             when (pose) {
-                OpponentPose.IDLE -> face(c, open, colors)
+                OpponentPose.IDLE -> face(c, snarl(open.first().length), colors)
                 OpponentPose.HIT -> face(c, OOH, colors)
                 OpponentPose.KO -> face(c, WOBBLE, colors)
             }
+        }
+
+        /** A grin as wide as [width] with two fangs hanging down. */
+        private fun snarl(width: Int): List<String> {
+            val w = width.coerceAtLeast(3)
+            val fangs = CharArray(w) { '.' }
+            fangs[1] = 'W'
+            fangs[w - 2] = 'W'
+            return listOf("O".repeat(w), fangs.concatToString())
         }
 
         // -- the opponents ------------------------------------------------------------------------
@@ -616,11 +630,6 @@ object OpponentPixels {
                 capsule(pt(34, 27), pt(39, 36), 2.6f, armPaint)
                 ellipse(pt(39, 37), 2.6f, 2.4f, armPaint)
             }
-            val brows = mapOf('O' to INK)
-            if (idle) {
-                face(pt(17.5, 16.5), listOf("..O", "OO."), brows)
-                face(pt(25, 16.5), listOf("O..", ".OO"), brows)
-            }
             eyes(pt(18.5, 19), pt(24.5, 19))
             mouth(pt(21.5, 24), open = listOf("W...W", ".OOO."))
             // the juggled things; knocked out, they lie on the ground
@@ -749,6 +758,8 @@ object OpponentPixels {
     private val DOT = listOf("OW", "OO")
     private val SLEEPY = listOf("LLL", "OOO", "OWO")
     private val SNEAKY = listOf("OW", "OW")
+    private val BROW_LEFT = listOf("OO..", "..OO")
+    private val BROW_RIGHT = listOf("..OO", "OO..")
     private val SQUEEZE_LEFT = listOf("O..", ".OO", "O..")
     private val SQUEEZE_RIGHT = listOf("..O", "OO.", "..O")
     private val SPIRAL = listOf(".OO.", "O..O", "O.OO", ".O..")
@@ -822,6 +833,7 @@ object OpponentPixels {
     private val WING = argb(0xF7AE7C)
     private val PILLOW = argb(0x9CC8F0)
     private val SMOKE = argb(0xC8C4D4)
+    private val EYE_GLOW = argb(0xFFD23C)
     private val IMPACT_CORE = argb(0xFFF2A8)
     private val STAR_YELLOW = argb(0xFFD34A)
 }
