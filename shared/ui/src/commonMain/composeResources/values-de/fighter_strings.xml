@@ -93,5 +93,7 @@
     <string name="fighter_belt_black_two_stripes">schwarz mit zwei Goldstreifen</string>
     <string name="fighter_belt_gold">gold</string>
 
-    <!-- Arena-Reiter, Platzhalter bis #14 -->
+    <!-- Motivations-Pop-up nach dem Abhaken (#15) -->
+    <string name="fighter_popup_xp">+1 %1$s-XP</string>
+    <string name="fighter_popup_ticket">+1 🎟 Kampf-Ticket</string>
 </resources>

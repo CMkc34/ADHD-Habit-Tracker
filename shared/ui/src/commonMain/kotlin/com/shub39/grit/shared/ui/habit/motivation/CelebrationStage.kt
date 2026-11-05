@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -249,17 +250,23 @@ fun rememberCountUp(target: Int): Int {
     return value.value.toInt()
 }
 
-/** Yellow pill, e.g. for the day's "+1 💧". */
+/** Yellow pill, e.g. for the day's "+1 💧", with an optional [icon] in front of the text. */
 @Composable
-fun StagePill(text: String, modifier: Modifier = Modifier) {
-    WaterText(
-        text = text,
-        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Black),
-        color = StageInk,
-        textAlign = TextAlign.Center,
+fun StagePill(text: String, modifier: Modifier = Modifier, icon: (@Composable () -> Unit)? = null) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
         modifier =
             modifier
                 .background(StageYellow, CircleShape)
                 .padding(horizontal = 14.dp, vertical = 6.dp),
-    )
+    ) {
+        icon?.invoke()
+        WaterText(
+            text = text,
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Black),
+            color = StageInk,
+            textAlign = TextAlign.Center,
+        )
+    }
 }

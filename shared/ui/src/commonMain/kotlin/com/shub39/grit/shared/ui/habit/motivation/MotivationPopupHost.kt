@@ -40,6 +40,9 @@ fun MotivationPopupHost() {
             quote = it.quote,
             activityStreak = it.activityStreak,
             avatar = it.avatar,
+            statGain = it.statGain,
+            newStatLevel = it.newStatLevel,
+            ticketEarned = it.ticketEarned,
             onDismiss = { viewModel.onAction(HabitsAction.DismissMotivationPopup) },
         )
     }
