@@ -31,12 +31,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.shub39.grit.core.fighter.StatRoutines
 import com.shub39.grit.shared.ui.LocalWindowSizeClass
 import com.shub39.grit.shared.ui.app.MainAppState
 import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.activity.FreezeNoticeHost
+import com.shub39.grit.shared.ui.habit.arena.ArenaPage
 import com.shub39.grit.shared.ui.habit.avatar.AvatarPage
 import com.shub39.grit.shared.ui.habit.avatar.AvatarShopPage
+import com.shub39.grit.shared.ui.habit.avatar.FighterNoticeHost
 import com.shub39.grit.shared.ui.habit.motivation.BonusPopupHost
 import com.shub39.grit.shared.ui.habit.motivation.DailyGreetingHost
 import com.shub39.grit.shared.ui.habit.motivation.MotivationPopupHost
@@ -130,6 +133,7 @@ fun GritNavDisplay(
             FreezeNoticeHost()
             DailyGreetingHost()
             NameSetupHost()
+            FighterNoticeHost()
         }
     }
 }
@@ -231,12 +235,26 @@ private fun EntryProviderScope<Routes>.habitsScreens(
         val viewModel = koinViewModel<HabitViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
+        val routines =
+            remember(state.habitsWithAnalytics, state.routineStats) {
+                StatRoutines.of(state.habitsWithAnalytics.map { it.habit }, state.routineStats)
+            }
+
         AvatarPage(
             avatar = state.avatar,
+            routines = routines,
             onAction = viewModel::onAction,
             onOpenShop = { topLevelBackStack.add(PlantShop) },
+            onOpenRoutines = { topLevelBackStack.add(HabitsList) },
             modifier = Modifier.paperBackground(),
         )
+    }
+
+    entry<Arena>(metadata = fadeTransitionMetadata()) {
+        val viewModel = koinViewModel<HabitViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        ArenaPage(avatar = state.avatar, modifier = Modifier.paperBackground())
     }
 
     entry<PlantShop>(metadata = horizontalTransitionMetadata()) {

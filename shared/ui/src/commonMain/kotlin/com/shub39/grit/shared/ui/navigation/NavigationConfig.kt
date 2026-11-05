@@ -55,6 +55,7 @@ fun Routes.getTopLevelRoute(): Routes? =
     when (val subType = this.getSubType()) {
         Habits,
         Avatar,
+        Arena,
         Settings -> subType
         else -> null
     }

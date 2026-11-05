@@ -19,8 +19,11 @@ package com.shub39.grit.shared.ui.navigation
 /** Energy page of the activity streak (fork-specific), opened from the habits header. */
 data object Energy : Routes
 
-/** Own tab with the plant avatar and its shop (fork-specific). */
+/** Own tab with the fighter, its stats and its shop (fork-specific, #9). */
 data object Avatar : Routes
 
-/** The shop of the plant, opened from the Avatar tab (fork-specific, #138). */
+/** Own tab for the turn-based fights (fork-specific); a placeholder until #14. */
+data object Arena : Routes
+
+/** The shop of the fighter, opened from the Fighter tab (fork-specific, #138). */
 data object PlantShop : Routes
