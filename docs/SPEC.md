@@ -740,6 +740,8 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   - Ausrüstung (`FighterItems`) sitzt auf den Skelett-Punkten und passt so auf alle Kämpfer.
   - Gegner (#13) im selben Pixel-Stil, entschieden am 2026-11-05 (`OpponentPixels`, reines Kotlin,
     getestet, gemalt von `OpponentAvatar`):
+    - **Fies statt niedlich** (Wunsch vom 2026-11-05, ersetzt „lustig und niedlich“ aus #13), aber
+      ohne Blut: dunklere, kühlere Farben, schmale leuchtende Schlitzaugen, gezackte Zähne, Krallen.
     - 48 × 48 Pixel wie der Kämpfer, feste eigene Farben, Blick nach links zum Kämpfer. Kleine Gegner
       bleiben klein (Schlummertaste), große füllen das Bild (Oger, Drache).
     - Posen `OpponentPose`: **IDLE** (leichtes Wippen plus eine eigene Bewegung: Wecker klingelt,

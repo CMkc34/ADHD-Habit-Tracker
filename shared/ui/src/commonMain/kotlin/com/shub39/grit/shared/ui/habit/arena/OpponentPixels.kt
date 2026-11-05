@@ -164,6 +164,14 @@ object OpponentPixels {
 
         private fun pt(x: Number, y: Number) = Pt(x, y)
 
+        /** A shape colour, graded darker and colder so the opponents look mean, not cute. */
+        private fun paint(color: Int, group: String = color.toString()) =
+            Paint(mix(color, DUSK, 0.24f), group)
+
+        /** White claws in a row, centred on [c]. */
+        private fun claws(c: Pt, rows: List<String> = listOf("W.W.W")) =
+            face(c, rows, mapOf('W' to CLAW))
+
         // -- shapes, all in design coordinates ----------------------------------------------------
 
         fun ellipse(c: Pt, rx: Float, ry: Float, paint: Paint) {
@@ -215,13 +223,11 @@ object OpponentPixels {
             }
             when (pose) {
                 OpponentPose.IDLE -> {
-                    // mean look: glowing eyes under angry brows that slant down to the middle
-                    val glowing = colors + ('W' to EYE_GLOW)
-                    face(l, open, glowing)
-                    face(r, open, glowing)
-                    val up = open.size / 2f + 1.5f
-                    face(l + Pt(0f, -up), BROW_LEFT, colors)
-                    face(r + Pt(0f, -up), BROW_RIGHT, colors)
+                    // mean look: narrow glowing eyes under lids that slant down to the middle
+                    val glowing = colors + ('G' to EYE_GLOW)
+                    val small = open.size <= 2
+                    face(l, if (small) SLIT_LEFT_SMALL else SLIT_LEFT, glowing)
+                    face(r, if (small) SLIT_RIGHT_SMALL else SLIT_RIGHT, glowing)
                 }
                 OpponentPose.HIT -> {
                     face(l, SQUEEZE_LEFT, colors)
@@ -239,7 +245,7 @@ object OpponentPixels {
          * out.
          */
         fun mouth(c: Pt, open: List<String> = SMILE) {
-            val colors = mapOf('O' to if (eyeInk == INK) MOUTH else eyeInk, 'W' to WHITE)
+            val colors = mapOf('O' to if (eyeInk == INK) MOUTH else eyeInk, 'W' to CLAW)
             when (pose) {
                 OpponentPose.IDLE -> face(c, snarl(open.first().length), colors)
                 OpponentPose.HIT -> face(c, OOH, colors)
@@ -247,13 +253,12 @@ object OpponentPixels {
             }
         }
 
-        /** A grin as wide as [width] with two fangs hanging down. */
+        /** A wide grin of jagged teeth, at least [width] wide. */
         private fun snarl(width: Int): List<String> {
-            val w = width.coerceAtLeast(3)
-            val fangs = CharArray(w) { '.' }
-            fangs[1] = 'W'
-            fangs[w - 2] = 'W'
-            return listOf("O".repeat(w), fangs.concatToString())
+            val w = (width + 1).coerceAtLeast(4)
+            val teeth = CharArray(w) { if (it % 2 == 0) 'W' else 'O' }.concatToString()
+            val fangs = CharArray(w) { if (it == 0 || it == w - 1) 'W' else '.' }.concatToString()
+            return listOf("O".repeat(w), teeth, fangs)
         }
 
         // -- the opponents ------------------------------------------------------------------------
@@ -281,10 +286,10 @@ object OpponentPixels {
             headTop = pt(24, 19)
             koTilt = 0.55f
             koPivot = 29f
-            val body = Paint(CLOCK_RED, "body")
-            val bell = Paint(GOLD, "bell")
-            val metal = Paint(METAL, "metal")
-            val feet = Paint(INK_SOFT, "feet")
+            val body = paint(CLOCK_RED, "body")
+            val bell = paint(GOLD, "bell")
+            val metal = paint(METAL, "metal")
+            val feet = paint(INK_SOFT, "feet")
 
             capsule(pt(20, 40), pt(18.5, 44.5), 1.1f, feet)
             capsule(pt(28, 40), pt(29.5, 44.5), 1.1f, feet)
@@ -297,10 +302,10 @@ object OpponentPixels {
             capsule(pt(15, 35), pt(11.5, 38), 1.3f, body)
             capsule(pt(33, 35), pt(36.5, 38), 1.3f, body)
             circle(pt(24, 33), 10f, body)
-            circle(pt(23, 33.5), 7.4f, Paint(CREAM, "dial"))
+            circle(pt(23, 33.5), 7.4f, paint(CREAM, "dial"))
             face(pt(23, 27.5), listOf("O"), mapOf('O' to INK_SOFT))
             face(pt(29.5, 33.5), listOf("O"), mapOf('O' to INK_SOFT))
-            circle(pt(21.5, 35.5), 2.3f, Paint(BUTTON_PINK, "button"))
+            circle(pt(21.5, 35.5), 2.3f, paint(BUTTON_PINK, "button"))
             eyes(pt(18, 30.5), pt(25.5, 30.5), open = SLEEPY, lid = CLOCK_RED)
             mouth(pt(22, 39.5), open = listOf("O..O", ".OO."))
             if (ringing) {
@@ -315,10 +320,10 @@ object OpponentPixels {
             impact = pt(12, 32)
             headTop = pt(24, 22)
             koPivot = 32f
-            val fur = Paint(GREMLIN, "fur")
-            val ear = Paint(GREMLIN, "ear")
-            val cushion = Paint(CUSHION, "cushion")
-            val tassel = Paint(GOLD, "tassel")
+            val fur = paint(GREMLIN, "fur")
+            val ear = paint(GREMLIN, "ear")
+            val cushion = paint(CUSHION, "cushion")
+            val tassel = paint(GOLD, "tassel")
 
             grounded = true
             circle(pt(8.5, 43.5), 1.6f, tassel)
@@ -334,9 +339,11 @@ object OpponentPixels {
                 val a = deg * PI / 180
                 circle(pt(24 + 9 * cos(a), 33 + 8 * sin(a)), 1.8f, fur)
             }
-            ellipse(pt(23, 37), 5f, 3.6f, Paint(GREMLIN_BELLY, "belly"))
+            ellipse(pt(23, 37), 5f, 3.6f, paint(GREMLIN_BELLY, "belly"))
             ellipse(pt(16.5, 40.5), 2.4f, 1.8f, fur)
             ellipse(pt(31.5, 40.5), 2.4f, 1.8f, fur)
+            claws(pt(15.5, 42))
+            claws(pt(32.5, 42))
             face(pt(9.5, 22.5), listOf("P."), mapOf('P' to EAR_PINK))
             face(pt(38.5, if (twitch) 23.5f else 22f), listOf(".P"), mapOf('P' to EAR_PINK))
             eyes(pt(19, 30), pt(26, 30), open = BIG)
@@ -348,8 +355,8 @@ object OpponentPixels {
             impact = pt(17, 34)
             headTop = pt(23, 15)
             koPivot = 30f
-            val imp = Paint(IMP, "imp")
-            val horn = Paint(HORN, "horn")
+            val imp = paint(IMP, "imp")
+            val horn = paint(HORN, "horn")
             val sway = if (idle && f / 3 % 2 == 1) 1.5f else 0f
 
             capsule(pt(30, 39), pt(37, 37), 1.0f, imp)
@@ -366,8 +373,8 @@ object OpponentPixels {
             poly(listOf(pt(16, 25.5), pt(10.5, 21.5), pt(16.5, 22)), imp)
             ellipse(pt(23, 25), 7.5f, 6.5f, imp)
             capsule(pt(20, 33), pt(15, 32), 1.4f, imp)
-            rect(9, 27, 15, 36, Paint(PHONE, "phone"))
-            rect(10, 28, 14, 34.5, Paint(SCREEN, "screen"))
+            rect(9, 27, 15, 36, paint(PHONE, "phone"))
+            rect(10, 28, 14, 34.5, paint(SCREEN, "screen"))
             ellipse(pt(15, 33), 1.9f, 1.7f, imp)
             if (!ko) {
                 // feed lines scrolling up the screen
@@ -389,19 +396,19 @@ object OpponentPixels {
             koPivot = 30f
             val flap = idle && f / 3 % 2 == 1
 
-            ellipse(pt(13, 41.5), 9f, 5f, Paint(JEANS, "jeans"))
-            ellipse(pt(35, 41.5), 9.5f, 5f, Paint(SHIRT_RED, "shirt"))
-            ellipse(pt(24, 42.5), 8.5f, 4f, Paint(TOWEL, "towel"))
-            capsule(pt(11, 32), pt(6.5, 39), 2f, Paint(HOODIE, "hoodie"))
-            ellipse(pt(19, 33), 9.5f, 6.5f, Paint(HOODIE, "hoodie"))
-            ellipse(pt(31, 32.5), 8.5f, 6.5f, Paint(TEE, "tee"))
-            capsule(pt(37, 33), pt(41.5, 37), 1.8f, Paint(TEE, "tee"))
-            val sock = Paint(SOCK, "sock")
+            ellipse(pt(13, 41.5), 9f, 5f, paint(JEANS, "jeans"))
+            ellipse(pt(35, 41.5), 9.5f, 5f, paint(SHIRT_RED, "shirt"))
+            ellipse(pt(24, 42.5), 8.5f, 4f, paint(TOWEL, "towel"))
+            capsule(pt(11, 32), pt(6.5, 39), 2f, paint(HOODIE, "hoodie"))
+            ellipse(pt(19, 33), 9.5f, 6.5f, paint(HOODIE, "hoodie"))
+            ellipse(pt(31, 32.5), 8.5f, 6.5f, paint(TEE, "tee"))
+            capsule(pt(37, 33), pt(41.5, 37), 1.8f, paint(TEE, "tee"))
+            val sock = paint(SOCK, "sock")
             capsule(pt(24, 22), pt(28, 16), 1.8f, sock)
             val toe = if (flap) pt(31.5, 16.5) else pt(30, 13.5)
             capsule(pt(28, 16), toe, 1.8f, sock)
             ellipse(toe, 2.2f, 1.9f, sock)
-            ellipse(pt(23, 25.5), 7.5f, 5f, Paint(SWEATER, "sweater"))
+            ellipse(pt(23, 25.5), 7.5f, 5f, paint(SWEATER, "sweater"))
             face(pt(26, 19), listOf("S"), mapOf('S' to SOCK_STRIPE))
             face(pt(27, 17.5), listOf("S"), mapOf('S' to SOCK_STRIPE))
             face(pt(23, 26), listOf("D.D.D.D"), mapOf('D' to mix(SWEATER, WHITE, 0.4f)))
@@ -415,23 +422,23 @@ object OpponentPixels {
             headTop = pt(24, 9)
             koTilt = 0.32f
             koPivot = 32f
-            val body = Paint(HYDRA, "hydra")
+            val body = paint(HYDRA, "hydra")
 
             capsule(pt(36, 40), pt(43, 35), 1.6f, body, 1.0f)
             ellipse(pt(19, 45), 3f, 1.6f, body)
             ellipse(pt(33, 45), 3f, 1.6f, body)
             ellipse(pt(26, 39), 11f, 6.5f, body)
-            ellipse(pt(25, 41), 6.5f, 3.2f, Paint(HYDRA_BELLY, "belly"))
+            ellipse(pt(25, 41), 6.5f, 3.2f, paint(HYDRA_BELLY, "belly"))
             val heads = listOf(pt(10, 22), pt(24, 13.5), pt(38, 21))
             val roots = listOf(pt(19, 35), pt(26, 33), pt(33, 35))
             val bends = listOf(pt(12, 31), pt(26.5, 24), pt(39, 30))
             heads.forEachIndexed { i, head ->
                 val dy = if (idle && (f / 2 + i * 2) % 6 >= 3) 1 else 0
                 val h = head + pt(0, dy)
-                val neck = Paint(HYDRA, "neck$i")
+                val neck = paint(HYDRA, "neck$i")
                 capsule(roots[i], bends[i], 2.8f, neck, 2.4f)
                 capsule(bends[i], h + pt(0, 3), 2.4f, neck, 2.0f)
-                rect(h.x - 6f, h.y - 4f, h.x + 6f, h.y + 4f, Paint(ENVELOPE, "env$i"))
+                rect(h.x - 6f, h.y - 4f, h.x + 6f, h.y + 4f, paint(ENVELOPE, "env$i"))
                 val fold = mapOf('F' to ENVELOPE_FOLD)
                 face(
                     h + pt(0, -1.5),
@@ -469,7 +476,7 @@ object OpponentPixels {
                 )
             small.forEachIndexed { i, (c0, r, color) ->
                 val c = c0 + jitter(i)
-                val paint = Paint(color, "bubble$i")
+                val paint = paint(color, "bubble$i")
                 poly(
                     listOf(
                         c + pt(-r * 0.2f, r * 0.6f),
@@ -489,7 +496,7 @@ object OpponentPixels {
                 if (!blink && i != 4)
                     face(c + pt(r * 0.7f, -r * 0.7f), listOf("RR", "RR"), mapOf('R' to BADGE))
             }
-            val main = Paint(BUBBLE_RED, "main")
+            val main = paint(BUBBLE_RED, "main")
             val mc = pt(24, 28) + jitter(5)
             poly(listOf(mc + pt(2, 6), mc + pt(6, 12), mc + pt(6, 5)), main)
             circle(mc, 8.5f, main)
@@ -509,11 +516,11 @@ object OpponentPixels {
             impact = pt(15, 28)
             headTop = pt(23, 12)
             koPivot = 30f
-            val cloak = Paint(CLOAK, "cloak")
-            val hood = Paint(HOOD, "hood")
-            val skin = Paint(THIEF_SKIN, "skin")
-            val dark = Paint(INK_SOFT, "legs")
-            val gold = Paint(GOLD, "watch")
+            val cloak = paint(CLOAK, "cloak")
+            val hood = paint(HOOD, "hood")
+            val skin = paint(THIEF_SKIN, "skin")
+            val dark = paint(INK_SOFT, "legs")
+            val gold = paint(GOLD, "watch")
             val flutter = if (idle && f % 4 >= 2) 1f else 0f
 
             capsule(pt(21, 37), pt(17, 44), 1.4f, dark)
@@ -538,12 +545,12 @@ object OpponentPixels {
             ellipse(pt(23.5, 18.5), 7.5f, 7f, hood)
             poly(listOf(pt(27, 13), pt(33, 10 + flutter), pt(30, 17)), hood)
             ellipse(pt(21.5, 20.5), 5.2f, 4.4f, skin)
-            rect(16.5, 17.5, 27, 21, Paint(MASK, "mask"))
+            rect(16.5, 17.5, 27, 21, paint(MASK, "mask"))
             capsule(pt(19, 27), pt(13, 30), 1.5f, cloak)
             ellipse(pt(12.5, 31), 1.8f, 1.7f, skin)
             capsule(pt(12.5, 31), pt(10, 31.5), 0.5f, gold)
             circle(pt(9, 34.5), 3.8f, gold)
-            circle(pt(8.8, 34.3), 2.6f, Paint(CREAM, "dial"))
+            circle(pt(8.8, 34.3), 2.6f, paint(CREAM, "dial"))
             val drip = if (idle) f / 4 else 1
             capsule(pt(8, 37.5), pt(8, 39f + drip), 1.0f, gold)
             face(pt(9, 33.5), listOf("O.", "O.", ".O"), mapOf('O' to INK_SOFT))
@@ -559,9 +566,9 @@ object OpponentPixels {
             headTop = pt(24, 11)
             koTilt = 0.3f
             koPivot = 33f
-            val stone = Paint(STONE, "stone")
-            val arm = Paint(STONE, "arm")
-            val leg = Paint(STONE_DARK, "leg")
+            val stone = paint(STONE, "stone")
+            val arm = paint(STONE, "arm")
+            val leg = paint(STONE_DARK, "leg")
 
             rect(14, 39, 21, 46.3, leg)
             rect(27, 39, 34, 46.3, leg)
@@ -570,8 +577,8 @@ object OpponentPixels {
             rect(37.5, 23, 43.5, 36, arm)
             ellipse(pt(7.5, 37), 3.5f, 3f, arm)
             ellipse(pt(40.5, 37), 3.5f, 3f, arm)
-            rect(14, 16, 34, 36, Paint(PAPER, "page"))
-            rect(14, 16, 34, 21, Paint(CALENDAR_RED, "header"))
+            rect(14, 16, 34, 36, paint(PAPER, "page"))
+            rect(14, 16, 34, 21, paint(CALENDAR_RED, "header"))
             val ring = mapOf('O' to METAL)
             face(pt(18.5, 15.5), listOf("O", "O"), ring)
             face(pt(29.5, 15.5), listOf("O", "O"), ring)
@@ -600,21 +607,21 @@ object OpponentPixels {
             headTop = pt(22, 13)
             koTilt = 0.28f
             koPivot = 32f
-            val ogre = Paint(OGRE, "ogre")
-            val armPaint = Paint(OGRE, "arm")
+            val ogre = paint(OGRE, "ogre")
+            val armPaint = paint(OGRE, "arm")
 
             capsule(pt(18, 38), pt(16.5, 44), 3f, ogre)
             capsule(pt(30, 38), pt(31.5, 44), 3f, ogre)
             ellipse(pt(15.5, 45), 4f, 1.7f, ogre)
             ellipse(pt(32.5, 45), 4f, 1.7f, ogre)
             ellipse(pt(24, 31), 12f, 9.5f, ogre)
-            ellipse(pt(23, 33.5), 7f, 5.5f, Paint(OGRE_BELLY, "belly"))
+            ellipse(pt(23, 33.5), 7f, 5.5f, paint(OGRE_BELLY, "belly"))
             poly(
                 listOf(pt(12.5, 37), pt(35.5, 37), pt(33.5, 41.5), pt(14.5, 41.5)),
-                Paint(LOINCLOTH, "cloth"),
+                paint(LOINCLOTH, "cloth"),
             )
-            ellipse(pt(14.5, 20.5), 2f, 2.6f, Paint(OGRE, "ear"))
-            ellipse(pt(29.5, 20.5), 2f, 2.6f, Paint(OGRE, "ear"))
+            ellipse(pt(14.5, 20.5), 2f, 2.6f, paint(OGRE, "ear"))
+            ellipse(pt(29.5, 20.5), 2f, 2.6f, paint(OGRE, "ear"))
             ellipse(pt(22, 20.5), 7f, 6.5f, ogre)
             val armsUp = !ko
             if (armsUp) {
@@ -624,6 +631,8 @@ object OpponentPixels {
                 capsule(pt(34, 27), pt(41, 22), 2.6f, armPaint)
                 capsule(pt(41, 22), pt(40, 15), 2.6f, armPaint, 2.2f)
                 ellipse(pt(40, 14), 2.6f, 2.4f, armPaint)
+                claws(pt(8, 11))
+                claws(pt(40, 11))
             } else {
                 capsule(pt(14, 27), pt(9, 36), 2.6f, armPaint)
                 ellipse(pt(9, 37), 2.6f, 2.4f, armPaint)
@@ -649,20 +658,20 @@ object OpponentPixels {
             }
         }
 
-        private fun ball(c: Pt) = circle(c, 2.2f, Paint(BALL_RED, "ball"))
+        private fun ball(c: Pt) = circle(c, 2.2f, paint(BALL_RED, "ball"))
 
         private fun book(c: Pt) {
-            rect(c.x - 2.5f, c.y - 2f, c.x + 2.5f, c.y + 2f, Paint(BOOK_BLUE, "book"))
+            rect(c.x - 2.5f, c.y - 2f, c.x + 2.5f, c.y + 2f, paint(BOOK_BLUE, "book"))
             face(c + pt(0, 0), listOf("WWW"), mapOf('W' to WHITE))
         }
 
         private fun mug(c: Pt) {
-            capsule(c + pt(2, -0.5), c + pt(2.5, 1), 0.9f, Paint(MUG, "mug"))
-            rect(c.x - 2f, c.y - 2f, c.x + 1.5f, c.y + 2f, Paint(MUG, "mug"))
+            capsule(c + pt(2, -0.5), c + pt(2.5, 1), 0.9f, paint(MUG, "mug"))
+            rect(c.x - 2f, c.y - 2f, c.x + 1.5f, c.y + 2f, paint(MUG, "mug"))
         }
 
         private fun phone(c: Pt) {
-            rect(c.x - 1.5f, c.y - 2.5f, c.x + 1.5f, c.y + 2.5f, Paint(PHONE, "phone"))
+            rect(c.x - 1.5f, c.y - 2.5f, c.x + 1.5f, c.y + 2.5f, paint(PHONE, "phone"))
             face(c, listOf("S", "S"), mapOf('S' to SCREEN))
         }
 
@@ -672,14 +681,14 @@ object OpponentPixels {
             headTop = pt(12, 25)
             koTilt = 0f
             koPivot = 24f
-            val dragon = Paint(DRAGON, "dragon")
-            val head = Paint(DRAGON, "head")
+            val dragon = paint(DRAGON, "dragon")
+            val head = paint(DRAGON, "head")
             val sway = if (idle) listOf(0f, 0.5f, 1f, 1.5f, 1f, 0.5f)[f % 6] else 0f
 
             grounded = true
-            circle(pt(4, 44), 1.6f, Paint(GOLD, "tassel"))
-            circle(pt(44, 44), 1.6f, Paint(GOLD, "tassel"))
-            ellipse(pt(24, 41.5), 21f, 5f, Paint(PILLOW, "pillow"))
+            circle(pt(4, 44), 1.6f, paint(GOLD, "tassel"))
+            circle(pt(44, 44), 1.6f, paint(GOLD, "tassel"))
+            ellipse(pt(24, 41.5), 21f, 5f, paint(PILLOW, "pillow"))
             face(
                 pt(31, 42),
                 CALENDAR_PLUS_ONE,
@@ -690,21 +699,23 @@ object OpponentPixels {
             capsule(pt(41.5, 29), pt(43 + sway, 22.5), 1.8f, dragon, 1.2f)
             poly(
                 listOf(pt(41 + sway, 23), pt(43.5 + sway, 18), pt(46 + sway, 22.5)),
-                Paint(SPIKE, "tip"),
+                paint(SPIKE, "tip"),
             )
-            val spike = Paint(SPIKE, "spike")
+            val spike = paint(SPIKE, "spike")
             for (x in listOf(19f, 24f, 29f, 34f)) {
                 poly(listOf(pt(x - 2, 29), pt(x, 25.5), pt(x + 2, 29)), spike)
             }
             ellipse(pt(27, 33), 11f, 5.5f, dragon)
-            ellipse(pt(26, 36.5), 8f, 2.2f, Paint(DRAGON_BELLY, "belly"))
-            poly(listOf(pt(25, 30), pt(32, 23), pt(35, 30)), Paint(WING, "wing"))
-            poly(listOf(pt(10, 28), pt(12.5, 22.5), pt(14, 27.5)), Paint(HORN, "horn"))
-            poly(listOf(pt(14.5, 28), pt(18, 23.5), pt(18, 29)), Paint(HORN, "horn"))
+            ellipse(pt(26, 36.5), 8f, 2.2f, paint(DRAGON_BELLY, "belly"))
+            poly(listOf(pt(25, 30), pt(32, 23), pt(35, 30)), paint(WING, "wing"))
+            poly(listOf(pt(10, 28), pt(12.5, 22.5), pt(14, 27.5)), paint(HORN, "horn"))
+            poly(listOf(pt(14.5, 28), pt(18, 23.5), pt(18, 29)), paint(HORN, "horn"))
             ellipse(pt(12.5, 32), 7f, 5.5f, head)
             ellipse(pt(6.5, 34.5), 4.2f, 3.2f, head)
-            ellipse(pt(8, 38.5), 3f, 1.8f, Paint(DRAGON, "paw"))
-            ellipse(pt(15, 38.8), 3f, 1.8f, Paint(DRAGON, "paw"))
+            ellipse(pt(8, 38.5), 3f, 1.8f, paint(DRAGON, "paw"))
+            ellipse(pt(15, 38.8), 3f, 1.8f, paint(DRAGON, "paw"))
+            claws(pt(5, 39), listOf("W", ".", "W"))
+            claws(pt(12, 39.5), listOf("W", ".", "W"))
             face(pt(3.5, 33.5), listOf("O.O"), mapOf('O' to INK))
             eyes(pt(9, 30.5), pt(14.5, 30.5), open = SLEEPY, lid = DRAGON)
             mouth(pt(7, 36.5), open = listOf("OOOO."))
@@ -758,8 +769,10 @@ object OpponentPixels {
     private val DOT = listOf("OW", "OO")
     private val SLEEPY = listOf("LLL", "OOO", "OWO")
     private val SNEAKY = listOf("OW", "OW")
-    private val BROW_LEFT = listOf("OO..", "..OO")
-    private val BROW_RIGHT = listOf("..OO", "OO..")
+    private val SLIT_LEFT = listOf("OO..", "OOOO", "OGGO", ".OO.")
+    private val SLIT_RIGHT = listOf("..OO", "OOOO", "OGGO", ".OO.")
+    private val SLIT_LEFT_SMALL = listOf("O..", "OOO", "GGO")
+    private val SLIT_RIGHT_SMALL = listOf("..O", "OOO", "OGG")
     private val SQUEEZE_LEFT = listOf("O..", ".OO", "O..")
     private val SQUEEZE_RIGHT = listOf("..O", "OO.", "..O")
     private val SPIRAL = listOf(".OO.", "O..O", "O.OO", ".O..")
@@ -834,6 +847,8 @@ object OpponentPixels {
     private val PILLOW = argb(0x9CC8F0)
     private val SMOKE = argb(0xC8C4D4)
     private val EYE_GLOW = argb(0xFFD23C)
+    private val CLAW = argb(0xF4F0E6)
+    private val DUSK = argb(0x2B1D3A)
     private val IMPACT_CORE = argb(0xFFF2A8)
     private val STAR_YELLOW = argb(0xFFD34A)
 }
