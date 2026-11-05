@@ -70,7 +70,6 @@ import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_fight_no_ticket
 import grit.shared.ui.generated.resources.arena_ladder_complete
 import grit.shared.ui.generated.resources.arena_level
-import grit.shared.ui.generated.resources.arena_locked_name
 import grit.shared.ui.generated.resources.arena_next_ticket_hint
 import grit.shared.ui.generated.resources.arena_no_tickets
 import grit.shared.ui.generated.resources.arena_status_beaten
@@ -252,9 +251,7 @@ private fun LadderCard(entry: LadderEntry, onClick: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text =
-                        if (entry.status == LadderStatus.LOCKED)
-                            stringResource(Res.string.arena_locked_name)
-                        else opponent.label(),
+                        if (entry.status == LadderStatus.LOCKED) LOCKED_NAME else opponent.label(),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
@@ -319,3 +316,7 @@ private fun ArenaPageNoTicketsPreview() {
         onOpenRoutines = {},
     )
 }
+
+// the same in every language, and kept out of the string resources, where Android reads a
+// leading "?" as a theme attribute
+private const val LOCKED_NAME = "???"
