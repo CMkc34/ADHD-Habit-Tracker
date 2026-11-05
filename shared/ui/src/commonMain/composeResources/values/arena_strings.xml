@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Arena (phase 6): opponent names follow core.arena.Opponent.number (#11), ticket texts (#11).
+  The fork's own file, the upstream strings.xml stays untouched.
+-->
+<resources>
+    <string name="arena_opponent_1">Snooze Button</string>
+    <string name="arena_opponent_2">Couch Gremlin</string>
+    <string name="arena_opponent_3">Doomscroll Imp</string>
+    <string name="arena_opponent_4">Laundry Mountain</string>
+    <string name="arena_opponent_5">Inbox Hydra</string>
+    <string name="arena_opponent_6">Distraction Swarm</string>
+    <string name="arena_opponent_7">Time Thief</string>
+    <string name="arena_opponent_8">Deadline Golem</string>
+    <string name="arena_opponent_9">Overwhelm Ogre</string>
+    <string name="arena_opponent_10">Procrastination Dragon</string>
+
+    <string name="arena_next_ticket_hint">Check off one more routine for a ticket</string>
+</resources>

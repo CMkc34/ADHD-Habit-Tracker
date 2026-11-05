@@ -651,11 +651,19 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 - Gegner n+1 öffnet sich nach dem ersten Sieg gegen n; Revanchen sind erlaubt.
 - Balance per Test: Ein typischer Kämpfer (Rang n+1, alle Stufen n+1) gewinnt 55–75 % von 1000
   Kämpfen gegen Gegner n.
+- Umgesetzt in #11 (`Opponent`, `Ladder` in `core.arena`), entschieden am 2026-11-05: **keine
+  Kampfstile**, alle Gegner steigen gleichmäßig. Gegner n hat Stufe L = n+1: Tempo = L (bei
+  Gleichstand beginnt der Spieler), Fokus = L−1, Angriff = 8 + 2·L. Nur die HP sind je Gegner
+  festgelegt (55, 70, 86, 106, 125, 143, 160, 178, 194, 211), so dass der typische Kämpfer 62–69 %
+  gewinnt (`LadderBalanceTest`). Die `id` (z. B. `snooze_button`) ist fest für Speicher und Backup.
 
 ### 9.6 Tickets und Belohnung (#11, #17)
 - Je Routine, die **für heute** erledigt ist, 1 Ticket, höchstens **3 pro Tag**.
 - Verfügbar = verdient − heute begonnene Kämpfe, nie negativ.
 - Nicht genutzte Tickets verfallen um Mitternacht und werden nicht gespeichert.
+- „Erledigt“ wie bei der XP (messbare ab Zielwert). Zählt nur das Datum heute, nachgetragene
+  Haken für gestern geben keine heutigen Tickets (`FightTickets`, `TicketStatus`). Solange weniger
+  als 3 verdient sind: „Hak noch eine Routine ab, dann bekommst du ein Ticket“.
 - Ein Kampf kostet das Ticket beim Start; Verlassen zählt als Niederlage.
 - Optional (#17): erster Sieg gegen Gegner n gibt einmalig 5·n 💧. `ActivityPlanner` bucht das als
   berechnete Einnahme, der Kontostand bleibt berechnet.

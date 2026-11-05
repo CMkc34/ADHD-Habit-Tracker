@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="arena_opponent_1">Schlummertaste</string>
+    <string name="arena_opponent_2">Sofa-Kobold</string>
+    <string name="arena_opponent_3">Doomscroll-Wicht</string>
+    <string name="arena_opponent_4">Wäscheberg</string>
+    <string name="arena_opponent_5">Posteingangs-Hydra</string>
+    <string name="arena_opponent_6">Ablenkungsschwarm</string>
+    <string name="arena_opponent_7">Zeitdieb</string>
+    <string name="arena_opponent_8">Deadline-Golem</string>
+    <string name="arena_opponent_9">Überforderungs-Oger</string>
+    <string name="arena_opponent_10">Aufschiebe-Drache</string>
+
+    <string name="arena_next_ticket_hint">Hak noch eine Routine ab, dann bekommst du ein Ticket</string>
+</resources>
