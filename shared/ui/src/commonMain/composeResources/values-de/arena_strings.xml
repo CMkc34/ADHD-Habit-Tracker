@@ -25,7 +25,7 @@
     <string name="arena_ladder_complete">Du hast die ganze Leiter geschafft! Revanchen gehen immer.</string>
     <string name="arena_status_beaten">Besiegt</string>
     <string name="arena_status_next">Nächste Herausforderung</string>
-    <string name="arena_locked_name">???</string>
+    <string name="arena_locked_name">\?\?\?</string>
     <string name="arena_level">Stufe %1$d</string>
 
     <string name="arena_vs">VS</string>

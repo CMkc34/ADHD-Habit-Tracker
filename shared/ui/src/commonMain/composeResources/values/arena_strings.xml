@@ -29,7 +29,7 @@
     <string name="arena_ladder_complete">You beat the whole ladder! Rematches are always open.</string>
     <string name="arena_status_beaten">Beaten</string>
     <string name="arena_status_next">Next challenge</string>
-    <string name="arena_locked_name">???</string>
+    <string name="arena_locked_name">\?\?\?</string>
     <string name="arena_level">Level %1$d</string>
 
     <string name="arena_vs">VS</string>
