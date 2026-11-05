@@ -65,6 +65,9 @@
     <string name="arena_win_title">You win!</string>
     <string name="arena_win_text">%1$s is beaten.</string>
     <string name="arena_unlocked">Ladder unlocked: %1$s</string>
+    <!-- #17: protein shakes for the first win; 🥤 is drawn as the shake coin -->
+    <string name="arena_reward">+%1$d 🥤</string>
+    <string name="arena_first_win_reward">First win: +%1$d 🥤</string>
     <string name="arena_loss_title">So close!</string>
     <string name="arena_loss_text">Train a bit more and try again tomorrow.</string>
     <string name="arena_draw_title">Draw</string>

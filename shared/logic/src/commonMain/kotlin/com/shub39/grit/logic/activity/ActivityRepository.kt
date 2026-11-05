@@ -23,6 +23,9 @@ import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.activity.ActivityStore
 import com.shub39.grit.core.activity.BonusDaySource
 import com.shub39.grit.core.activity.FreezeNotice
+import com.shub39.grit.core.activity.Reward
+import com.shub39.grit.core.arena.ArenaRewards
+import com.shub39.grit.core.arena.ArenaStore
 import com.shub39.grit.core.avatar.AvatarStore
 import com.shub39.grit.core.avatar.Purchase
 import com.shub39.grit.core.now
@@ -39,16 +42,25 @@ class ActivityRepository(
     private val store: ActivityStore,
     private val avatarStore: AvatarStore,
     private val bonusDaySource: BonusDaySource,
+    private val arenaStore: ArenaStore,
 ) : ActivityRepo {
 
     override fun getActivityReport(): Flow<ActivityReport> =
-        combine(activity(), purchases(), bonusDaySource.getBonusDays()) { data, purchases, bonus ->
-            plan(data, purchases, bonus)
+        combine(activity(), purchases(), bonusDaySource.getBonusDays(), rewards()) {
+            data,
+            purchases,
+            bonus,
+            rewards ->
+            plan(data, purchases, bonus, rewards)
         }
 
     override fun getFreezeNotice(): Flow<FreezeNotice?> =
-        combine(activity(), purchases(), bonusDaySource.getBonusDays()) { data, purchases, bonus ->
-            FreezeNotice.of(plan(data, purchases, bonus), data.seenFreezes)
+        combine(activity(), purchases(), bonusDaySource.getBonusDays(), rewards()) {
+            data,
+            purchases,
+            bonus,
+            rewards ->
+            FreezeNotice.of(plan(data, purchases, bonus, rewards), data.seenFreezes)
         }
 
     override suspend fun markFreezesSeen(days: Set<LocalDate>) = store.markFreezesSeen(days)
@@ -66,10 +78,15 @@ class ActivityRepository(
     private fun purchases(): Flow<List<Purchase>> =
         avatarStore.getAvatar().map { it.purchases }.distinctUntilChanged()
 
+    // protein shakes for the first win against each opponent (#17), derived from the fight log
+    private fun rewards(): Flow<List<Reward>> =
+        arenaStore.getFights().map(ArenaRewards::of).distinctUntilChanged()
+
     private fun plan(
         data: ActivityData,
         purchases: List<Purchase>,
         bonusDays: Set<LocalDate>,
+        rewards: List<Reward>,
     ): ActivityReport {
         val today = LocalDate.now()
         return ActivityPlanner.plan(
@@ -79,6 +96,7 @@ class ActivityRepository(
             purchases = purchases,
             autoFreeze = data.autoFreeze,
             bonusDays = bonusDays,
+            rewards = rewards,
         )
     }
 }

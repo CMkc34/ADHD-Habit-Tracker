@@ -24,7 +24,7 @@ import com.shub39.grit.core.motivation.MotivationQuote
 /**
  * Data for the popup shown after a habit check-in.
  *
- * @property activityStreak Activity streak after the first check-in of the day, shown as "+1 💧"
+ * @property activityStreak Activity streak after the first check-in of the day, shown as "+1 🥤"
  *   line; `null` for later check-ins that day, which earn no energy.
  * @property avatar The user's plant shown on the popup, `null` if it could not be read.
  */

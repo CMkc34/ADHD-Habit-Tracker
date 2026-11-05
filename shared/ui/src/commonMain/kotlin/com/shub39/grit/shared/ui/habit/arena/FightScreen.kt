@@ -88,6 +88,7 @@ import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
 import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
 import com.shub39.grit.shared.ui.habit.fighter.KiBlast
 import com.shub39.grit.shared.ui.habit.fighter.drawPixels
+import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_charge
@@ -113,6 +114,7 @@ import grit.shared.ui.generated.resources.arena_log_time_up
 import grit.shared.ui.generated.resources.arena_loss_text
 import grit.shared.ui.generated.resources.arena_loss_title
 import grit.shared.ui.generated.resources.arena_result_ok
+import grit.shared.ui.generated.resources.arena_reward
 import grit.shared.ui.generated.resources.arena_round
 import grit.shared.ui.generated.resources.arena_special
 import grit.shared.ui.generated.resources.arena_special_hint
@@ -584,6 +586,14 @@ private fun ResultOverlay(result: FightResult, opponentName: String, onClose: ()
                         text = stringResource(Res.string.arena_unlocked, it.label()),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+                if (result.shakes > 0) {
+                    ShakeText(
+                        text = stringResource(Res.string.arena_reward, result.shakes),
+                        style =
+                            MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         textAlign = TextAlign.Center,
                     )
                 }

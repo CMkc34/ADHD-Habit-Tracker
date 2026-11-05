@@ -61,6 +61,9 @@
     <string name="arena_win_title">Gewonnen!</string>
     <string name="arena_win_text">%1$s ist besiegt.</string>
     <string name="arena_unlocked">Leiter freigeschaltet: %1$s</string>
+    <!-- #17: Protein-Shakes für den ersten Sieg; 🥤 wird als Shake-Münze gezeichnet -->
+    <string name="arena_reward">+%1$d 🥤</string>
+    <string name="arena_first_win_reward">Erster Sieg: +%1$d 🥤</string>
     <string name="arena_loss_title">Knapp daneben!</string>
     <string name="arena_loss_text">Trainier noch ein bisschen und versuch es morgen wieder.</string>
     <string name="arena_draw_title">Unentschieden</string>

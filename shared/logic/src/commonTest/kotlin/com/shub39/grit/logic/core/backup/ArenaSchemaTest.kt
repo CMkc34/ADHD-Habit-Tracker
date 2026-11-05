@@ -16,6 +16,8 @@
  */
 package com.shub39.grit.logic.core.backup
 
+import com.shub39.grit.core.activity.ActivityPlanner
+import com.shub39.grit.core.arena.ArenaRewards
 import com.shub39.grit.core.arena.FightLog
 import com.shub39.grit.core.arena.FightRecord
 import com.shub39.grit.core.arena.Opponent
@@ -60,6 +62,31 @@ class ArenaSchemaTest {
             setOf(Opponent.SNOOZE_BUTTON, Opponent.COUCH_GREMLIN),
             FightLog.beaten(imported),
         )
+    }
+
+    @Test
+    fun `backup round-trip keeps the shakes from arena wins`() {
+        val schema =
+            ExportSchema(
+                habits = emptyList(),
+                habitStatus = emptyList(),
+                arena = fights.toArenaSchema(),
+            )
+
+        fun balance(records: List<FightRecord>) =
+            ActivityPlanner.plan(
+                    activeDays = setOf(day),
+                    startDate = day,
+                    today = day,
+                    rewards = ArenaRewards.of(records),
+                )
+                .energy
+
+        val imported = roundTrip(schema).arena!!.toFightRecords()
+
+        // 1 for the active day, 5 for Snooze Button, 10 for Couch Gremlin (won once, drawn once)
+        assertEquals(1 + 5 + 10, balance(fights))
+        assertEquals(balance(fights), balance(imported))
     }
 
     @Test

@@ -16,6 +16,7 @@
  */
 package com.shub39.grit.shared.ui.habit.arena
 
+import com.shub39.grit.core.arena.ArenaRewards
 import com.shub39.grit.core.arena.ArenaState
 import com.shub39.grit.core.arena.BattleAction
 import com.shub39.grit.core.arena.BattleEvent
@@ -79,8 +80,12 @@ data class FightState(
         get() {
             val outcome = battle.outcome ?: return null
             if (!playback.isDone) return null
-            val unlocked = if (outcome == Outcome.WIN && wasNext) opponent.next else null
-            return FightResult(outcome, unlocked)
+            val firstWin = outcome == Outcome.WIN && wasNext
+            return FightResult(
+                outcome = outcome,
+                unlocked = if (firstWin) opponent.next else null,
+                shakes = if (firstWin) ArenaRewards.shakes(opponent) else 0,
+            )
         }
 
     fun hp(side: Side): Int = playback.hp(side)
@@ -95,8 +100,11 @@ data class FightState(
     }
 }
 
-/** How a fight ended; [unlocked] is the opponent a win opened up, if any. */
-data class FightResult(val outcome: Outcome, val unlocked: Opponent?)
+/**
+ * How a fight ended; [unlocked] is the opponent a win opened up, if any, and [shakes] what the
+ * first win against this opponent paid (#17), 0 otherwise.
+ */
+data class FightResult(val outcome: Outcome, val unlocked: Opponent?, val shakes: Int = 0)
 
 /** What the user does on the Arena tab and in a fight. */
 sealed interface ArenaAction {

@@ -37,6 +37,10 @@ data class LadderEntry(val opponent: Opponent, val status: LadderStatus) {
     /** Whether the player may start a fight against [opponent]. */
     val canFight: Boolean
         get() = status != LadderStatus.LOCKED
+
+    /** Protein shakes the first win against [opponent] still pays; 0 once it is beaten (#17). */
+    val firstWinShakes: Int
+        get() = if (status == LadderStatus.BEATEN) 0 else ArenaRewards.shakes(opponent)
 }
 
 /** Everything the arena tab needs, computed from the fight log and the habits. */

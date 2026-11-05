@@ -68,7 +68,7 @@ fun FreezeNoticeDialog(notice: FreezeNotice, onDismiss: () -> Unit, modifier: Mo
             color = Color.White,
             textAlign = TextAlign.Center,
         )
-        WaterText(
+        ShakeText(
             text =
                 pluralStringResource(
                     Res.plurals.freeze_notice_text,

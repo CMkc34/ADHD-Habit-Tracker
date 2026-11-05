@@ -124,7 +124,7 @@ fun AvatarShopPage(
             },
             actions = {
                 avatar?.let {
-                    WaterChip(energy = it.energy, modifier = Modifier.padding(end = 8.dp))
+                    ShakeChip(energy = it.energy, modifier = Modifier.padding(end = 8.dp))
                 }
             },
             windowInsets =

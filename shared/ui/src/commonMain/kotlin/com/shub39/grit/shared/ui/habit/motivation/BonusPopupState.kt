@@ -21,6 +21,6 @@ import androidx.compose.runtime.Immutable
 /**
  * Data for the popup shown after the check-in that earned the daily bonus for a second routine.
  *
- * @property energy The user's water after the bonus, `null` if it could not be read.
+ * @property energy The user's shakes after the bonus, `null` if it could not be read.
  */
 @Immutable data class BonusPopupState(val energy: Int? = null)

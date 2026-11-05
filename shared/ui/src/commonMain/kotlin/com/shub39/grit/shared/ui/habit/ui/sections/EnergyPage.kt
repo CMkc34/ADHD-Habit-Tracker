@@ -55,7 +55,9 @@ import com.shub39.grit.core.activity.ActivityPlanner
 import com.shub39.grit.core.activity.ActivityReport
 import com.shub39.grit.core.activity.DailyBonus
 import com.shub39.grit.core.activity.DayStatus
+import com.shub39.grit.core.arena.ArenaRewards
 import com.shub39.grit.core.arena.ArenaRules
+import com.shub39.grit.core.arena.Opponent
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.stats.ForkStats
 import com.shub39.grit.shared.ui.GritPreviewWrapper
@@ -64,8 +66,8 @@ import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
 import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.activity.RecentDay
 import com.shub39.grit.shared.ui.habit.activity.recentDays
-import com.shub39.grit.shared.ui.habit.ui.component.WATER_MARK
-import com.shub39.grit.shared.ui.habit.ui.component.WaterText
+import com.shub39.grit.shared.ui.habit.ui.component.SHAKE_MARK
+import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import com.shub39.grit.shared.ui.theme.flexFontRounded
 import grit.shared.ui.generated.resources.Res
@@ -88,6 +90,7 @@ import grit.shared.ui.generated.resources.energy_legend_missed
 import grit.shared.ui.generated.resources.energy_legend_open
 import grit.shared.ui.generated.resources.energy_longest_streak
 import grit.shared.ui.generated.resources.energy_rule_active
+import grit.shared.ui.generated.resources.energy_rule_arena
 import grit.shared.ui.generated.resources.energy_rule_auto_freeze
 import grit.shared.ui.generated.resources.energy_rule_bonus
 import grit.shared.ui.generated.resources.energy_rule_break
@@ -220,8 +223,8 @@ internal fun EnergyBalance(energy: Int, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth().padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            WaterText(
-                text = "$WATER_MARK $energy",
+            ShakeText(
+                text = "$SHAKE_MARK $energy",
                 style =
                     MaterialTheme.typography.displayLarge.copy(
                         fontFamily = flexFontEmphasis(),
@@ -411,6 +414,11 @@ private fun RulesCard(modifier: Modifier = Modifier) {
                     DailyBonus.MIN_ROUTINES,
                 ),
                 stringResource(
+                    Res.string.energy_rule_arena,
+                    ArenaRewards.SHAKES_PER_PLACE,
+                    ArenaRewards.shakes(Opponent.entries.last()),
+                ),
+                stringResource(
                     Res.string.energy_rule_freeze,
                     ActivityPlanner.FREEZE_COST,
                     ActivityPlanner.MAX_FROZEN_DAYS_IN_A_ROW,
@@ -457,7 +465,7 @@ private fun RulesList(title: String, rules: List<String>, modifier: Modifier = M
             rules.forEach { rule ->
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(text = "•", style = MaterialTheme.typography.bodyMedium)
-                    WaterText(text = rule, style = MaterialTheme.typography.bodyMedium)
+                    ShakeText(text = rule, style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }

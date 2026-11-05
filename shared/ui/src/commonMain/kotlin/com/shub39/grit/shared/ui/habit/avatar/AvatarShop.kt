@@ -67,7 +67,7 @@ import com.shub39.grit.shared.ui.components.GritDialog
 import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
 import com.shub39.grit.shared.ui.habit.fighter.PropIcon
 import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
-import com.shub39.grit.shared.ui.habit.ui.component.WaterText
+import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.avatar_cancel
 import grit.shared.ui.generated.resources.shop_buy
@@ -263,11 +263,11 @@ private fun ShopRow(
                 )
             PurchaseCheck.NOT_ENOUGH_ENERGY ->
                 Button(onClick = {}, enabled = false) {
-                    WaterText(stringResource(Res.string.shop_buy_for, item.price))
+                    ShakeText(stringResource(Res.string.shop_buy_for, item.price))
                 }
             PurchaseCheck.OK ->
                 Button(onClick = onBuyClick) {
-                    WaterText(stringResource(Res.string.shop_buy_for, item.price))
+                    ShakeText(stringResource(Res.string.shop_buy_for, item.price))
                 }
         }
     }
@@ -340,13 +340,13 @@ fun BuyItemDialog(
         )
         when (preview.check) {
             PurchaseCheck.OK -> {
-                WaterText(
+                ShakeText(
                     text = stringResource(Res.string.shop_confirm_text, item.price, balanceAfter),
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                 )
                 if (balanceAfter < ActivityPlanner.FREEZE_COST) {
-                    WaterText(
+                    ShakeText(
                         text =
                             stringResource(Res.string.shop_low_energy, ActivityPlanner.FREEZE_COST),
                         style = MaterialTheme.typography.bodyMedium,
@@ -369,7 +369,7 @@ fun BuyItemDialog(
                     textAlign = TextAlign.Center,
                 )
             PurchaseCheck.NOT_ENOUGH_ENERGY ->
-                WaterText(
+                ShakeText(
                     text = stringResource(Res.string.shop_preview_missing, preview.missingEnergy),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,

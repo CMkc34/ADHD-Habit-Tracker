@@ -22,8 +22,8 @@
         <item quantity="other">%1$d more active days and I reach rank %2$d.</item>
     </plurals>
     <string name="greeting_growing_last">I’m a Legend now. Thanks for sticking with it!</string>
-    <!-- 💧 is drawn as the water coin -->
-    <string name="greeting_water">You have %1$d 💧</string>
+    <!-- 🥤 is drawn as the shake coin -->
+    <string name="greeting_water">You have %1$d 🥤</string>
     <string name="greeting_start">Let’s go</string>
     <string name="greeting_setting">Daily greeting</string>
     <string name="greeting_setting_desc">Your fighter greets you on the first app start of each day</string>
