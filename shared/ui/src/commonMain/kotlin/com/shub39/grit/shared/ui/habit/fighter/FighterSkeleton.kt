@@ -128,6 +128,53 @@ internal class Skeleton(
                 kiRadius = 5f,
             )
 
+        /**
+         * A straight punch: the front fist shoots out at shoulder height, the back one at the hip.
+         */
+        val punch =
+            Skeleton(
+                head = Pt(26, 14),
+                torso = torsoAt(1f),
+                beltLeft = Pt(19, 30),
+                beltRight = Pt(31, 30),
+                backArm = Limb(Pt(19, 24), Pt(15, 29), Pt(19.5f, 31f)),
+                frontArm = Limb(Pt(31, 24), Pt(37, 23), Pt(43.5f, 22f)),
+                backLeg = Limb(Pt(22, 33), Pt(16, 39), Pt(12, 44)),
+                frontLeg = Limb(Pt(28, 33), Pt(34, 38), Pt(37, 44)),
+                backFoot = Pt(11f, 45.2f),
+                frontFoot = Pt(39f, 45.2f),
+            )
+
+        /** A side kick: leaning back on the back leg, the front foot thrusts out at belt height. */
+        val kick =
+            Skeleton(
+                head = Pt(20, 14),
+                torso = torsoAt(-5f, -1f),
+                beltLeft = Pt(13, 29),
+                beltRight = Pt(25, 29),
+                backArm = Limb(Pt(13, 23), Pt(8, 26), Pt(5, 30)),
+                frontArm = Limb(Pt(25, 23), Pt(29, 26), Pt(28.5f, 19f)),
+                backLeg = Limb(Pt(17, 32), Pt(16, 38), Pt(16, 44)),
+                frontLeg = Limb(Pt(23, 31), Pt(31, 29), Pt(39, 27.5f)),
+                backFoot = Pt(16f, 45.2f),
+                frontFoot = Pt(42f, 27f),
+            )
+
+        /** Guarding: low and wide, both forearms crossed in front of the chin. */
+        val guard =
+            Skeleton(
+                head = Pt(23, 15),
+                torso = torsoAt(-2f, 1f),
+                beltLeft = Pt(16, 31),
+                beltRight = Pt(28, 31),
+                backArm = Limb(Pt(16, 25), Pt(30, 32), Pt(40.5f, 17f)),
+                frontArm = Limb(Pt(28, 25), Pt(41, 31), Pt(34f, 16.5f)),
+                backLeg = Limb(Pt(20, 34), Pt(14, 39), Pt(12, 44)),
+                frontLeg = Limb(Pt(26, 34), Pt(33, 39), Pt(36, 44)),
+                backFoot = Pt(11f, 45.2f),
+                frontFoot = Pt(38f, 45.2f),
+            )
+
         /** Sitting cross-legged, the hands on the knees: a tired fighter takes a break. */
         val sitting =
             Skeleton(

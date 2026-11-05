@@ -94,6 +94,4 @@
     <string name="fighter_belt_gold">gold belt</string>
 
     <!-- Arena tab, placeholder until #14 -->
-    <string name="arena_soon_title">The arena opens soon</string>
-    <string name="arena_soon_text">Keep training. Soon you can take on the everyday enemies here.</string>
 </resources>

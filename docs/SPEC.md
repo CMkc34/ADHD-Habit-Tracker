@@ -713,10 +713,31 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
     (`FighterNoticeHost`, `FighterNotice`), aber erst wenn Motivations-Pop-up, Bonus, Begrüßung und
     Namensfrage weg sind. Erst der Rang (Kämpfer in der Pose „Ki laden“ mit neuem Gürtel), danach
     die neuen Stufen gesammelt in einem kleineren Dialog.
-  - Reiter-Symbole: `sports_martial_arts` (Kämpfer) und `swords` (Arena); bis #14 zeigt der
-    Arena-Reiter „Die Arena öffnet bald“ mit dem Kämpfer.
+  - Reiter-Symbole: `sports_martial_arts` (Kämpfer) und `swords` (Arena).
 - Arena-Reiter (#14): Tickets, Leiter, Vergleich vor dem Kampf, Kampfbildschirm mit HP, Ladungen und
-  drei Aktionen.
+  drei Aktionen. Entschieden am 2026-11-05:
+  - Eigenes `ArenaViewModel` (`ArenaPageState`, `ArenaAction`). Der Kampf läuft in der reinen
+    `Battle`-Engine; `FightPlayback` (`core.arena`) spielt die Ereignisse eines Zugs einzeln ab.
+    Erst der eigene Zug, dann folgt der des Gegners von selbst, je etwa 0,5 s; die Knöpfe sind so
+    lange gesperrt. Die UI meldet jedes fertig animierte Ereignis (`EventPlayed`); ohne Animationen
+    läuft der Kampf sofort durch. Ein Sieg wird schon beim letzten Zug gespeichert.
+  - Kopf mit „🎟 2 von 3 heute“ und Hinweis; ohne Ticket „Hak eine Routine ab …“ mit Knopf zu den
+    Routinen. Leiter als Karten 1 bis 10: besiegt mit Haken (Revanche möglich), der nächste Gegner
+    mit Rahmen und Wippen (die Liste scrollt zu ihm), gesperrte als Silhouette mit „???“.
+  - Vergleich vor dem Kampf als Leiste von unten: beide stehen sich gegenüber, darunter HP, Angriff,
+    Tempo, Fokus; der stärkere Wert je Zeile hat einen grünen Pfeil. „Kämpfen“ kostet 1 Ticket.
+  - Kampfbildschirm ganzseitig: HP-Balken, 3 Ladungs-Punkte, Pixel-Bühne, die letzten 3 Log-Zeilen,
+    drei große Knöpfe mit Hinweis (Spezial erst ab 3 Ladungen). Schwebende Zahlen („-12“, gelb
+    „KRIT!“, „DANEBEN!“, „BLOCK“). Posen und Versatz berechnet `FightScene` (rein, getestet).
+  - Neue Kämpfer-Posen `PUNCH`, `KICK` (ein Schlag zeigt zufällig eins von beiden, nur Optik) und
+    `GUARD` (Arme gekreuzt, kurzes Ki-Schimmern); Spezial = `BLAST` mit fliegendem `KiBlast`.
+  - **Wechselnde Hintergründe** (`ArenaStage`, `ArenaStagePixels`): 5 Pixel-Bühnen, je zwei
+    benachbarte Gegner teilen eine (Schlafzimmer 1–2, Bildschirmwelt 3–4, Waschküche 5–6,
+    Uhrturm 7–8, Vulkan 9–10), dazu je Kampf zufällig Tag, Abend oder Nacht (`ArenaLighting`);
+    Lampen, Bildschirme und Lava leuchten auch nachts.
+  - Ergebnis: Sieg mit Pixel-Konfetti in den Theme-Farben und „Leiter freigeschaltet: …“, Niederlage
+    „Trainier noch ein bisschen und versuch es morgen wieder.“, Unentschieden „Gleich stark! Keiner
+    ging zu Boden.“ Zurück während des Kampfs fragt „Aufgeben? Das zählt als Niederlage.“
 - Routinen-Formular und -Karte zeigen den trainierten Wert (#4).
 - Motivations-Pop-up (#15): „+1 Kraft-XP“, „Kraft Stufe 4!“, „+1 🎟“.
 - Einrichtung und Texte (#16): „Wer trainiert mit dir?“ (fünf Kämpfer + Farben, #26), keine

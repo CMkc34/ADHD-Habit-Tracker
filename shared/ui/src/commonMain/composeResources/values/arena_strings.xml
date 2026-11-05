@@ -21,4 +21,58 @@
     <string name="arena_opponent_locked">Locked opponent</string>
 
     <string name="arena_next_ticket_hint">Check off one more routine for a ticket</string>
+
+    <!-- Arena tab and fight screen (#14) -->
+    <string name="arena_tickets">🎟 %1$d of %2$d today</string>
+    <string name="arena_no_tickets">Check off a routine to earn a fight</string>
+    <string name="arena_to_routines">To my routines</string>
+    <string name="arena_ladder_complete">You beat the whole ladder! Rematches are always open.</string>
+    <string name="arena_status_beaten">Beaten</string>
+    <string name="arena_status_next">Next challenge</string>
+    <string name="arena_level">Level %1$d</string>
+
+    <string name="arena_vs">VS</string>
+    <string name="arena_hp">HP</string>
+    <string name="arena_attack">Attack</string>
+    <string name="arena_speed">Speed</string>
+    <string name="arena_focus">Focus</string>
+    <string name="arena_stronger">stronger</string>
+    <string name="arena_fight">Fight (uses 1 🎟)</string>
+    <string name="arena_fight_no_ticket">No ticket left today</string>
+
+    <string name="arena_round">Round %1$d of %2$d</string>
+    <string name="arena_charge">%1$d of %2$d charge</string>
+    <string name="arena_strike">Strike</string>
+    <string name="arena_strike_hint">Normal hit, can be dodged</string>
+    <string name="arena_guard">Guard</string>
+    <string name="arena_guard_hint">Half damage, +1 charge</string>
+    <string name="arena_special">Special</string>
+    <string name="arena_special_hint">Ki blast: double damage, can\'t be blocked</string>
+    <string name="arena_special_locked">Needs 3 charge</string>
+
+    <string name="arena_log_hit">%1$s hits: %2$d damage</string>
+    <string name="arena_log_crit">Crit! %1$s deals %2$d damage</string>
+    <string name="arena_log_guarded">%1$s hits the guard: %2$d damage</string>
+    <string name="arena_log_dodge">Dodged! %1$s misses</string>
+    <string name="arena_log_guard">%1$s guards</string>
+    <string name="arena_log_special">Special! %1$s deals %2$d damage</string>
+    <string name="arena_log_ko">%1$s is knocked out!</string>
+    <string name="arena_log_time_up">Time\'s up! 30 rounds are over</string>
+    <string name="arena_float_crit">CRIT!</string>
+    <string name="arena_float_dodge">DODGE!</string>
+    <string name="arena_float_guard">GUARD</string>
+
+    <string name="arena_win_title">You win!</string>
+    <string name="arena_win_text">%1$s is beaten.</string>
+    <string name="arena_unlocked">Ladder unlocked: %1$s</string>
+    <string name="arena_loss_title">So close!</string>
+    <string name="arena_loss_text">Train a bit more and try again tomorrow.</string>
+    <string name="arena_draw_title">Draw</string>
+    <string name="arena_draw_text">Even match! Nobody went down.</string>
+    <string name="arena_result_ok">Back to the arena</string>
+
+    <string name="arena_give_up_title">Give up?</string>
+    <string name="arena_give_up_text">This counts as a loss.</string>
+    <string name="arena_give_up">Give up</string>
+    <string name="arena_keep_fighting">Keep fighting</string>
 </resources>

@@ -22,7 +22,7 @@ data object Energy : Routes
 /** Own tab with the fighter, its stats and its shop (fork-specific, #9). */
 data object Avatar : Routes
 
-/** Own tab for the turn-based fights (fork-specific); a placeholder until #14. */
+/** Own tab for the turn-based fights (fork-specific, #14): tickets, ladder and the fight screen. */
 data object Arena : Routes
 
 /** The shop of the fighter, opened from the Fighter tab (fork-specific, #138). */

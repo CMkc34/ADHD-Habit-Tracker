@@ -17,4 +17,58 @@
     <string name="arena_opponent_locked">Gesperrter Gegner</string>
 
     <string name="arena_next_ticket_hint">Hak noch eine Routine ab, dann bekommst du ein Ticket</string>
+
+    <!-- Arena-Reiter und Kampfbildschirm (#14) -->
+    <string name="arena_tickets">🎟 %1$d von %2$d heute</string>
+    <string name="arena_no_tickets">Hak eine Routine ab, dann hast du einen Kampf frei</string>
+    <string name="arena_to_routines">Zu meinen Routinen</string>
+    <string name="arena_ladder_complete">Du hast die ganze Leiter geschafft! Revanchen gehen immer.</string>
+    <string name="arena_status_beaten">Besiegt</string>
+    <string name="arena_status_next">Nächste Herausforderung</string>
+    <string name="arena_level">Stufe %1$d</string>
+
+    <string name="arena_vs">VS</string>
+    <string name="arena_hp">HP</string>
+    <string name="arena_attack">Angriff</string>
+    <string name="arena_speed">Tempo</string>
+    <string name="arena_focus">Fokus</string>
+    <string name="arena_stronger">stärker</string>
+    <string name="arena_fight">Kämpfen (kostet 1 🎟)</string>
+    <string name="arena_fight_no_ticket">Heute kein Ticket mehr</string>
+
+    <string name="arena_round">Runde %1$d von %2$d</string>
+    <string name="arena_charge">%1$d von %2$d Ladungen</string>
+    <string name="arena_strike">Schlag</string>
+    <string name="arena_strike_hint">Normaler Treffer, man kann ausweichen</string>
+    <string name="arena_guard">Block</string>
+    <string name="arena_guard_hint">Halber Schaden, +1 Ladung</string>
+    <string name="arena_special">Spezial</string>
+    <string name="arena_special_hint">Ki-Strahl: doppelter Schaden, nicht blockbar</string>
+    <string name="arena_special_locked">Braucht 3 Ladungen</string>
+
+    <string name="arena_log_hit">%1$s trifft: %2$d Schaden</string>
+    <string name="arena_log_crit">Krit! %1$s macht %2$d Schaden</string>
+    <string name="arena_log_guarded">%1$s trifft den Block: %2$d Schaden</string>
+    <string name="arena_log_dodge">Ausgewichen! %1$s geht ins Leere</string>
+    <string name="arena_log_guard">%1$s blockt</string>
+    <string name="arena_log_special">Spezial! %1$s macht %2$d Schaden</string>
+    <string name="arena_log_ko">%1$s ist k.o.!</string>
+    <string name="arena_log_time_up">Zeit um! 30 Runden sind vorbei</string>
+    <string name="arena_float_crit">KRIT!</string>
+    <string name="arena_float_dodge">DANEBEN!</string>
+    <string name="arena_float_guard">BLOCK</string>
+
+    <string name="arena_win_title">Gewonnen!</string>
+    <string name="arena_win_text">%1$s ist besiegt.</string>
+    <string name="arena_unlocked">Leiter freigeschaltet: %1$s</string>
+    <string name="arena_loss_title">Knapp daneben!</string>
+    <string name="arena_loss_text">Trainier noch ein bisschen und versuch es morgen wieder.</string>
+    <string name="arena_draw_title">Unentschieden</string>
+    <string name="arena_draw_text">Gleich stark! Keiner ging zu Boden.</string>
+    <string name="arena_result_ok">Zurück zur Arena</string>
+
+    <string name="arena_give_up_title">Aufgeben?</string>
+    <string name="arena_give_up_text">Das zählt als Niederlage.</string>
+    <string name="arena_give_up">Aufgeben</string>
+    <string name="arena_keep_fighting">Weiterkämpfen</string>
 </resources>
