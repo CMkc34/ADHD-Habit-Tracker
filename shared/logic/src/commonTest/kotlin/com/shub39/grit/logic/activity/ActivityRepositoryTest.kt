@@ -88,7 +88,9 @@ class ActivityRepositoryTest {
             )
 
         val report =
-            ActivityRepository(store, FakeAvatarStore(), noBonus, FakeArenaStore()).getActivityReport().first()
+            ActivityRepository(store, FakeAvatarStore(), noBonus, FakeArenaStore())
+                .getActivityReport()
+                .first()
 
         assertEquals(3, report.currentStreak)
         assertEquals(3, report.energy)
@@ -98,7 +100,9 @@ class ActivityRepositoryTest {
     fun `reading the report sets the start date on first use`() = runTest {
         val store = FakeActivityStore()
 
-        ActivityRepository(store, FakeAvatarStore(), noBonus, FakeArenaStore()).getActivityReport().first()
+        ActivityRepository(store, FakeAvatarStore(), noBonus, FakeArenaStore())
+            .getActivityReport()
+            .first()
 
         assertEquals(today, store.data.value.startDate)
     }
@@ -131,7 +135,10 @@ class ActivityRepositoryTest {
         val avatarStore =
             FakeAvatarStore(AvatarData(purchases = listOf(Purchase("gi_blue", daysAgo(1), 3))))
 
-        val report = ActivityRepository(store, avatarStore, noBonus, FakeArenaStore()).getActivityReport().first()
+        val report =
+            ActivityRepository(store, avatarStore, noBonus, FakeArenaStore())
+                .getActivityReport()
+                .first()
 
         assertEquals(2, report.energy)
     }
@@ -161,7 +168,8 @@ class ActivityRepositoryTest {
                 ActivityData(startDate = daysAgo(2), activeDays = (0..2).map(::daysAgo).toSet())
             )
         val bonus = MutableStateFlow(setOf(daysAgo(1), today))
-        val repository = ActivityRepository(store, FakeAvatarStore(), BonusDaySource { bonus }, FakeArenaStore())
+        val repository =
+            ActivityRepository(store, FakeAvatarStore(), BonusDaySource { bonus }, FakeArenaStore())
 
         assertEquals(5, repository.getActivityReport().first().energy)
 
@@ -172,7 +180,7 @@ class ActivityRepositoryTest {
     }
 
     @Test
-    fun `the first win against an opponent adds water once`() = runTest {
+    fun `the first win against an opponent adds shakes once`() = runTest {
         val store = FakeActivityStore(ActivityData(startDate = today, activeDays = setOf(today)))
         val win = FightRecord(today, Opponent.DOOMSCROLL_IMP.id, Outcome.WIN, startedAt = 1)
         val arena = FakeArenaStore(listOf(win))

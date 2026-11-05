@@ -65,7 +65,7 @@ class ArenaSchemaTest {
     }
 
     @Test
-    fun `backup round-trip keeps the water from arena wins`() {
+    fun `backup round-trip keeps the shakes from arena wins`() {
         val schema =
             ExportSchema(
                 habits = emptyList(),

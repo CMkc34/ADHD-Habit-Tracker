@@ -41,11 +41,13 @@ import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.shared.ui.components.GritBottomSheet
 import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
+import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_attack
 import grit.shared.ui.generated.resources.arena_fight
 import grit.shared.ui.generated.resources.arena_fight_no_ticket
+import grit.shared.ui.generated.resources.arena_first_win_reward
 import grit.shared.ui.generated.resources.arena_focus
 import grit.shared.ui.generated.resources.arena_hp
 import grit.shared.ui.generated.resources.arena_speed
@@ -105,6 +107,17 @@ fun PreFightSheet(
         StatRow(Res.string.arena_attack, player.attack, them.attack)
         StatRow(Res.string.arena_speed, player.speed, them.speed)
         StatRow(Res.string.arena_focus, player.focus, them.focus)
+
+        val firstWinShakes = arena.entry(opponent).firstWinShakes
+        if (firstWinShakes > 0) {
+            ShakeText(
+                text = stringResource(Res.string.arena_first_win_reward, firstWinShakes),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
 
         Button(
             onClick = onFight,

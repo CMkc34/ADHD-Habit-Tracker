@@ -78,7 +78,7 @@ class ActivityRepository(
     private fun purchases(): Flow<List<Purchase>> =
         avatarStore.getAvatar().map { it.purchases }.distinctUntilChanged()
 
-    // water for the first win against each opponent (#17), derived from the fight log
+    // protein shakes for the first win against each opponent (#17), derived from the fight log
     private fun rewards(): Flow<List<Reward>> =
         arenaStore.getFights().map(ArenaRewards::of).distinctUntilChanged()
 

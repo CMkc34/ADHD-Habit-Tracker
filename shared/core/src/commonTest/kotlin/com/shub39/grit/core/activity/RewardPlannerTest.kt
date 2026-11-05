@@ -16,13 +16,13 @@
  */
 package com.shub39.grit.core.activity
 
-import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.avatar.Purchase
+import com.shub39.grit.core.fighter.FighterItems
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.LocalDate
 
-/** [ActivityPlanner] with [Reward]s, e.g. water for arena wins (#17). */
+/** [ActivityPlanner] with [Reward]s, e.g. shakes for arena wins (#17). */
 class RewardPlannerTest {
 
     private val start = LocalDate(2026, 10, 1)
@@ -82,8 +82,7 @@ class RewardPlannerTest {
 
     @Test
     fun `a reward after today is not credited yet`() {
-        val report =
-            plan((0..4).map(::day).toSet(), day(4), rewards = listOf(Reward(day(5), 15)))
+        val report = plan((0..4).map(::day).toSet(), day(4), rewards = listOf(Reward(day(5), 15)))
 
         assertEquals(5, report.energy)
         assertEquals(emptyList(), report.rewards)
@@ -91,8 +90,7 @@ class RewardPlannerTest {
 
     @Test
     fun `a reward before the start date counts on the start date`() {
-        val report =
-            plan(setOf(day(0)), day(0), rewards = listOf(Reward(day(-3), 5)))
+        val report = plan(setOf(day(0)), day(0), rewards = listOf(Reward(day(-3), 5)))
 
         assertEquals(1 + 5, report.energy)
         assertEquals(listOf(Reward(day(0), 5)), report.rewards)
@@ -100,7 +98,7 @@ class RewardPlannerTest {
 
     @Test
     fun `a reward is credited before the purchases of its day`() {
-        // 2 days give 2 water; without the reward the purchase would be cut to 0
+        // 2 days give 2 shakes; without the reward the purchase would be cut to 0
         val purchase = Purchase(FighterItems.GI_BLUE, day(1), 10)
 
         val report =

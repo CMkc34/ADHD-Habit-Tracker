@@ -220,6 +220,7 @@ class ArenaViewModelTest {
             val result = viewModel.fight!!.result!!
             assertEquals(Outcome.WIN, result.outcome)
             assertEquals(Opponent.COUCH_GREMLIN, result.unlocked)
+            assertEquals(5, result.shakes) // first win against opponent 1 (#17)
             val ladder = viewModel.state.value.arena!!.ladder
             assertEquals(LadderStatus.BEATEN, ladder[0].status)
             assertEquals(LadderStatus.NEXT, ladder[1].status)
@@ -238,6 +239,7 @@ class ArenaViewModelTest {
 
             assertEquals(Outcome.WIN, viewModel.fight!!.result!!.outcome)
             assertNull(viewModel.fight!!.result!!.unlocked)
+            assertEquals(0, viewModel.fight!!.result!!.shakes)
         }
 
     @Test

@@ -36,6 +36,7 @@
     <string name="energy_rule_energy">Jeder aktive Tag bringt dir +%1$d 🥤, ohne Obergrenze.</string>
     <!-- %1$d = Bonus-Energie, %2$d = nötige Routinen an einem Tag -->
     <string name="energy_rule_bonus">Hakst du an einem Tag %2$d oder mehr Routinen ab, bekommst du +%1$d 🥤 Bonus. Nimmst du einen Haken zurück und es sind weniger als %2$d, wird der Bonus wieder abgezogen.</string>
+    <string name="energy_rule_arena">Dein erster Sieg gegen jeden Gegner in der Arena bringt %1$d 🥤 pro Platz auf der Leiter, von %1$d bis %2$d 🥤. Revanchen bringen nichts.</string>
     <string name="energy_rule_freeze">Einen Tag verpasst? Ein Freeze kostet %1$d 🥤 pro Tag und rettet deine Serie automatisch, bis zu %2$d Tage am Stück.</string>
     <string name="energy_rule_frozen_day">Ein gefrorener Tag hält deine Serie, zählt aber nicht mit.</string>
     <string name="energy_rule_break">Reißt die Serie trotzdem, bleiben deine Shakes erhalten.</string>

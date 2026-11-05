@@ -19,8 +19,8 @@ package com.shub39.grit.core.activity
 import kotlinx.datetime.LocalDate
 
 /**
- * Water earned on top of the daily energy, e.g. for the first arena win against an opponent (#17).
- * Rewards are derived from stored data like everything else, so [ActivityPlanner] credits them on
- * [date] and the balance stays computed.
+ * Protein shakes (the energy) earned on top of the daily energy, e.g. for the first arena win
+ * against an opponent (#17). Rewards are derived from stored data like everything else, so
+ * [ActivityPlanner] credits them on [date] and the balance stays computed.
  */
 data class Reward(val date: LocalDate, val amount: Int)

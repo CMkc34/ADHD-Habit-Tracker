@@ -36,9 +36,9 @@ class ArenaRewardsTest {
 
     @Test
     fun `the first win against opponent n pays 5 times n`() {
-        assertEquals(5, ArenaRewards.water(Opponent.SNOOZE_BUTTON))
-        assertEquals(15, ArenaRewards.water(Opponent.DOOMSCROLL_IMP))
-        assertEquals(50, ArenaRewards.water(Opponent.PROCRASTINATION_DRAGON))
+        assertEquals(5, ArenaRewards.shakes(Opponent.SNOOZE_BUTTON))
+        assertEquals(15, ArenaRewards.shakes(Opponent.DOOMSCROLL_IMP))
+        assertEquals(50, ArenaRewards.shakes(Opponent.PROCRASTINATION_DRAGON))
     }
 
     @Test
@@ -69,10 +69,7 @@ class ArenaRewardsTest {
                 fight(tuesday, Opponent.COUCH_GREMLIN, Outcome.WIN),
             )
 
-        assertEquals(
-            listOf(Reward(monday, 5), Reward(tuesday, 10)),
-            ArenaRewards.of(log),
-        )
+        assertEquals(listOf(Reward(monday, 5), Reward(tuesday, 10)), ArenaRewards.of(log))
     }
 
     @Test
@@ -107,5 +104,14 @@ class ArenaRewardsTest {
             )
 
         assertEquals(1 + 5, report.energy)
+    }
+
+    @Test
+    fun `the ladder shows what a first win still pays`() {
+        val ladder = ArenaState.ladder(beaten = setOf(Opponent.SNOOZE_BUTTON))
+
+        assertEquals(0, ladder[0].firstWinShakes)
+        assertEquals(10, ladder[1].firstWinShakes)
+        assertEquals(15, ladder[2].firstWinShakes)
     }
 }
