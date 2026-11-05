@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ki check mark app icon (#18), themed icon: the pixel check mark alone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FF000000" android:pathData="M70,36h4v4h-4zM74,36h4v4h-4zM78,36h4v4h-4zM66,40h4v4h-4zM70,40h4v4h-4zM74,40h4v4h-4zM78,40h4v4h-4zM62,44h4v4h-4zM66,44h4v4h-4zM70,44h4v4h-4zM74,44h4v4h-4zM58,48h4v4h-4zM62,48h4v4h-4zM66,48h4v4h-4zM70,48h4v4h-4zM26,52h4v4h-4zM30,52h4v4h-4zM34,52h4v4h-4zM54,52h4v4h-4zM58,52h4v4h-4zM62,52h4v4h-4zM66,52h4v4h-4zM26,56h4v4h-4zM30,56h4v4h-4zM34,56h4v4h-4zM38,56h4v4h-4zM50,56h4v4h-4zM54,56h4v4h-4zM58,56h4v4h-4zM62,56h4v4h-4zM30,60h4v4h-4zM34,60h4v4h-4zM38,60h4v4h-4zM42,60h4v4h-4zM46,60h4v4h-4zM50,60h4v4h-4zM54,60h4v4h-4zM34,64h4v4h-4zM38,64h4v4h-4zM42,64h4v4h-4zM46,64h4v4h-4zM50,64h4v4h-4zM38,68h4v4h-4zM42,68h4v4h-4zM46,68h4v4h-4z" />
+</vector>

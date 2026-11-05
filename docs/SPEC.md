@@ -815,6 +815,11 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
     auf festen Plätzen links und rechts in zwei Reihen und überdecken den Kämpfer nie (getestet für
     alle Kämpfer bis 1,6-fach).
   - Müde: Boden und Teile werden leicht grau, der Himmel steht still.
+- App-Icon (#18, entschieden am 2026-11-05, Idee C): ein Häkchen aus oranger Ki-Energie in
+  Pixel-Art (14 × 9 Pixel, dunkle Kante, helle Kern-Punkte) in einem gestuften Ki-Schein auf dunklem
+  Arena-Blau; ersetzt den Spross. Gleiches Häkchen im Splash, als Themen-Icon (einfarbig), als
+  Benachrichtigungs-Icon und im Info-Bereich der Einstellungen (`ki_check_icon`). Alle Dateien
+  erzeugt `tools/app-icon/generate_icon.py` (Python + Pillow) aus einer Vorlage.
 
 ### 9.10 Issues
 | # | Inhalt |
