@@ -41,6 +41,8 @@ data class ActivityReport(
     val autoFreeze: Boolean = true,
     /** Active days that earned the [DailyBonus] on top of the daily energy. */
     val bonusDays: Set<LocalDate> = emptySet(),
+    /** The [Reward]s credited so far, each on the day it was credited, in order. */
+    val rewards: List<Reward> = emptyList(),
 ) {
     val frozenDays: Set<LocalDate>
         get() = days.filterValues { it == DayStatus.FROZEN }.keys
@@ -67,6 +69,10 @@ object ActivityPlanner {
      *
      * A gap is not frozen when [autoFreeze] was off on any of its days. Switching freezes off keeps
      * the freezes of earlier days.
+     *
+     * [rewards] are credited on their date, before that day's purchases are charged, so a later
+     * freeze can use them. Like purchases, rewards from before [startDate] count on the start date,
+     * and rewards after [today] are not credited yet.
      */
     fun plan(
         activeDays: Set<LocalDate>,
@@ -75,6 +81,7 @@ object ActivityPlanner {
         purchases: List<Purchase> = emptyList(),
         autoFreeze: AutoFreezeSwitches = AutoFreezeSwitches(),
         bonusDays: Set<LocalDate> = emptySet(),
+        rewards: List<Reward> = emptyList(),
     ): ActivityReport {
         var streak = 0
         var longest = 0
@@ -84,6 +91,13 @@ object ActivityPlanner {
         val earnedBonus = mutableSetOf<LocalDate>()
         val gap = mutableListOf<LocalDate>()
         val spendByDay = Shop.charged(purchases).groupBy({ it.date }, { it.price })
+        val rewardsByDay = rewards.filter { it.amount > 0 }.groupBy { it.date }
+        val credited = mutableListOf<Reward>()
+
+        // entries dated before the start date count on the start date
+        fun <T> onDay(byDay: Map<LocalDate, List<T>>, day: LocalDate): List<T> =
+            if (day == startDate) byDay.filterKeys { it <= startDate }.values.flatten()
+            else byDay[day].orEmpty()
 
         fun spendPending() {
             energy = maxOf(0, energy - pendingSpend)
@@ -124,14 +138,11 @@ object ActivityPlanner {
                 }
                 else -> days[day] = DayStatus.OPEN
             }
-            // purchases made before the start date count on the start date
-            val spentToday =
-                if (epochDay == startDate.toEpochDays()) {
-                    spendByDay.filterKeys { it <= startDate }.values.flatten().sum()
-                } else {
-                    spendByDay[day].orEmpty().sum()
-                }
-            pendingSpend += spentToday
+            onDay(rewardsByDay, day).forEach {
+                energy += it.amount
+                credited += it.copy(date = day)
+            }
+            pendingSpend += onDay(spendByDay, day).sum()
             if (gap.isEmpty()) spendPending()
         }
         closeGap()
@@ -144,6 +155,7 @@ object ActivityPlanner {
             days = days,
             autoFreeze = autoFreeze.isOn(today),
             bonusDays = earnedBonus,
+            rewards = credited,
         )
     }
 }

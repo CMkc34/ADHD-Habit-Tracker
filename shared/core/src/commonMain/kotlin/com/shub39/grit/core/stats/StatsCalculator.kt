@@ -36,7 +36,7 @@ import kotlinx.datetime.yearMonth
 /** Active days of one month; [beforeStart] marks months that ended before the start date. */
 data class MonthlyActiveDays(val month: YearMonth, val activeDays: Int, val beforeStart: Boolean)
 
-/** Energy earned by active days and spent on freezes in one month. */
+/** Energy earned by active days, bonuses and rewards, and spent on freezes in one month. */
 data class MonthlyEnergy(
     val month: YearMonth,
     val earned: Int,
@@ -87,7 +87,8 @@ object StatsCalculator {
                 earned =
                     report.countIn(month, DayStatus.ACTIVE) *
                         ActivityPlanner.ENERGY_PER_ACTIVE_DAY +
-                        report.bonusDays.count { it.yearMonth == month } * DailyBonus.ENERGY,
+                        report.bonusDays.count { it.yearMonth == month } * DailyBonus.ENERGY +
+                        report.rewards.filter { it.date.yearMonth == month }.sumOf { it.amount },
                 spent = report.countIn(month, DayStatus.FROZEN) * ActivityPlanner.FREEZE_COST,
                 beforeStart = startDate == null || month.lastDay < startDate,
             )
