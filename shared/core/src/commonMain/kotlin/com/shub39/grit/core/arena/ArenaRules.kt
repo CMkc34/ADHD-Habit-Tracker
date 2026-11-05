@@ -16,7 +16,9 @@
  */
 package com.shub39.grit.core.arena
 
-/** Every number of the arena fight (SPEC 9.4) lives here, so balance changes touch one file. */
+/**
+ * Every number of the arena fight (SPEC 9.4, 9.6) lives here, so balance changes touch one file.
+ */
 object ArenaRules {
     const val BASE_HP = 40
     const val HP_PER_RANK = 6
@@ -47,4 +49,15 @@ object ArenaRules {
 
     const val CPU_LOW_HP_SHARE = 0.30
     const val CPU_GUARD_CHANCE = 0.25
+
+    /**
+     * Opponent n of the ladder scales evenly with its level n + 1 (SPEC 9.5): speed = level (the
+     * player still starts on the tie), focus = level − 1, attack like a fighter's plus a bonus.
+     * Only HP is set per opponent in [Opponent], tuned by `LadderBalanceTest`.
+     */
+    const val OPPONENT_ATTACK_BONUS = 4
+    const val OPPONENT_FOCUS_OFFSET = -1
+
+    /** Fight tickets a day can earn, one per routine done today (SPEC 9.6). */
+    const val TICKETS_PER_DAY = 3
 }

@@ -34,10 +34,7 @@ object StatXp {
         val habitsById = habits.associateBy { it.id }
         val counts =
             statuses
-                .filter { status ->
-                    val habit = habitsById[status.habitId] ?: return@filter false
-                    !habit.isMeasurable || status.value >= habit.targetValue
-                }
+                .filter { status -> habitsById[status.habitId]?.isDoneBy(status) == true }
                 .distinctBy { it.habitId to it.date }
                 .groupingBy { statOf(it.habitId) }
                 .eachCount()
