@@ -128,7 +128,9 @@ internal class Skeleton(
                 kiRadius = 5f,
             )
 
-        /** A straight punch: the front fist shoots out at shoulder height, the back one at the hip. */
+        /**
+         * A straight punch: the front fist shoots out at shoulder height, the back one at the hip.
+         */
         val punch =
             Skeleton(
                 head = Pt(26, 14),
@@ -146,7 +148,7 @@ internal class Skeleton(
         /** A side kick: leaning back on the back leg, the front foot thrusts out at belt height. */
         val kick =
             Skeleton(
-                head = Pt(20, 13),
+                head = Pt(20, 14),
                 torso = torsoAt(-5f, -1f),
                 beltLeft = Pt(13, 29),
                 beltRight = Pt(25, 29),

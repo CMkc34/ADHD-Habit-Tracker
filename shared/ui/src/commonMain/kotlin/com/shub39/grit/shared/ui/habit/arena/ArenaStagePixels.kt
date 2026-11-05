@@ -92,7 +92,14 @@ object ArenaStagePixels {
             rect(x0 + 1, y1 - 2, x1 - 1, y1 - 1, dark(color), lit)
         }
 
-        fun disc(cx: Float, cy: Float, r: Float, color: Int, lit: Boolean = false, edge: Boolean = true) {
+        fun disc(
+            cx: Float,
+            cy: Float,
+            r: Float,
+            color: Int,
+            lit: Boolean = false,
+            edge: Boolean = true,
+        ) {
             for (y in 0 until HEIGHT) for (x in 0 until WIDTH) {
                 val d = hypot(x + 0.5f - cx, y + 0.5f - cy)
                 if (d < r) put(x, y, color, lit) else if (edge && d < r + 1f) put(x, y, INK, lit)
@@ -127,7 +134,8 @@ object ArenaStagePixels {
             rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2, INK)
             rect(x0 - 1, y0 - 1, x1 + 1, y1 + 1, frame)
             sky(x0, y0, x1, y1)
-            if (lighting == ArenaLighting.NIGHT) disc(x1 - 6f, y0 + 6f, 3f, argb(0xF4EFCF), true, false)
+            if (lighting == ArenaLighting.NIGHT)
+                disc(x1 - 6f, y0 + 6f, 3f, argb(0xF4EFCF), true, false)
             val mx = (x0 + x1) / 2
             rect(mx, y0, mx + 1, y1, frame)
             rect(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2 + 1, frame)
@@ -139,7 +147,8 @@ object ArenaStagePixels {
                 val row = (y - FLOOR_TOP) / 5
                 for (x in 0 until WIDTH) {
                     val seam = (y - FLOOR_TOP) % 5 == 0 || (x + row * 23) % 40 == 0
-                    this[x, y] = if (seam) dark(base) else if ((x + y) % 11 == 0) light(base) else base
+                    this[x, y] =
+                        if (seam) dark(base) else if ((x + y) % 11 == 0) light(base) else base
                 }
             }
             rect(0, FLOOR_TOP, WIDTH, FLOOR_TOP + 1, INK)
@@ -213,10 +222,29 @@ object ArenaStagePixels {
                 rect(x + 3, y + 5, x + 11, y + 6, argb(0x8A8AA8), true)
             }
             // neon grid floor
-            for (y in FLOOR_TOP until HEIGHT) for (x in 0 until WIDTH) put(x, y, argb(0x150E2C), false)
+            for (y in FLOOR_TOP until HEIGHT) for (x in 0 until WIDTH) put(
+                x,
+                y,
+                argb(0x150E2C),
+                false,
+            )
             val neon = argb(0xE45AD8)
-            for (y in listOf(0, 2, 5, 9, 14, 20, 26)) rect(0, FLOOR_TOP + y, WIDTH, FLOOR_TOP + y + 1, neon, true)
-            for (i in -8..8) line(WIDTH / 2f + i * 4f, FLOOR_TOP.toFloat(), WIDTH / 2f + i * 22f, HEIGHT.toFloat(), neon, true)
+            for (y in listOf(0, 2, 5, 9, 14, 20, 26)) rect(
+                0,
+                FLOOR_TOP + y,
+                WIDTH,
+                FLOOR_TOP + y + 1,
+                neon,
+                true,
+            )
+            for (i in -8..8) line(
+                WIDTH / 2f + i * 4f,
+                FLOOR_TOP.toFloat(),
+                WIDTH / 2f + i * 22f,
+                HEIGHT.toFloat(),
+                neon,
+                true,
+            )
         }
 
         // --- 5 and 6: Laundry Mountain, Distraction Swarm
@@ -225,7 +253,14 @@ object ArenaStagePixels {
             window(70, 8, 92, 26, argb(0xEDEDED))
             // clothes line with socks and shirts
             line(0f, 12f, WIDTH.toFloat(), 16f, INK)
-            for ((x, color) in listOf(8 to argb(0xD9524A), 24 to argb(0x4A78C8), 104 to argb(0x6FB35A), 124 to argb(0xE8BE4A), 144 to argb(0x8E62C4))) {
+            for ((x, color) in
+                listOf(
+                    8 to argb(0xD9524A),
+                    24 to argb(0x4A78C8),
+                    104 to argb(0x6FB35A),
+                    124 to argb(0xE8BE4A),
+                    144 to argb(0x8E62C4),
+                )) {
                 val y = 13 + x / 40
                 box(x, y, x + 8, y + 12, color)
                 rect(x + 1, y + 9, x + 12, y + 12, color)
@@ -240,7 +275,12 @@ object ArenaStagePixels {
                 rect(x + 22, 39, x + 26, 41, argb(0x4FD1B0), true)
             }
             // a heap of clothes
-            for ((cx, cy, color) in listOf(Triple(46f, 66f, argb(0x9B5CD0)), Triple(54f, 63f, argb(0xD9524A)), Triple(62f, 67f, argb(0x3F7FD9)))) {
+            for ((cx, cy, color) in
+                listOf(
+                    Triple(46f, 66f, argb(0x9B5CD0)),
+                    Triple(54f, 63f, argb(0xD9524A)),
+                    Triple(62f, 67f, argb(0x3F7FD9)),
+                )) {
                 disc(cx, cy, 6f, color)
             }
             tiles(argb(0x9AA6B8), 10, FLOOR_TOP, HEIGHT)
@@ -294,7 +334,8 @@ object ArenaStagePixels {
         fun volcano() {
             sky(0, 0, WIDTH, FLOOR_TOP)
             // smoke
-            for ((cx, cy, r) in listOf(Triple(80f, 8f, 7f), Triple(88f, 4f, 6f), Triple(72f, 2f, 5f))) {
+            for ((cx, cy, r) in
+                listOf(Triple(80f, 8f, 7f), Triple(88f, 4f, 6f), Triple(72f, 2f, 5f))) {
                 disc(cx, cy, r, argb(0x5A5560), edge = false)
             }
             // the volcano with a lava stream
@@ -307,12 +348,20 @@ object ArenaStagePixels {
             rect(70, 13, 91, 15, argb(0xFF7A2A), true)
             for (y in 15 until FLOOR_TOP) {
                 val x = 80 + (sin(y / 5.0) * 4).toInt()
-                rect(x - 2, y, x + 2, y + 1, if (y % 3 == 0) argb(0xFFC94A) else argb(0xFF7A2A), true)
+                rect(
+                    x - 2,
+                    y,
+                    x + 2,
+                    y + 1,
+                    if (y % 3 == 0) argb(0xFFC94A) else argb(0xFF7A2A),
+                    true,
+                )
             }
             // far hills
             for (x in 0 until WIDTH) {
                 val top = FLOOR_TOP - 10 + (sin(x / 9.0) * 4).toInt()
-                for (y in top until FLOOR_TOP) if (argb[y * WIDTH + x] != argb(0x4A3A44)) this[x, y] = argb(0x3A2E36)
+                for (y in top until FLOOR_TOP) if (argb[y * WIDTH + x] != argb(0x4A3A44))
+                    this[x, y] = argb(0x3A2E36)
             }
             // rock floor with glowing cracks
             for (y in FLOOR_TOP until HEIGHT) for (x in 0 until WIDTH) {
@@ -330,10 +379,11 @@ object ArenaStagePixels {
         }
 
         fun image(): PixelImage {
-            val out = IntArray(argb.size) { i ->
-                val c = argb[i]
-                if (c == 0 || glow[i]) c else tint(c)
-            }
+            val out =
+                IntArray(argb.size) { i ->
+                    val c = argb[i]
+                    if (c == 0 || glow[i]) c else tint(c)
+                }
             return PixelImage(WIDTH, HEIGHT, out)
         }
 

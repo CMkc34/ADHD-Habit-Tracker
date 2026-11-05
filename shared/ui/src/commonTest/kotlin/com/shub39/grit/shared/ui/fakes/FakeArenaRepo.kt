@@ -36,8 +36,7 @@ import kotlinx.datetime.LocalDate
 /** Arena storage in memory: [earned] tickets today and the fight log in [fights]. */
 class FakeArenaRepo(
     earned: Int = 3,
-    private val player: Combatant =
-        Combatant("Kai", maxHp = 90, attack = 12, speed = 3, focus = 3),
+    private val player: Combatant = Combatant("Kai", maxHp = 90, attack = 12, speed = 3, focus = 3),
 ) : ArenaRepo {
     val today = LocalDate(2026, 11, 5)
     val fights = MutableStateFlow<List<FightRecord>>(emptyList())

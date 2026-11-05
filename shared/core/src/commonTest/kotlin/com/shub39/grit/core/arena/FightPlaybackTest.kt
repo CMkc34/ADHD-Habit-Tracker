@@ -56,7 +56,8 @@ class FightPlaybackTest {
     @Test
     fun `hp drops event by event and ends at the engine's values`() {
         val start = Battle.start(player, slow)
-        val after = Battle.act(start, BattleAction.STRIKE, FixedRandom(MISS, MID, MISS, MISS, MID, MISS))
+        val after =
+            Battle.act(start, BattleAction.STRIKE, FixedRandom(MISS, MID, MISS, MISS, MID, MISS))
         var playback = FightPlayback(start, after)
 
         assertEquals(2, playback.events.size)

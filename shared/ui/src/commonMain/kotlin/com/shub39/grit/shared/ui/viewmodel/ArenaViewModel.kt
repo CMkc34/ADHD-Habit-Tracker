@@ -49,8 +49,8 @@ import org.koin.core.annotation.Provided
  * Owns the Arena tab and the running fight (#14). The fight itself is the pure [Battle] engine;
  * this class starts and stores fights through [ArenaRepo] and steps through the events of each
  * move, while the UI only animates the event that is playing and reports back with
- * [ArenaAction.EventPlayed]. With animations off, the UI reports at once and the fight runs at
- * full speed.
+ * [ArenaAction.EventPlayed]. With animations off, the UI reports at once and the fight runs at full
+ * speed.
  */
 @KoinViewModel
 class ArenaViewModel(

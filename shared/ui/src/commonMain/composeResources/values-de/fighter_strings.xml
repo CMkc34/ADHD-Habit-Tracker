@@ -94,6 +94,4 @@
     <string name="fighter_belt_gold">gold</string>
 
     <!-- Arena-Reiter, Platzhalter bis #14 -->
-    <string name="arena_soon_title">Die Arena öffnet bald</string>
-    <string name="arena_soon_text">Trainier weiter. Bald trittst du hier gegen die Alltagsfeinde an.</string>
 </resources>

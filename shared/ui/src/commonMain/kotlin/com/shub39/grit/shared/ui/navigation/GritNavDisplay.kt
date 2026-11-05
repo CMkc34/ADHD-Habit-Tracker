@@ -57,6 +57,7 @@ import com.shub39.grit.shared.ui.setting.ui.section.LookAndFeelPage
 import com.shub39.grit.shared.ui.setting.ui.section.RootPage
 import com.shub39.grit.shared.ui.theme.GritTheme
 import com.shub39.grit.shared.ui.theme.paperBackground
+import com.shub39.grit.shared.ui.viewmodel.ArenaViewModel
 import com.shub39.grit.shared.ui.viewmodel.HabitViewModel
 import com.shub39.grit.shared.ui.viewmodel.MainViewModel
 import com.shub39.grit.shared.ui.viewmodel.SettingsViewModel
@@ -251,10 +252,15 @@ private fun EntryProviderScope<Routes>.habitsScreens(
     }
 
     entry<Arena>(metadata = fadeTransitionMetadata()) {
-        val viewModel = koinViewModel<HabitViewModel>()
+        val viewModel = koinViewModel<ArenaViewModel>()
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        ArenaPage(avatar = state.avatar, modifier = Modifier.paperBackground())
+        ArenaPage(
+            state = state,
+            onAction = viewModel::onAction,
+            onOpenRoutines = { topLevelBackStack.add(HabitsList) },
+            modifier = Modifier.paperBackground(),
+        )
     }
 
     entry<PlantShop>(metadata = horizontalTransitionMetadata()) {
