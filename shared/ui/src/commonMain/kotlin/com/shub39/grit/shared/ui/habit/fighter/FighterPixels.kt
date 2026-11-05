@@ -39,6 +39,12 @@ enum class FighterPose {
     CHARGE,
     /** Firing the ki blast, the special attack in the arena. */
     BLAST,
+    /** A straight punch, one of the two looks of a strike in the arena (#14). */
+    PUNCH,
+    /** A side kick, the other look of a strike in the arena (#14). */
+    KICK,
+    /** Arms crossed to block, with a short shimmer of ki around the body (#14). */
+    GUARD,
 }
 
 /** A finished pixel picture, row by row; each pixel is an ARGB colour, 0 is transparent. */
@@ -97,6 +103,9 @@ object FighterPixels {
                 tired -> Skeleton.sitting
                 pose == FighterPose.CHARGE -> Skeleton.charge
                 pose == FighterPose.BLAST -> Skeleton.blast
+                pose == FighterPose.PUNCH -> Skeleton.punch
+                pose == FighterPose.KICK -> Skeleton.kick
+                pose == FighterPose.GUARD -> Skeleton.guard
                 else -> Skeleton.stance
             }
         val bounce = !tired && pose == FighterPose.STANCE && f >= FRAMES / 2
@@ -107,6 +116,7 @@ object FighterPixels {
 
         val ki = kiColor(character, rank)
         val charging = !tired && pose == FighterPose.CHARGE
+        val guarding = !tired && pose == FighterPose.GUARD
         val golden = hasGoldenAura(rank)
         val p = drawing.painter
         val at = s.ki
@@ -126,6 +136,12 @@ object FighterPixels {
             when {
                 charging ->
                     p.render(halo = mix(ki, WHITE, 0.35f), beforeEffects = { kiFlames(it, ki, f) })
+                // a thin, sparkling ki skin that shimmers as the light runs over it
+                guarding ->
+                    p.render(
+                        halo = mix(ki, WHITE, 0.5f),
+                        haloLit = { x, y -> (x + y + 2 * f) % 4 != 0 },
+                    )
                 golden -> p.render(halo = GOLD, haloLit = { x, y -> (x + 2 * y + f) % 6 != 0 })
                 else -> p.render()
             }
