@@ -65,8 +65,8 @@ import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.components.GritDialog
 import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
-import com.shub39.grit.shared.ui.habit.fighter.FighterShopScene
 import com.shub39.grit.shared.ui.habit.fighter.PropIcon
+import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
 import com.shub39.grit.shared.ui.habit.ui.component.WaterText
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.avatar_cancel
@@ -312,10 +312,11 @@ fun BuyItemDialog(
     val shown = if (showWith) preview.with else preview.without
 
     GritDialog(onDismissRequest = onDismiss) {
-        FighterShopScene(
+        TrainingGroundScene(
             data = shown,
             rank = preview.rank,
             mood = avatar.fighter.mood,
+            weather = avatar.fighter.weather,
             modifier = Modifier.fillMaxWidth(),
         )
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
