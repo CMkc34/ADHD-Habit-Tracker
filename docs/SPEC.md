@@ -738,7 +738,17 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
     **Ki-Strahl** (Spezialangriff, #14). Dazu `KiBlast` als fliegendes Geschoss für die Arena.
   - Müde: sitzt im Schneidersitz, Augen zu, „z“.
   - Ausrüstung (`FighterItems`) sitzt auf den Skelett-Punkten und passt so auf alle Kämpfer.
-  - Gegner (#13) sollten im selben Pixel-Stil gezeichnet werden.
+  - Gegner (#13) im selben Pixel-Stil, entschieden am 2026-11-05 (`OpponentPixels`, reines Kotlin,
+    getestet, gemalt von `OpponentAvatar`):
+    - 48 × 48 Pixel wie der Kämpfer, feste eigene Farben, Blick nach links zum Kämpfer. Kleine Gegner
+      bleiben klein (Schlummertaste), große füllen das Bild (Oger, Drache).
+    - Posen `OpponentPose`: **IDLE** (leichtes Wippen plus eine eigene Bewegung: Wecker klingelt,
+      Ohr zuckt, Bildschirm scrollt, Socke flattert, Köpfe nicken, Abzeichen blinken, Uhr tropft,
+      Datum blinkt, Oger jongliert, Drache pafft), **HIT** (zuckt zurück, Augen zugekniffen, weißer
+      Treffer-Stern, nie Blut oder Wunden), **KO** (kippt nach hinten, Spiralaugen, gelbe Sterne
+      kreisen; Kissen und fallengelassene Dinge bleiben am Boden).
+    - Gesperrte Gegner (`LockedOpponent`): flache Form in der Umriss-Farbe des Themes mit „?“.
+    - Bewegung folgt „Animationen entfernen“; Beschreibungen für Screenreader auf DE + EN.
 - Trainingsplatz (#8, entschieden am 2026-11-05): `TrainingGroundScene` ersetzt `MeadowScene` auf dem
   Kämpfer-Reiter, im Shop-Kopf, in der Kauf-Vorschau und in der Tagesbegrüßung.
   - Alles in Pixel-Art (`TrainingGroundPixels`, reines Kotlin, getestet), auch Himmel, Sonne und
