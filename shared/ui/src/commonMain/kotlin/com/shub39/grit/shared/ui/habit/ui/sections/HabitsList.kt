@@ -74,6 +74,8 @@ import grit.shared.ui.generated.resources.completed
 import grit.shared.ui.generated.resources.drag_indicator
 import grit.shared.ui.generated.resources.expand
 import grit.shared.ui.generated.resources.habits
+import grit.shared.ui.generated.resources.label_compact_view
+import grit.shared.ui.generated.resources.label_drag_to_reorder
 import grit.shared.ui.generated.resources.reorder
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -193,7 +195,7 @@ private fun HabitsTopAppBar(
                                         Res.drawable.collapse
                                     }
                                 ),
-                            contentDescription = "Compact View",
+                            contentDescription = stringResource(Res.string.label_compact_view),
                         )
                     }
 
@@ -279,7 +281,8 @@ private fun HabitsListContent(
                         reorderHandle = {
                             Icon(
                                 imageVector = vectorResource(Res.drawable.drag_indicator),
-                                contentDescription = "Drag Indicator",
+                                contentDescription =
+                                    stringResource(Res.string.label_drag_to_reorder),
                                 modifier =
                                     Modifier.draggableHandle(
                                         onDragStopped = { onAction(HabitsAction.ReorderHabits) }

@@ -50,7 +50,9 @@ import androidx.compose.ui.unit.dp
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.check
 import grit.shared.ui.generated.resources.edit
+import grit.shared.ui.generated.resources.label_edit
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * A composable that displays a title and a list of options as toggleable buttons, allowing the user
@@ -106,7 +108,7 @@ fun <T> ListSelect(
                         content = {
                             Icon(
                                 painter = painterResource(Res.drawable.edit),
-                                contentDescription = "Edit",
+                                contentDescription = stringResource(Res.string.label_edit),
                             )
                         },
                     )

@@ -307,13 +307,13 @@ fun RootPage(
                             trailingContent = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.arrow_forward),
-                                    contentDescription = "Navigate",
+                                    contentDescription = stringResource(Res.string.label_open),
                                 )
                             },
                             leadingContent = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.palette),
-                                    contentDescription = "Navigate",
+                                    contentDescription = stringResource(Res.string.label_open),
                                 )
                             },
                             colors = listItemColors(),
@@ -330,13 +330,13 @@ fun RootPage(
                             trailingContent = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.arrow_forward),
-                                    contentDescription = "Navigate",
+                                    contentDescription = stringResource(Res.string.label_open),
                                 )
                             },
                             leadingContent = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.download),
-                                    contentDescription = "Backup",
+                                    contentDescription = stringResource(Res.string.backup),
                                 )
                             },
                         )
@@ -355,12 +355,18 @@ fun RootPage(
                                 )
                             },
                             supportingContent = {
-                                Text(text = "Grit ${state.currentVersion ?: "x.x.x"}")
+                                Text(
+                                    text =
+                                        stringResource(
+                                            Res.string.app_version_label,
+                                            state.currentVersion ?: "x.x.x",
+                                        )
+                                )
                             },
                             trailingContent = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.arrow_forward),
-                                    contentDescription = "Navigate",
+                                    contentDescription = stringResource(Res.string.label_open),
                                 )
                             },
                             headlineContent = { Text(text = stringResource(Res.string.about)) },
@@ -381,7 +387,7 @@ fun RootPage(
                             trailingContent = {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.arrow_forward),
-                                    contentDescription = "Navigate",
+                                    contentDescription = stringResource(Res.string.label_open),
                                 )
                             },
                             headlineContent = { Text(text = stringResource(Res.string.changelog)) },

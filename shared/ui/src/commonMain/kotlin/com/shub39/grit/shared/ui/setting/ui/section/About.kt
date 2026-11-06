@@ -93,7 +93,7 @@ fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = 
                     FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.nav_arrow_back),
-                            contentDescription = "Navigate Back",
+                            contentDescription = stringResource(Res.string.label_navigate_back),
                         )
                     }
                 },
@@ -122,7 +122,7 @@ fun About(versionName: String, onNavigateBack: () -> Unit, modifier: Modifier = 
                             contentDescription = null,
                         )
                     },
-                    headlineContent = { Text(text = "License") },
+                    headlineContent = { Text(text = stringResource(Res.string.label_license)) },
                     supportingContent = { Text(text = "GPL-3.0 License") },
                     modifier =
                         Modifier.clip(detachedItemShape()).clickable {
@@ -175,7 +175,9 @@ private fun LazyListScope.engagementLinks(uriHandler: UriHandler) {
                     )
                 },
                 headlineContent = { Text(text = "GitHub Sponsors") },
-                supportingContent = { Text(text = "Support me through GitHub") },
+                supportingContent = {
+                    Text(text = stringResource(Res.string.label_support_github))
+                },
                 modifier =
                     Modifier.clip(middleItemShape()).clickable {
                         uriHandler.openUri("https://github.com/sponsors/shub39")
@@ -237,7 +239,7 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
 
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Sprout",
+                            text = stringResource(Res.string.app_display_name),
                             style =
                                 MaterialTheme.typography.headlineMedium.copy(
                                     fontFamily = flexFontRounded()
@@ -311,7 +313,7 @@ private fun LazyListScope.aboutApp(versionName: String, uriHandler: UriHandler) 
                                     ),
                             )
                             Text(
-                                text = "Developer",
+                                text = stringResource(Res.string.label_developer),
                                 style =
                                     MaterialTheme.typography.titleSmall.copy(
                                         color = MaterialTheme.colorScheme.tertiary

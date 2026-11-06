@@ -84,7 +84,7 @@ fun BoxScope.HabitListFABs(
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.analytics),
-                        contentDescription = "All Analytics",
+                        contentDescription = stringResource(Res.string.label_all_analytics),
                     )
                 }
             }
@@ -110,7 +110,7 @@ fun BoxScope.HabitListFABs(
                     ) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.add),
-                            contentDescription = "Add Habit",
+                            contentDescription = stringResource(Res.string.label_add_routine),
                             modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
                         )
 
@@ -152,7 +152,7 @@ fun BoxScope.HabitListFABs(
                     ) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.add),
-                            contentDescription = "Add Habit",
+                            contentDescription = stringResource(Res.string.label_add_routine),
                             modifier = Modifier.size(FloatingActionButtonDefaults.MediumIconSize),
                         )
 
@@ -186,7 +186,7 @@ fun BoxScope.HabitListFABs(
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.analytics),
-                        contentDescription = "All Analytics",
+                        contentDescription = stringResource(Res.string.label_all_analytics),
                     )
                 }
             }

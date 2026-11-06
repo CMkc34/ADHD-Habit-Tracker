@@ -78,7 +78,7 @@ fun BackupPage(
                 FilledTonalIconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.nav_arrow_back),
-                        contentDescription = "Navigate Back",
+                        contentDescription = stringResource(Res.string.label_navigate_back),
                     )
                 }
             },
@@ -120,7 +120,8 @@ fun BackupPage(
                                     IDLE ->
                                         Icon(
                                             painter = painterResource(Res.drawable.play_arrow),
-                                            contentDescription = "Start",
+                                            contentDescription =
+                                                stringResource(Res.string.label_start),
                                         )
 
                                     EXPORTING ->
@@ -129,7 +130,8 @@ fun BackupPage(
                                     EXPORTED ->
                                         Icon(
                                             imageVector = vectorResource(Res.drawable.check_circle),
-                                            contentDescription = "Done",
+                                            contentDescription =
+                                                stringResource(Res.string.label_done),
                                         )
                                 }
                             }
@@ -168,7 +170,8 @@ fun BackupPage(
                                     IDLE ->
                                         Icon(
                                             painter = painterResource(Res.drawable.play_arrow),
-                                            contentDescription = "Start",
+                                            contentDescription =
+                                                stringResource(Res.string.label_start),
                                         )
 
                                     RESTORING ->
@@ -177,13 +180,15 @@ fun BackupPage(
                                     RESTORED ->
                                         Icon(
                                             imageVector = vectorResource(Res.drawable.check_circle),
-                                            contentDescription = "Done",
+                                            contentDescription =
+                                                stringResource(Res.string.label_done),
                                         )
 
                                     FAILURE ->
                                         Icon(
                                             imageVector = vectorResource(Res.drawable.warning),
-                                            contentDescription = "Fail",
+                                            contentDescription =
+                                                stringResource(Res.string.label_failed),
                                         )
                                 }
                             }

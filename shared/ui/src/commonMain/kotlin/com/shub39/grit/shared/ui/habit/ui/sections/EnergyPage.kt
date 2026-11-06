@@ -99,6 +99,7 @@ import grit.shared.ui.generated.resources.energy_rule_freeze
 import grit.shared.ui.generated.resources.energy_rule_frozen_day
 import grit.shared.ui.generated.resources.energy_rules_title
 import grit.shared.ui.generated.resources.energy_title
+import grit.shared.ui.generated.resources.label_navigate_back
 import grit.shared.ui.generated.resources.nav_arrow_back
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.pluralStringResource
@@ -148,7 +149,7 @@ fun EnergyPage(
                     FilledTonalIconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.nav_arrow_back),
-                            contentDescription = "Navigate Back",
+                            contentDescription = stringResource(Res.string.label_navigate_back),
                         )
                     }
                 }

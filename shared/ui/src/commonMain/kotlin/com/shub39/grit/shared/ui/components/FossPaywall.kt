@@ -75,7 +75,7 @@ fun FossPaywall(modifier: Modifier = Modifier) {
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.warning),
-                        contentDescription = "Warning",
+                        contentDescription = stringResource(Res.string.label_warning),
                         modifier = Modifier.size(50.dp),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )

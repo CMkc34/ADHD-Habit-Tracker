@@ -52,6 +52,7 @@ import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.add
 import grit.shared.ui.generated.resources.add_status
 import grit.shared.ui.generated.resources.done
+import grit.shared.ui.generated.resources.label_add_status
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
@@ -101,7 +102,7 @@ fun HabitStatusDialog(
             ) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.add),
-                    contentDescription = "Add Status",
+                    contentDescription = stringResource(Res.string.label_add_status),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }

@@ -2,4 +2,7 @@
 <resources>
     <!-- App branding (#97) -->
     <string name="about_based_on_grit">Basiert auf Grit von shub39</string>
+    <!-- App name, same in every language (#18) -->
+    <string name="app_display_name">Daily Dojo</string>
+    <string name="app_version_label">Daily Dojo %1$s</string>
 </resources>

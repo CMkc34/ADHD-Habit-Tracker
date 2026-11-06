@@ -66,6 +66,7 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 /** Habit Card for list */
@@ -219,7 +220,7 @@ fun HabitCard(
                     ) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.analytics),
-                            contentDescription = "Analytics",
+                            contentDescription = stringResource(Res.string.label_analytics),
                         )
                     }
 
