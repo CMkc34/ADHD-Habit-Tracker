@@ -24,12 +24,15 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 
-fun LocalDateTime.toFormattedString(is24Hr: Boolean): String {
+fun LocalDateTime.toFormattedString(
+    is24Hr: Boolean,
+    monthNames: MonthNames = MonthNames.ENGLISH_ABBREVIATED,
+): String {
     return this.format(
         LocalDateTime.Format {
             day()
             char(' ')
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            monthName(monthNames)
             char(' ')
             year()
             chars(" @ ")
@@ -42,12 +45,12 @@ fun LocalDateTime.toFormattedString(is24Hr: Boolean): String {
     )
 }
 
-fun LocalDate.toFormattedString(): String {
+fun LocalDate.toFormattedString(monthNames: MonthNames = MonthNames.ENGLISH_ABBREVIATED): String {
     return this.format(
         LocalDate.Format {
             day()
             char(' ')
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            monthName(monthNames)
             char(' ')
             year()
         }
@@ -66,10 +69,10 @@ fun LocalTime.toFormattedString(is24Hr: Boolean): String {
     )
 }
 
-fun YearMonth.toFormattedString(): String {
+fun YearMonth.toFormattedString(monthNames: MonthNames = MonthNames.ENGLISH_ABBREVIATED): String {
     return this.format(
         YearMonth.Format {
-            monthName(MonthNames.ENGLISH_ABBREVIATED)
+            monthName(monthNames)
             chars(" ")
             year()
         }

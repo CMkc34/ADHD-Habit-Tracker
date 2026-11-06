@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Labels and screen reader texts that upstream had hard-coded in English (#18) -->
+    <string name="label_navigate_back">Zurück</string>
+    <string name="label_compact_view">Kompakte Ansicht</string>
+    <string name="label_drag_to_reorder">Zum Sortieren ziehen</string>
+    <string name="label_add_status">Status hinzufügen</string>
+    <string name="label_add_routine">Routine hinzufügen</string>
+    <string name="label_edit_routine">Routine bearbeiten</string>
+    <string name="label_delete_routine">Routine löschen</string>
+    <string name="label_analytics">Statistik</string>
+    <string name="label_all_analytics">Alle Statistiken</string>
+    <string name="label_reminder">Erinnerung</string>
+    <string name="label_pick_time">Uhrzeit wählen</string>
+    <string name="label_hours">Stunden</string>
+    <string name="label_start">Starten</string>
+    <string name="label_done">Fertig</string>
+    <string name="label_failed">Fehlgeschlagen</string>
+    <string name="label_open">Öffnen</string>
+    <string name="label_warning">Warnung</string>
+    <string name="label_edit">Bearbeiten</string>
+    <string name="label_select_color">Farbe wählen</string>
+    <string name="label_license">Lizenz</string>
+    <string name="label_developer">Entwickler</string>
+    <string name="label_support_github">Unterstütze mich über GitHub</string>
+    <string name="label_earlier">Früher</string>
+    <string name="label_later">Später</string>
+    <string name="label_expand">Vergrößern</string>
+</resources>

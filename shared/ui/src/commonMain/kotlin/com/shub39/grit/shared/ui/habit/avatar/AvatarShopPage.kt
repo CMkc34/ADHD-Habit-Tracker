@@ -61,6 +61,7 @@ import com.shub39.grit.shared.ui.habit.HabitsAction
 import com.shub39.grit.shared.ui.habit.fighter.TrainingGroundScene
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
+import grit.shared.ui.generated.resources.label_navigate_back
 import grit.shared.ui.generated.resources.nav_arrow_back
 import grit.shared.ui.generated.resources.shop_gear
 import grit.shared.ui.generated.resources.shop_outfits
@@ -118,7 +119,7 @@ fun AvatarShopPage(
                 FilledTonalIconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.nav_arrow_back),
-                        contentDescription = "Navigate Back",
+                        contentDescription = stringResource(Res.string.label_navigate_back),
                     )
                 }
             },

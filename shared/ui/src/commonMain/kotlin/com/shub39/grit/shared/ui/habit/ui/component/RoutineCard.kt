@@ -83,6 +83,7 @@ import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.analytics
 import grit.shared.ui.generated.resources.check
 import grit.shared.ui.generated.resources.heat
+import grit.shared.ui.generated.resources.label_analytics
 import grit.shared.ui.generated.resources.routine_stat_description
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -230,7 +231,7 @@ fun RoutineCard(
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.analytics),
-                        contentDescription = "Analytics",
+                        contentDescription = stringResource(Res.string.label_analytics),
                     )
                 }
 

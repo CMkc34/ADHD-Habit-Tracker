@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Month and weekday names for the statistics, upstream used English only (#18) -->
+    <string name="date_month_full_1">Januar</string>
+    <string name="date_month_full_2">Februar</string>
+    <string name="date_month_full_3">März</string>
+    <string name="date_month_full_4">April</string>
+    <string name="date_month_full_5">Mai</string>
+    <string name="date_month_full_6">Juni</string>
+    <string name="date_month_full_7">Juli</string>
+    <string name="date_month_full_8">August</string>
+    <string name="date_month_full_9">September</string>
+    <string name="date_month_full_10">Oktober</string>
+    <string name="date_month_full_11">November</string>
+    <string name="date_month_full_12">Dezember</string>
+    <string name="date_weekday_short_1">Mo</string>
+    <string name="date_weekday_short_2">Di</string>
+    <string name="date_weekday_short_3">Mi</string>
+    <string name="date_weekday_short_4">Do</string>
+    <string name="date_weekday_short_5">Fr</string>
+    <string name="date_weekday_short_6">Sa</string>
+    <string name="date_weekday_short_7">So</string>
+    <string name="date_weekday_letter_1">M</string>
+    <string name="date_weekday_letter_2">D</string>
+    <string name="date_weekday_letter_3">M</string>
+    <string name="date_weekday_letter_4">D</string>
+    <string name="date_weekday_letter_5">F</string>
+    <string name="date_weekday_letter_6">S</string>
+    <string name="date_weekday_letter_7">S</string>
+    <string name="date_period_2m">2M</string>
+    <string name="date_period_4m">4M</string>
+    <string name="date_period_8m">8M</string>
+    <string name="date_period_1y">1J</string>
+    <string name="date_completions_per_week">Abschlüsse pro Woche (Ø)</string>
+</resources>

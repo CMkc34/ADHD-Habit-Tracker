@@ -27,10 +27,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -65,6 +68,8 @@ import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterState
 import com.shub39.grit.shared.ui.GritPreviewWrapper
+import com.shub39.grit.shared.ui.LocalWindowSizeClass
+import com.shub39.grit.shared.ui.WindowSize.Companion.isExpanded
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_fight_no_ticket
@@ -107,11 +112,18 @@ fun ArenaPage(
     // the header is item 0, so this shows the opponent before the next one, and the next below it
     LaunchedEffect(nextIndex) { if (nextIndex > 0) listState.animateScrollToItem(nextIndex) }
 
+    // the tab draws edge to edge, so the header starts below the status bar (#18), like the Fighter
+    // tab
+    val statusBar =
+        if (LocalWindowSizeClass.current.isExpanded()) 0.dp
+        else WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         LazyColumn(
             state = listState,
             modifier = Modifier.widthIn(max = 600.dp).fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding =
+                PaddingValues(start = 16.dp, top = 16.dp + statusBar, end = 16.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item(key = "header") { TicketHeader(arena.tickets, onOpenRoutines = onOpenRoutines) }

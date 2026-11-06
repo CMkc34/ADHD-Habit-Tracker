@@ -228,7 +228,7 @@ fun HabitUpsertSheetContent(
                 Icon(
                     imageVector =
                         vectorResource(if (isEditSheet) Res.drawable.edit else Res.drawable.add),
-                    contentDescription = "Edit Habit",
+                    contentDescription = stringResource(Res.string.label_edit_routine),
                     tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
@@ -379,7 +379,7 @@ fun HabitUpsertSheetContent(
                                                 newHabit.days.contains(dayOfWeek)),
                                         modifier = Modifier.weight(1f),
                                         colors = ToggleButtonDefaults.tonalToggleButtonColors(),
-                                        content = { Text(text = dayOfWeek.name.take(1)) },
+                                        content = { Text(text = dayOfWeek.letter()) },
                                     )
                                 }
                             }
@@ -460,7 +460,9 @@ fun HabitUpsertSheetContent(
                                             Text(text = stringResource(Res.string.too_long))
                                         }
                                     },
-                                    placeholder = { Text(text = "Hours") },
+                                    placeholder = {
+                                        Text(text = stringResource(Res.string.label_hours))
+                                    },
                                     modifier = Modifier.weight(1f),
                                     isError = targetUnitState.text.length > UNIT_STRING_LIMIT,
                                 )
@@ -486,7 +488,7 @@ fun HabitUpsertSheetContent(
                         leadingContent = {
                             Icon(
                                 imageVector = vectorResource(Res.drawable.alarm),
-                                contentDescription = "Alarm Icon",
+                                contentDescription = stringResource(Res.string.label_reminder),
                             )
                         },
                         trailingContent = {
@@ -524,7 +526,8 @@ fun HabitUpsertSheetContent(
                                 FilledTonalIconButton(onClick = { timePickerDialog = true }) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.edit),
-                                        contentDescription = "Pick Time",
+                                        contentDescription =
+                                            stringResource(Res.string.label_pick_time),
                                     )
                                 }
                             },

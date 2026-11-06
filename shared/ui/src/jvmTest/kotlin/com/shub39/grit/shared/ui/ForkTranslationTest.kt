@@ -39,6 +39,9 @@ class ForkTranslationTest {
             "fighter_strings.xml",
             "greeting_strings.xml",
             "arena_strings.xml",
+            "label_strings.xml",
+            "date_strings.xml",
+            "branding_strings.xml",
         )
 
     private fun forkStrings(valuesDir: String): List<Document> =
@@ -106,6 +109,19 @@ class ForkTranslationTest {
         plantWords.forEach { (dir, words) ->
             val found = texts(dir).filter { words.containsMatchIn(it) }
             assertTrue(found.isEmpty(), "$dir still mentions the plant: $found")
+        }
+    }
+
+    @Test
+    fun `the app is called Daily Dojo in every language`() {
+        // renamed from Sprout in #18
+        listOf("values", "values-de").forEach { dir ->
+            val names =
+                forkStrings(dir)
+                    .flatMap { it.elements("string") }
+                    .associate { it.getAttribute("name") to it.textContent }
+            assertEquals("Daily Dojo", names["app_display_name"], dir)
+            assertEquals("Daily Dojo %1\$s", names["app_version_label"], dir)
         }
     }
 

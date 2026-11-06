@@ -49,6 +49,8 @@ import com.shub39.grit.shared.ui.components.leadingItemShape
 import com.shub39.grit.shared.ui.habit.daysStartingFrom
 import com.shub39.grit.shared.ui.habit.ui.component.AnalyticsCard
 import com.shub39.grit.shared.ui.habit.ui.component.CardArrows
+import com.shub39.grit.shared.ui.habit.ui.component.letter
+import com.shub39.grit.shared.ui.habit.ui.component.shortMonthNames
 import com.shub39.grit.shared.ui.theme.flexFontRounded
 import grit.shared.ui.generated.resources.*
 import kotlin.collections.forEachIndexed
@@ -109,7 +111,7 @@ fun HabitHeatMap(
                                 )
                     ) {
                         Text(
-                            text = dayOfWeek.name.take(1),
+                            text = dayOfWeek.letter(),
                             style =
                                 MaterialTheme.typography.labelSmall.copy(
                                     color = MaterialTheme.colorScheme.onSurface
@@ -134,7 +136,7 @@ fun HabitHeatMap(
                     monthHeader = {
                         Box(modifier = Modifier.padding(2.dp)) {
                             Text(
-                                text = it.yearMonth.toFormattedString(),
+                                text = it.yearMonth.toFormattedString(shortMonthNames()),
                                 style =
                                     MaterialTheme.typography.labelSmall.copy(
                                         color = MaterialTheme.colorScheme.onSurface,

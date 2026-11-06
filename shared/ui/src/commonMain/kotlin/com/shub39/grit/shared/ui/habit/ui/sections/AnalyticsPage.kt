@@ -157,7 +157,7 @@ fun AnalyticsPage(
                 FilledTonalIconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.nav_arrow_back),
-                        contentDescription = "Navigate Back",
+                        contentDescription = stringResource(Res.string.label_navigate_back),
                     )
                 }
             },
@@ -172,7 +172,7 @@ fun AnalyticsPage(
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.delete),
-                        contentDescription = "Delete Habit",
+                        contentDescription = stringResource(Res.string.label_delete_routine),
                     )
                 }
 
@@ -186,7 +186,7 @@ fun AnalyticsPage(
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.edit),
-                        contentDescription = "Edit Habit",
+                        contentDescription = stringResource(Res.string.label_edit_routine),
                     )
                 }
             },
@@ -298,7 +298,7 @@ fun AnalyticsPage(
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.warning),
-                        contentDescription = "Warning",
+                        contentDescription = stringResource(Res.string.label_warning),
                         tint = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                 }

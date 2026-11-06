@@ -46,12 +46,15 @@ import com.kizitonwose.calendar.core.now
 import com.kizitonwose.calendar.core.plusDays
 import com.shub39.grit.core.habits.HabitStatus
 import com.shub39.grit.core.habits.StreakPosition
+import com.shub39.grit.core.toFormattedString
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.components.endItemShape
 import com.shub39.grit.shared.ui.components.leadingItemShape
 import com.shub39.grit.shared.ui.habit.daysStartingFrom
 import com.shub39.grit.shared.ui.habit.ui.component.AnalyticsCard
 import com.shub39.grit.shared.ui.habit.ui.component.CardArrows
+import com.shub39.grit.shared.ui.habit.ui.component.letter
+import com.shub39.grit.shared.ui.habit.ui.component.shortMonthNames
 import com.shub39.grit.shared.ui.heatMapStreakShape
 import com.shub39.grit.shared.ui.theme.flexFontRounded
 import grit.shared.ui.generated.resources.*
@@ -60,9 +63,6 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
-import kotlinx.datetime.format
-import kotlinx.datetime.format.MonthNames
-import kotlinx.datetime.format.char
 import kotlinx.datetime.minus
 import org.jetbrains.compose.resources.stringResource
 
@@ -119,7 +119,7 @@ fun WeeklyHeatMap(
                                 .background(color = colorScheme.surfaceContainerHigh, shape = shape)
                     ) {
                         Text(
-                            text = dayOfWeek.name.take(1),
+                            text = dayOfWeek.letter(),
                             style =
                                 MaterialTheme.typography.labelSmall.copy(
                                     color = colorScheme.onSurface
@@ -144,14 +144,7 @@ fun WeeklyHeatMap(
                     monthHeader = {
                         Box(modifier = Modifier.padding(2.dp)) {
                             Text(
-                                text =
-                                    it.yearMonth.format(
-                                        YearMonth.Format {
-                                            monthName(MonthNames.ENGLISH_ABBREVIATED)
-                                            char(' ')
-                                            year()
-                                        }
-                                    ),
+                                text = it.yearMonth.toFormattedString(shortMonthNames()),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = colorScheme.onSurface,
                                 modifier = Modifier.align(Alignment.Center),

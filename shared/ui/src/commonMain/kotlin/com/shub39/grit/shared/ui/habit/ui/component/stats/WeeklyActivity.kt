@@ -58,11 +58,11 @@ import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
 import com.shub39.grit.core.habits.WeeklyTimePeriod
-import com.shub39.grit.core.habits.WeeklyTimePeriod.Companion.toDisplayString
 import com.shub39.grit.core.habits.WeeklyTimePeriod.Companion.toWeeks
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.ui.component.AnalyticsCard
 import com.shub39.grit.shared.ui.habit.ui.component.NotEnoughData
+import com.shub39.grit.shared.ui.habit.ui.component.label
 import com.shub39.grit.shared.ui.theme.flexFontRounded
 import grit.shared.ui.generated.resources.*
 import kotlin.random.Random
@@ -111,7 +111,7 @@ fun WeeklyActivity(lineChartData: List<Double>, modifier: Modifier = Modifier) {
                                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
                             ),
                     ) {
-                        Text(text = period.toDisplayString())
+                        Text(text = period.label())
                     }
                 }
             }
@@ -146,7 +146,7 @@ fun WeeklyActivity(lineChartData: List<Double>, modifier: Modifier = Modifier) {
                                         .copy(fontFamily = flexFontRounded())
                                         .toSpanStyle()
                             ) {
-                                append("Completions per week (Avg)")
+                                append(stringResource(Res.string.date_completions_per_week))
                             }
                         },
                     color = MaterialTheme.colorScheme.onSurface,
