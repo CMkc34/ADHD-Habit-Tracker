@@ -47,6 +47,7 @@ import com.shub39.grit.core.habits.WeekDayFrequencyData
 import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.ui.component.AnalyticsCard
 import com.shub39.grit.shared.ui.habit.ui.component.NotEnoughData
+import com.shub39.grit.shared.ui.habit.ui.component.weekdayLabel
 import grit.shared.ui.generated.resources.*
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -144,7 +145,7 @@ fun WeekDayBreakdown(
                             }
                         }
                         Text(
-                            text = day,
+                            text = weekdayLabel(day),
                             color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.Bold,
                         )

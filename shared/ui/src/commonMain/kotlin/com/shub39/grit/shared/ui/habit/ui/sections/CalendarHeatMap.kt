@@ -78,6 +78,7 @@ import com.shub39.grit.shared.ui.components.endItemShape
 import com.shub39.grit.shared.ui.components.leadingItemShape
 import com.shub39.grit.shared.ui.habit.HabitState
 import com.shub39.grit.shared.ui.habit.ui.component.CalendarMonthHeader
+import com.shub39.grit.shared.ui.habit.ui.component.shortMonthNames
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import com.shub39.grit.shared.ui.theme.flexFontRounded
 import com.shub39.grit.shared.ui.toStringRes
@@ -111,7 +112,7 @@ fun CalendarHeatMap(
             GritBottomSheet(onDismissRequest = { selectedDay = null }, padding = 16.dp) {
                 state.overallAnalytics.completedHabits?.let { (date, habits) ->
                     Text(
-                        text = date.toFormattedString(),
+                        text = date.toFormattedString(shortMonthNames()),
                         fontFamily = flexFontRounded(),
                         color = colorScheme.onSurface,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),

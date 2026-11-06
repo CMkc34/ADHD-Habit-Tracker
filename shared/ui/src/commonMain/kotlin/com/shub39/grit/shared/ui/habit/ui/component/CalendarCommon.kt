@@ -49,7 +49,6 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.format
-import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 
 @Composable
@@ -59,12 +58,13 @@ fun CalendarMonthHeader(
     style: TextStyle = MaterialTheme.typography.titleLarge,
     padding: PaddingValues = PaddingValues(start = 4.dp, end = 4.dp, top = 32.dp, bottom = 8.dp),
 ) {
+    val months = fullMonthNames()
     Box(modifier = modifier.padding(padding)) {
         Text(
             text =
                 calendarMonth.yearMonth.format(
                     YearMonth.Format {
-                        monthName(MonthNames.ENGLISH_FULL)
+                        monthName(months)
                         char(' ')
                         year()
                     }

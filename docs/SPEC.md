@@ -825,7 +825,8 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   den Einstellungen). Die applicationId bleibt `com.shub39.grit.sprout`, damit Updates klappen.
 - Geräte-Abnahme (#18, Pixel 8a, 2026-11-06): Arena-Reiter und Kampfbildschirm beginnen unter der
   Statusleiste; vom Original fest auf Englisch geschriebene Beschriftungen und Screenreader-Texte
-  kommen jetzt aus `label_strings.xml` (DE + EN). Ein abgehakter und wieder entfernter Haken lässt
+  kommen jetzt aus `label_strings.xml` (DE + EN). Monats- und Wochentagsnamen, Zeitraum-Knöpfe und „Abschlüsse pro
+  Woche“ in der Statistik kommen aus `date_strings.xml` (`LocalizedDates.kt`). Ein abgehakter und wieder entfernter Haken lässt
   den Shake und den aktiven Tag stehen (gewollt, bestätigt am 2026-11-06).
 
 ### 9.10 Issues

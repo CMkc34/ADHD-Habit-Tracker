@@ -40,6 +40,7 @@ class ForkTranslationTest {
             "greeting_strings.xml",
             "arena_strings.xml",
             "label_strings.xml",
+            "date_strings.xml",
             "branding_strings.xml",
         )
 

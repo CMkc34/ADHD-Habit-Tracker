@@ -379,7 +379,7 @@ fun HabitUpsertSheetContent(
                                                 newHabit.days.contains(dayOfWeek)),
                                         modifier = Modifier.weight(1f),
                                         colors = ToggleButtonDefaults.tonalToggleButtonColors(),
-                                        content = { Text(text = dayOfWeek.name.take(1)) },
+                                        content = { Text(text = dayOfWeek.letter()) },
                                     )
                                 }
                             }
