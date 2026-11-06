@@ -23,4 +23,7 @@
     <string name="label_license">Lizenz</string>
     <string name="label_developer">Entwickler</string>
     <string name="label_support_github">Unterstütze mich über GitHub</string>
+    <string name="label_earlier">Früher</string>
+    <string name="label_later">Später</string>
+    <string name="label_expand">Vergrößern</string>
 </resources>

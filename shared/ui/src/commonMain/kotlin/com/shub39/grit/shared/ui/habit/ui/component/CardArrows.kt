@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import grit.shared.ui.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CardArrows(
@@ -39,7 +40,7 @@ fun CardArrows(
         IconButton(onClick = onBackAction, enabled = enabled) {
             Icon(
                 painter = painterResource(Res.drawable.arrow_back),
-                contentDescription = null,
+                contentDescription = stringResource(Res.string.label_earlier),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -47,7 +48,7 @@ fun CardArrows(
         IconButton(onClick = onForwardAction, enabled = enabled) {
             Icon(
                 painter = painterResource(Res.drawable.arrow_forward),
-                contentDescription = null,
+                contentDescription = stringResource(Res.string.label_later),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -60,7 +61,7 @@ fun CardArrows(
             ) {
                 Icon(
                     painter = painterResource(Res.drawable.expand),
-                    contentDescription = null,
+                    contentDescription = stringResource(Res.string.label_expand),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
