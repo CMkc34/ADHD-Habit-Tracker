@@ -23,8 +23,7 @@ import kotlin.test.assertTrue
 /**
  * Guards the difficulty curve (SPEC 9.5): a typical fighter for opponent n (rank n + 1, every stat
  * level n + 1, special when ready, else strike) wins 55 to 75 % of 1000 seeded best-of-three
- * matches. If a rule
- * change in [ArenaRules] breaks this, retune the [Opponent] values.
+ * matches. If a rule change in [ArenaRules] breaks this, retune the [Opponent] values.
  */
 class LadderBalanceTest {
 

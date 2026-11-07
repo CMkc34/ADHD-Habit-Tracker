@@ -144,9 +144,9 @@ private const val ROUND_END_MILLIS = 1800
  * The full-screen fight (#14): the fighter on the left, the opponent on the right on their
  * [ArenaStage], each with an HP bar, 3 charge pips and their won rounds of the best of three, the
  * last log lines, and the three moves. The event that is playing is animated for
- * [FightScene.durationOf] and then reported back with [ArenaAction.EventPlayed]; the phone
- * vibrates as a blow lands. Each round opens with a banner and ends with one. Back asks "Give
- * up?"; at the end the result covers the screen.
+ * [FightScene.durationOf] and then reported back with [ArenaAction.EventPlayed]; the phone vibrates
+ * as a blow lands. Each round opens with a banner and ends with one. Back asks "Give up?"; at the
+ * end the result covers the screen.
  */
 @Composable
 fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) -> Unit) {

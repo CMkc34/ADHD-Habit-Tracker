@@ -60,8 +60,8 @@ object OpponentAttack {
         }
 
     /**
-     * The flying part of [opponent]'s attack in [frame], twice as big for the special; `null` for
-     * a [AttackPath.RUSH], where the opponent hits with its own body.
+     * The flying part of [opponent]'s attack in [frame], twice as big for the special; `null` for a
+     * [AttackPath.RUSH], where the opponent hits with its own body.
      */
     fun render(opponent: Opponent, frame: Int = 0, special: Boolean = false): PixelImage? {
         val (rows, colors) = pattern(opponent, frame.mod(FRAMES)) ?: return null

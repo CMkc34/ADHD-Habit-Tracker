@@ -206,8 +206,7 @@ data class FightScene(
                                 else idle.opponentPose,
                             opponentFlash = !event.guarded && after in 0f..90f,
                             opponentDx = knockBack(t, STRIKE_LANDS, RETURN_AT, knock),
-                            float =
-                                if (after < 0) null else FloatText.damage(Side.OPPONENT, event),
+                            float = if (after < 0) null else FloatText.damage(Side.OPPONENT, event),
                             floatAge = after / FLOAT_MILLIS,
                         )
                 }
@@ -304,8 +303,8 @@ data class FightScene(
                 else if (dodged && after < 150f)
                     flying(path, g, 1f + after / 300f, special).copy(alpha = 1f - after / 150f)
                 else if (path == AttackPath.CHAIN && after < 400f)
-                    // the watch is pulled back on its chain
-                    flying(path, g, 1f - ease(phase(after, 150f, 400f)), special)
+                // the watch is pulled back on its chain
+                flying(path, g, 1f - ease(phase(after, 150f, 400f)), special)
                 else null
             val scene = base.copy(opponentDx = opponentDx, shot = shot)
 
@@ -353,8 +352,7 @@ data class FightScene(
                         },
                     playerFlash = !guarded && after in 0f..90f,
                     playerDx = -knockBack(t, impact, impact + 450f, knock),
-                    flash =
-                        if (special && after >= 0) (1f - after / 250f).coerceIn(0f, 1f) else 0f,
+                    flash = if (special && after >= 0) (1f - after / 250f).coerceIn(0f, 1f) else 0f,
                     float = if (after < 0) null else damageText,
                     floatAge = after / FLOAT_MILLIS,
                 )

@@ -20,8 +20,8 @@ import com.shub39.grit.shared.ui.habit.fighter.PixelImage
 
 /**
  * Where blows land in one fight, measured once from the pixel pictures, in stage pixels: how far
- * the fighter dashes so the fist or foot touches the opponent's outline, how far a rushing
- * opponent comes, where its attack starts and where it hits the fighter.
+ * the fighter dashes so the fist or foot touches the opponent's outline, how far a rushing opponent
+ * comes, where its attack starts and where it hits the fighter.
  */
 data class FightGeometry(
     /** The fighter's dash for a punch, and where the fist meets the opponent. */
