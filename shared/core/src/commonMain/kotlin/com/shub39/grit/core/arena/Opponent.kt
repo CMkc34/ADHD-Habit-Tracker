@@ -27,7 +27,7 @@ package com.shub39.grit.core.arena
  * [id] is stable and goes into storage and backups; never rename it. Names are UI strings.
  */
 enum class Opponent(val id: String, val maxHp: Int) {
-    SNOOZE_BUTTON("snooze_button", maxHp = 55),
+    SNOOZE_BUTTON("snooze_button", maxHp = 56),
     COUCH_GREMLIN("couch_gremlin", maxHp = 70),
     DOOMSCROLL_IMP("doomscroll_imp", maxHp = 86),
     LAUNDRY_MOUNTAIN("laundry_mountain", maxHp = 106),

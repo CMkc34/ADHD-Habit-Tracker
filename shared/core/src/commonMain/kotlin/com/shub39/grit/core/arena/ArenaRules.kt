@@ -45,7 +45,11 @@ object ArenaRules {
     const val MAX_CRIT = 0.30
     const val CRIT_MULTIPLIER = 1.5
 
+    /** Turn pairs per round of a match; at the limit the opponent wins the round. */
     const val MAX_ROUNDS = 30
+
+    /** A match is best of three: the first to win this many rounds wins the fight. */
+    const val ROUNDS_TO_WIN = 2
 
     const val CPU_LOW_HP_SHARE = 0.30
     const val CPU_GUARD_CHANCE = 0.25

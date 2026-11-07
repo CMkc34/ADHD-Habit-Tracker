@@ -641,7 +641,11 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   - Wer schneller ist, beginnt; bei Gleichstand der Spieler.
   - Ausweichen: 3 % je Tempo-Vorsprung, höchstens 25 %.
   - Krit: 5 % + 2 % je Fokus-Stufe, höchstens 30 %, Schaden ×1,5.
-  - Nach 30 Runden gewinnt der höhere HP-Anteil; Gleichstand = Unentschieden.
+  - Nach 30 Zugpaaren ohne K.o. gewinnt der Gegner die Runde (entschieden 2026-11-07).
+- Match: **Best of three** (entschieden 2026-11-07). Jede Runde ist ein `Battle` mit vollen HP
+  und leerer Ladung; wer zuerst 2 Runden gewinnt, gewinnt den Kampf. Ein Ticket gilt für das ganze
+  Match. Kein Unentschieden mehr (`Outcome.DRAW` nur noch in alten Kampfeinträgen). `Match` in
+  `core.arena`.
 - CPU: Spezial, sobald bereit; unter 30 % HP mit 25 % Block; sonst Schlag.
 - Reine Funktion `Battle` in `core.arena`, Zufall injizierbar, alle Zahlen in `ArenaRules`.
 
@@ -651,12 +655,13 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   Deadline-Golem, Überforderungs-Oger, Aufschiebe-Drache.
 - Gegner n+1 öffnet sich nach dem ersten Sieg gegen n; Revanchen sind erlaubt.
 - Balance per Test: Ein typischer Kämpfer (Rang n+1, alle Stufen n+1) gewinnt 55–75 % von 1000
-  Kämpfen gegen Gegner n.
+  Matches (Best of three) gegen Gegner n.
 - Umgesetzt in #11 (`Opponent`, `Ladder` in `core.arena`), entschieden am 2026-11-05: **keine
   Kampfstile**, alle Gegner steigen gleichmäßig. Gegner n hat Stufe L = n+1: Tempo = L (bei
   Gleichstand beginnt der Spieler), Fokus = L−1, Angriff = 8 + 2·L. Nur die HP sind je Gegner
-  festgelegt (55, 70, 86, 106, 125, 143, 160, 178, 194, 211), so dass der typische Kämpfer 62–69 %
-  gewinnt (`LadderBalanceTest`). Die `id` (z. B. `snooze_button`) ist fest für Speicher und Backup.
+  festgelegt (56, 70, 86, 106, 125, 143, 160, 178, 194, 211), so dass der typische Kämpfer 62–69 %
+  gewinnt (`LadderBalanceTest`). Seit Best of three (2026-11-07) zählt der Test ganze Matches
+  (62–71 %); die Schlummertaste bekam dafür 56 statt 55 HP. Die `id` (z. B. `snooze_button`) ist fest für Speicher und Backup.
 
 ### 9.6 Tickets und Belohnung (#11, #17)
 - Je Routine, die **für heute** erledigt ist, 1 Ticket, höchstens **3 pro Tag**.
