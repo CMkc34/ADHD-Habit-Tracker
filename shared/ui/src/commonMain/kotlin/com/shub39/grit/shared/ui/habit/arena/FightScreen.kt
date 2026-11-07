@@ -29,24 +29,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -71,8 +68,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -86,19 +83,18 @@ import com.shub39.grit.core.arena.BattleEvent
 import com.shub39.grit.core.arena.Outcome
 import com.shub39.grit.core.arena.Side
 import com.shub39.grit.core.avatar.AvatarState
-import com.shub39.grit.shared.ui.habit.fighter.FighterAvatar
-import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
-import com.shub39.grit.shared.ui.habit.fighter.KiBlast
-import com.shub39.grit.shared.ui.habit.fighter.drawPixels
 import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
+import grit.shared.ui.generated.resources.arena_banner_fight
+import grit.shared.ui.generated.resources.arena_banner_round
+import grit.shared.ui.generated.resources.arena_banner_round_lost
+import grit.shared.ui.generated.resources.arena_banner_round_won
+import grit.shared.ui.generated.resources.arena_banner_time_up
+import grit.shared.ui.generated.resources.arena_best_of_three
 import grit.shared.ui.generated.resources.arena_charge
 import grit.shared.ui.generated.resources.arena_draw_text
 import grit.shared.ui.generated.resources.arena_draw_title
-import grit.shared.ui.generated.resources.arena_float_crit
-import grit.shared.ui.generated.resources.arena_float_dodge
-import grit.shared.ui.generated.resources.arena_float_guard
 import grit.shared.ui.generated.resources.arena_give_up
 import grit.shared.ui.generated.resources.arena_give_up_text
 import grit.shared.ui.generated.resources.arena_give_up_title
@@ -115,14 +111,18 @@ import grit.shared.ui.generated.resources.arena_log_special
 import grit.shared.ui.generated.resources.arena_log_time_up
 import grit.shared.ui.generated.resources.arena_loss_text
 import grit.shared.ui.generated.resources.arena_loss_title
+import grit.shared.ui.generated.resources.arena_match_round
 import grit.shared.ui.generated.resources.arena_result_ok
 import grit.shared.ui.generated.resources.arena_reward
 import grit.shared.ui.generated.resources.arena_round
+import grit.shared.ui.generated.resources.arena_rounds_won
 import grit.shared.ui.generated.resources.arena_special
 import grit.shared.ui.generated.resources.arena_special_hint
 import grit.shared.ui.generated.resources.arena_special_locked
 import grit.shared.ui.generated.resources.arena_strike
 import grit.shared.ui.generated.resources.arena_strike_hint
+import grit.shared.ui.generated.resources.arena_turn_opponent
+import grit.shared.ui.generated.resources.arena_turn_player
 import grit.shared.ui.generated.resources.arena_unlocked
 import grit.shared.ui.generated.resources.arena_win_text
 import grit.shared.ui.generated.resources.arena_win_title
@@ -134,29 +134,99 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-/** How long one event plays; with animations off it plays at once. */
-private const val EVENT_MILLIS = 550
+/** How long the "Round n, Fight!" banner shows; with animations off it is skipped. */
+private const val INTRO_MILLIS = 1400
+
+/** How long the end of a round shows before the next one starts. */
+private const val ROUND_END_MILLIS = 1800
 
 /**
  * The full-screen fight (#14): the fighter on the left, the opponent on the right on their
- * [ArenaStage], each with an HP bar and 3 charge pips, the last log lines, and the three moves. The
- * event that is playing is animated for [EVENT_MILLIS] and then reported back with
- * [ArenaAction.EventPlayed]. Back asks "Give up?"; at the end the result covers the screen.
+ * [ArenaStage], each with an HP bar, 3 charge pips and their won rounds of the best of three, the
+ * last log lines, and the three moves. The event that is playing is animated for
+ * [FightScene.durationOf] and then reported back with [ArenaAction.EventPlayed]; the phone vibrates
+ * as a blow lands. Each round opens with a banner and ends with one. Back asks "Give up?"; at the
+ * end the result covers the screen.
  */
 @Composable
 fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) -> Unit) {
     val act by rememberUpdatedState(onAction)
+    val haptics = LocalHapticFeedback.current
     val index = fight.playback.playingIndex
-    val progress = remember { Animatable(0f) }
-    LaunchedEffect(index) {
-        if (index < 0) return@LaunchedEffect
-        progress.snapTo(0f)
-        progress.animateTo(1f, tween(EVENT_MILLIS, easing = LinearEasing))
+    val event = fight.playback.playing
+    val round = fight.match.round
+    // a fresh clock per event, so a new event never shows a frame of the last one's end
+    val clock = remember(index, round) { Animatable(0f) }
+    LaunchedEffect(index, round, fight.intro) {
+        if (index < 0 || fight.intro) return@LaunchedEffect
+        val duration = FightScene.durationOf(event)
+        val impact = FightScene.impactAt(event)
+        if (impact != null) {
+            clock.animateTo(impact.toFloat(), tween(impact, easing = LinearEasing))
+            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+        }
+        val left = duration - (impact ?: 0)
+        clock.animateTo(duration.toFloat(), tween(left, easing = LinearEasing))
         act(ArenaAction.EventPlayed(index))
     }
-    val scene = FightScene.of(fight, if (index < 0) 0f else progress.value)
+
+    // the round banners: "Round n, Fight!" at the start, won or lost at the end
+    val banner = remember { Animatable(0f) }
+    LaunchedEffect(round, fight.intro) {
+        if (!fight.intro) return@LaunchedEffect
+        banner.snapTo(0f)
+        banner.animateTo(1f, tween(INTRO_MILLIS, easing = LinearEasing))
+        act(ArenaAction.IntroShown)
+    }
+    LaunchedEffect(round, fight.roundOver, fight.askingGiveUp) {
+        if (!fight.roundOver || fight.askingGiveUp) return@LaunchedEffect
+        banner.snapTo(0f)
+        banner.animateTo(1f, tween(ROUND_END_MILLIS, easing = LinearEasing))
+        act(ArenaAction.NextRound)
+    }
+
+    val data = avatar.data
+    val rank = avatar.fighter.rank
+    val sprites =
+        remember(data.character, rank, data.colors, data.outfit, data.accessories, fight.opponent) {
+            FightSprites(
+                data.character,
+                rank,
+                data.colors,
+                data.outfit,
+                data.accessories,
+                fight.opponent,
+            )
+        }
+    val millis = if (index < 0 || fight.intro) 0 else clock.value.toInt()
+    val scene = FightScene.of(fight, millis, sprites.geometry)
     val playerName = fight.started.player.name
     val opponentName = fight.opponent.label()
+    val turn =
+        when {
+            scene.opponentTurn -> stringResource(Res.string.arena_turn_opponent)
+            fight.canAct -> stringResource(Res.string.arena_turn_player)
+            else -> null
+        }
+    val stageBanner =
+        when {
+            fight.intro ->
+                if (banner.value < 0.6f) {
+                    StageBanner(
+                        stringResource(Res.string.arena_banner_round, round),
+                        stringResource(Res.string.arena_best_of_three),
+                    )
+                } else StageBanner(stringResource(Res.string.arena_banner_fight))
+            fight.roundOver ->
+                when {
+                    fight.roundWinner == Side.PLAYER ->
+                        StageBanner(stringResource(Res.string.arena_banner_round_won))
+                    fight.battle.log.lastOrNull() == BattleEvent.TimeUp && banner.value < 0.5f ->
+                        StageBanner(stringResource(Res.string.arena_banner_time_up))
+                    else -> StageBanner(stringResource(Res.string.arena_banner_round_lost))
+                }
+            else -> null
+        }
 
     // read in the app window: the full-screen dialog draws under the status bar but does not get
     // the insets itself, so safeDrawingPadding inside it was 0 on the Pixel (#18)
@@ -179,16 +249,22 @@ fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) 
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text =
-                                stringResource(
-                                    Res.string.arena_round,
-                                    fight.battle.round,
-                                    ArenaRules.MAX_ROUNDS,
-                                ),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.weight(1f),
-                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(Res.string.arena_match_round, round),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                text =
+                                    stringResource(
+                                        Res.string.arena_round,
+                                        fight.battle.round,
+                                        ArenaRules.MAX_ROUNDS,
+                                    ),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                         IconButton(onClick = { act(ArenaAction.AskGiveUp) }) {
                             Icon(
                                 painter = painterResource(Res.drawable.close),
@@ -203,6 +279,7 @@ fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) 
                             hp = fight.hp(Side.PLAYER),
                             maxHp = fight.battle.player.combatant.maxHp,
                             charge = fight.charge(Side.PLAYER),
+                            wins = fight.wins(Side.PLAYER),
                             alignEnd = false,
                             modifier = Modifier.weight(1f),
                         )
@@ -211,6 +288,7 @@ fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) 
                             hp = fight.hp(Side.OPPONENT),
                             maxHp = fight.battle.opponent.combatant.maxHp,
                             charge = fight.charge(Side.OPPONENT),
+                            wins = fight.wins(Side.OPPONENT),
                             alignEnd = true,
                             modifier = Modifier.weight(1f),
                         )
@@ -219,8 +297,10 @@ fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) 
                     FightStage(
                         fight = fight,
                         scene = scene,
-                        avatar = avatar,
-                        progress = progress.value,
+                        sprites = sprites,
+                        millis = millis,
+                        turn = turn,
+                        banner = stageBanner,
                     )
 
                     LogBox(fight.logLines, playerName, opponentName)
@@ -283,13 +363,14 @@ fun FightScreen(fight: FightState, avatar: AvatarState, onAction: (ArenaAction) 
     }
 }
 
-/** Name, HP bar with "hp / max" and the charge pips of one side. */
+/** Name with the won rounds, HP bar with "hp / max" and the charge pips of one side. */
 @Composable
 private fun CornerPanel(
     name: String,
     hp: Int,
     maxHp: Int,
     charge: Int,
+    wins: Int,
     alignEnd: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -301,13 +382,44 @@ private fun CornerPanel(
             else -> Color(0xFFE0504A)
         }
     val chargeText = stringResource(Res.string.arena_charge, charge, ArenaRules.MAX_CHARGE)
+    val winsText = stringResource(Res.string.arena_rounds_won, wins)
 
     Column(
         modifier = modifier,
         horizontalAlignment = if (alignEnd) Alignment.End else Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(name, style = MaterialTheme.typography.titleSmall, maxLines = 1)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val marks: @Composable () -> Unit = {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(3.dp),
+                    modifier = Modifier.semantics { contentDescription = winsText },
+                ) {
+                    repeat(ArenaRules.ROUNDS_TO_WIN) { i ->
+                        Box(
+                            modifier =
+                                Modifier.size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (i < wins) Color(0xFFFFD34A)
+                                        else MaterialTheme.colorScheme.surfaceContainerHighest
+                                    )
+                        )
+                    }
+                }
+            }
+            if (alignEnd) marks()
+            Text(
+                name,
+                style = MaterialTheme.typography.titleSmall,
+                maxLines = 1,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (!alignEnd) marks()
+        }
         Box(
             modifier =
                 Modifier.fillMaxWidth()
@@ -344,115 +456,6 @@ private fun CornerPanel(
             }
         }
     }
-}
-
-/** The stage with both fighters, the flying ki blast and the floating texts. */
-@Composable
-private fun FightStage(fight: FightState, scene: FightScene, avatar: AvatarState, progress: Float) {
-    val backdrop =
-        remember(fight.stage, fight.lighting) {
-            ArenaStagePixels.render(fight.stage, fight.lighting)
-        }
-    val character = avatar.data.character
-    val ratio = ArenaStagePixels.WIDTH.toFloat() / ArenaStagePixels.HEIGHT
-    val top = (ArenaStagePixels.FOOT_Y - FighterPixels.SIZE).toFloat()
-
-    BoxWithConstraints(
-        modifier = Modifier.fillMaxWidth().aspectRatio(ratio).clip(RoundedCornerShape(16.dp))
-    ) {
-        val px = maxWidth / ArenaStagePixels.WIDTH
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawPixels(backdrop, Offset.Zero, size.width / ArenaStagePixels.WIDTH)
-        }
-        FighterAvatar(
-            character = character,
-            rank = avatar.fighter.rank,
-            mood = scene.playerMood,
-            colors = avatar.data.colors,
-            outfit = avatar.data.outfit,
-            gear = avatar.data.accessories,
-            pose = scene.playerPose,
-            modifier =
-                Modifier.offset(
-                        x = px * (ArenaStagePixels.PLAYER_LEFT + scene.playerDx),
-                        y = px * top,
-                    )
-                    .size(px * FighterPixels.SIZE),
-        )
-        OpponentAvatar(
-            opponent = fight.opponent,
-            pose = scene.opponentPose,
-            modifier =
-                Modifier.offset(
-                        x = px * (ArenaStagePixels.OPPONENT_LEFT + scene.opponentDx),
-                        y = px * top,
-                    )
-                    .size(px * FighterPixels.SIZE),
-        )
-        scene.blast?.let { t ->
-            val from = ArenaStagePixels.PLAYER_LEFT + 36f
-            val to = ArenaStagePixels.OPPONENT_LEFT + 4f
-            KiBlast(
-                character = character,
-                rank = avatar.fighter.rank,
-                modifier =
-                    Modifier.offset(x = px * (from + (to - from) * t), y = px * (top + 17f))
-                        .width(px * 24),
-            )
-        }
-        scene.float?.let { float ->
-            FloatingText(
-                float = float,
-                progress = progress,
-                modifier =
-                    Modifier.offset(
-                            x =
-                                px *
-                                    (if (float.over == Side.PLAYER) ArenaStagePixels.PLAYER_LEFT
-                                    else ArenaStagePixels.OPPONENT_LEFT),
-                            y = px * (top - 2f - 10f * progress),
-                        )
-                        .width(px * FighterPixels.SIZE),
-            )
-        }
-        if (scene.flash > 0f) {
-            Box(
-                modifier =
-                    Modifier.fillMaxSize()
-                        .graphicsLayer { alpha = scene.flash * 0.5f }
-                        .background(Color.White)
-            )
-        }
-    }
-}
-
-@Composable
-private fun FloatingText(float: FloatText, progress: Float, modifier: Modifier = Modifier) {
-    val text =
-        when (float.kind) {
-            FloatKind.DAMAGE -> "-${float.damage}"
-            FloatKind.CRIT -> "${stringResource(Res.string.arena_float_crit)} -${float.damage}"
-            FloatKind.DODGE -> stringResource(Res.string.arena_float_dodge)
-            FloatKind.GUARD -> stringResource(Res.string.arena_float_guard)
-        }
-    val color =
-        when (float.kind) {
-            FloatKind.CRIT -> Color(0xFFFFD34A)
-            FloatKind.GUARD -> Color(0xFF8FD8FF)
-            else -> Color.White
-        }
-    Text(
-        text = text,
-        color = color,
-        textAlign = TextAlign.Center,
-        style =
-            MaterialTheme.typography.titleLarge.copy(
-                fontFamily = flexFontEmphasis(),
-                fontWeight = FontWeight.Black,
-                shadow = Shadow(color = Color(0xFF231B2E), offset = Offset(2f, 2f), blurRadius = 2f),
-            ),
-        modifier = modifier.graphicsLayer { alpha = (1.6f - 1.6f * progress).coerceIn(0f, 1f) },
-    )
 }
 
 /** The last [FightState.LOG_LINES] events, newest at the bottom. */

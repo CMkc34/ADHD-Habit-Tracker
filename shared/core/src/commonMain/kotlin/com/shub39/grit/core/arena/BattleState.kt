@@ -34,6 +34,7 @@ enum class Side {
 enum class Outcome {
     WIN,
     LOSS,
+    /** Only in fights stored before best of three; a battle can no longer end in a draw. */
     DRAW,
 }
 
@@ -59,7 +60,7 @@ sealed interface BattleEvent {
     /** [actor] knocked out the other side. */
     data class Ko(override val actor: Side) : BattleEvent
 
-    /** The round limit was reached; the outcome is decided by remaining HP share. */
+    /** The turn limit was reached with nobody knocked out; the opponent wins the round. */
     data object TimeUp : BattleEvent {
         override val actor: Side = Side.PLAYER
     }
@@ -88,7 +89,10 @@ data class BattleState(
     val outcome: Outcome? = null,
     val log: List<BattleEvent> = emptyList(),
 ) {
-    /** 1-based round; a round is one turn of each side. */
+    /**
+     * 1-based count of turn pairs (one turn of each side) within this battle, at most
+     * [ArenaRules.MAX_ROUNDS]. Not to be confused with the rounds of a [Match].
+     */
     val round: Int
         get() = minOf(turnsTaken / 2 + 1, ArenaRules.MAX_ROUNDS)
 

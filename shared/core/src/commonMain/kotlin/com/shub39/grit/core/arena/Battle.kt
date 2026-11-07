@@ -20,9 +20,9 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 
 /**
- * Pure turn-based battle engine (SPEC 9.4). All randomness comes from the injected [Random], and
- * the draws happen in a fixed order, so the same seed and the same player actions always give the
- * same fight.
+ * Pure turn-based battle engine (SPEC 9.4) for one round of a [Match]. All randomness comes from
+ * the injected [Random], and the draws happen in a fixed order, so the same seed and the same
+ * player actions always give the same fight.
  *
  * Invalid input throws instead of returning an unchanged state:
  * - [act] with SPECIAL and less than [ArenaRules.SPECIAL_COST] charge: [IllegalArgumentException].
@@ -133,9 +133,10 @@ object Battle {
                     events += BattleEvent.Ko(side)
                     if (side == Side.PLAYER) Outcome.WIN else Outcome.LOSS
                 }
+                // the clock is on the opponent's side: nobody down at the limit is a loss
                 next.turnsTaken >= 2 * ArenaRules.MAX_ROUNDS -> {
                     events += BattleEvent.TimeUp
-                    byHpShare(next)
+                    Outcome.LOSS
                 }
                 else -> null
             }
@@ -157,17 +158,6 @@ object Battle {
         if (guarded) damage *= ArenaRules.GUARD_DAMAGE_FACTOR
         val dealt = damage.roundToInt().coerceAtLeast(ArenaRules.MIN_DAMAGE)
         return BattleEvent.Hit(side, dealt, critical, guarded)
-    }
-
-    /** Compares remaining HP shares exactly (cross-multiplied, no floating point). */
-    private fun byHpShare(state: BattleState): Outcome {
-        val player = state.player.hp.toLong() * state.opponent.combatant.maxHp
-        val opponent = state.opponent.hp.toLong() * state.player.combatant.maxHp
-        return when {
-            player > opponent -> Outcome.WIN
-            player < opponent -> Outcome.LOSS
-            else -> Outcome.DRAW
-        }
     }
 
     private fun Corner.hurt(damage: Int): Corner = copy(hp = (hp - damage).coerceAtLeast(0))

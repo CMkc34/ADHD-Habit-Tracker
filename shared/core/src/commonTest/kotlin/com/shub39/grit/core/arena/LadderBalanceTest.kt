@@ -22,8 +22,8 @@ import kotlin.test.assertTrue
 
 /**
  * Guards the difficulty curve (SPEC 9.5): a typical fighter for opponent n (rank n + 1, every stat
- * level n + 1, special when ready, else strike) wins 55 to 75 % of 1000 seeded fights. If a rule
- * change in [ArenaRules] breaks this, retune the [Opponent] values.
+ * level n + 1, special when ready, else strike) wins 55 to 75 % of 1000 seeded best-of-three
+ * matches. If a rule change in [ArenaRules] breaks this, retune the [Opponent] values.
  */
 class LadderBalanceTest {
 
@@ -44,11 +44,16 @@ class LadderBalanceTest {
         val wins =
             (0 until FIGHTS).count { seed ->
                 val random = Random(seed)
-                var state = Battle.start(player, opponent.combatant, random)
+                var state = Match.start(player, opponent.combatant, random)
                 while (!state.isOver) {
+                    if (state.needsNextRound) {
+                        state = Match.nextRound(state, random)
+                        continue
+                    }
                     val action =
-                        if (state.player.specialReady) BattleAction.SPECIAL else BattleAction.STRIKE
-                    state = Battle.act(state, action, random)
+                        if (state.battle.player.specialReady) BattleAction.SPECIAL
+                        else BattleAction.STRIKE
+                    state = Match.act(state, action, random)
                 }
                 state.outcome == Outcome.WIN
             }

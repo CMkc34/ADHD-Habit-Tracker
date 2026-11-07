@@ -41,9 +41,9 @@ object ArenaStagePixels {
     /** Row where both fighters' feet stand (the bottom edge of their pictures). */
     const val FOOT_Y = 90
 
-    /** Left edge of the player's 48 px picture; the opponent's mirrors it on the right. */
+    /** Left edge of the player's 48 px picture; the opponent's bigger picture mirrors it. */
     const val PLAYER_LEFT = 18
-    const val OPPONENT_LEFT = WIDTH - PLAYER_LEFT - 48
+    const val OPPONENT_LEFT = WIDTH - PLAYER_LEFT - OpponentPixels.SIZE
 
     fun render(stage: ArenaStage, lighting: ArenaLighting): PixelImage {
         val c = Scene(lighting)

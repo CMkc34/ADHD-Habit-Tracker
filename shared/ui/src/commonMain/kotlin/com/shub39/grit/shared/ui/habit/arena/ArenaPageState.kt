@@ -23,6 +23,7 @@ import com.shub39.grit.core.arena.BattleEvent
 import com.shub39.grit.core.arena.BattleState
 import com.shub39.grit.core.arena.FightPlayback
 import com.shub39.grit.core.arena.LadderStatus
+import com.shub39.grit.core.arena.MatchState
 import com.shub39.grit.core.arena.Opponent
 import com.shub39.grit.core.arena.Outcome
 import com.shub39.grit.core.arena.Side
@@ -41,9 +42,14 @@ data class ArenaPageState(
     val fight: FightState? = null,
 )
 
-/** A running fight as the battle screen shows it. */
+/**
+ * A running fight as the battle screen shows it: a best-of-three [match] whose current round plays
+ * through [playback].
+ */
 data class FightState(
     val started: StartedFight,
+    val match: MatchState,
+    /** The events of the current round's last exchange, see [FightPlayback]. */
     val playback: FightPlayback,
     /** Whether [opponent] was the next one on the ladder, so a win unlocks the following one. */
     val wasNext: Boolean,
@@ -51,19 +57,41 @@ data class FightState(
     val lighting: ArenaLighting,
     /** Indices in [BattleState.log] of the player's strikes that are shown as a kick. */
     val kicks: Set<Int> = emptySet(),
+    /** The "Round n, Fight!" banner of the current round is showing; nothing plays meanwhile. */
+    val intro: Boolean = true,
     /** "Give up? This counts as a loss." is open. */
     val askingGiveUp: Boolean = false,
 ) {
     val opponent: Opponent
         get() = started.opponent
 
-    /** The engine's state after the last move. */
+    /** The engine's state of the current round after the last move. */
     val battle: BattleState
         get() = playback.after
 
-    /** The player may pick a move: nothing is playing and the fight goes on. */
+    /** The player may pick a move: nothing is playing and the round goes on. */
     val canAct: Boolean
-        get() = playback.isDone && !battle.isOver && !askingGiveUp
+        get() = !intro && playback.isDone && !battle.isOver && !askingGiveUp
+
+    /** The round has ended and played out, another one follows: time for the round banner. */
+    val roundOver: Boolean
+        get() = playback.isDone && match.needsNextRound
+
+    /** Rounds won by [side], counting the current round only once it has played out. */
+    fun wins(side: Side): Int {
+        val wins = match.wins(side)
+        val pending = battle.isOver && !playback.isDone && roundWinner == side
+        return if (pending) wins - 1 else wins
+    }
+
+    /** Who won the current round, `null` while it goes on. */
+    val roundWinner: Side?
+        get() =
+            when (battle.outcome) {
+                null -> null
+                Outcome.WIN -> Side.PLAYER
+                else -> Side.OPPONENT
+            }
 
     val canSpecial: Boolean
         get() = canAct && battle.player.specialReady
@@ -72,13 +100,19 @@ data class FightState(
     val logLines: List<BattleEvent>
         get() = playback.shownLog.takeLast(LOG_LINES)
 
+    /** Whether [side]'s guard is up as shown now: its last move shown so far was a guard. */
+    fun guarding(side: Side): Boolean {
+        val last = playback.shownLog.lastOrNull { it.actor == side && it != BattleEvent.TimeUp }
+        return last is BattleEvent.Guard
+    }
+
     /** Whether the event at [index] in the log is a player strike shown as a kick. */
     fun isKick(index: Int): Boolean = index in kicks
 
-    /** The result dialog, once the last move has played. */
+    /** The result dialog, once the last move of the match has played. */
     val result: FightResult?
         get() {
-            val outcome = battle.outcome ?: return null
+            val outcome = match.outcome ?: return null
             if (!playback.isDone) return null
             val firstWin = outcome == Outcome.WIN && wasNext
             return FightResult(
@@ -121,6 +155,12 @@ sealed interface ArenaAction {
 
     /** The UI finished animating the event at [index] in the battle log. */
     data class EventPlayed(val index: Int) : ArenaAction
+
+    /** The UI finished showing the "Round n, Fight!" banner. */
+    data object IntroShown : ArenaAction
+
+    /** The UI finished showing the end of a round; the next one starts with full HP. */
+    data object NextRound : ArenaAction
 
     /** Back during a fight: asks first. */
     data object AskGiveUp : ArenaAction

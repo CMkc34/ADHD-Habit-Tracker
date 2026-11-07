@@ -221,32 +221,25 @@ class BattleTest {
     }
 
     @Test
-    fun `after 30 rounds equal hp shares are a draw`() {
+    fun `after 30 rounds with nobody down the opponent wins`() {
         var s = Battle.start(fighter(hp = 1000, attack = 1), fighter("O", hp = 1000, attack = 1))
         while (!s.isOver) s = Battle.act(s, s.bestAction(), FixedRandom(MISS, MID, MISS))
-        assertEquals(Outcome.DRAW, s.outcome)
+        assertEquals(Outcome.LOSS, s.outcome)
         assertEquals(BattleEvent.TimeUp, s.log.last())
         assertEquals(ArenaRules.MAX_ROUNDS * 2, s.turnsTaken)
         assertEquals(ArenaRules.MAX_ROUNDS, s.round)
-        assertEquals(s.player.hp, s.opponent.hp)
     }
 
     @Test
-    fun `after 30 rounds the higher hp share wins`() {
-        // player 100 max hp, CPU 50 max hp with attack 1, one round before the limit
+    fun `time up is a loss even with far more hp left`() {
         val base = Battle.start(fighter(hp = 100), fighter("O", hp = 50, attack = 1))
-        fun decide(playerHp: Int, opponentHp: Int): Outcome? {
-            val lastRound =
-                base.copy(
-                    player = base.player.copy(hp = playerHp),
-                    opponent = base.opponent.copy(hp = opponentHp),
-                    turnsTaken = ArenaRules.MAX_ROUNDS * 2 - 2,
-                )
-            return Battle.act(lastRound, BattleAction.GUARD, cpuStrike()).outcome
-        }
-        // the CPU's guarded strike still deals the minimum of 1 before the limit is checked
-        assertEquals(Outcome.DRAW, decide(playerHp = 81, opponentHp = 40))
-        assertEquals(Outcome.WIN, decide(playerHp = 82, opponentHp = 40))
-        assertEquals(Outcome.LOSS, decide(playerHp = 80, opponentHp = 40))
+        val lastRound =
+            base.copy(
+                opponent = base.opponent.copy(hp = 1),
+                turnsTaken = ArenaRules.MAX_ROUNDS * 2 - 2,
+            )
+        val after = Battle.act(lastRound, BattleAction.GUARD, cpuStrike())
+        assertEquals(Outcome.LOSS, after.outcome)
+        assertEquals(BattleEvent.TimeUp, after.log.last())
     }
 }

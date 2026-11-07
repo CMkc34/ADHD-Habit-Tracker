@@ -14,6 +14,8 @@
     <string name="arena_opponent_idle">%1$s, kampfbereit</string>
     <string name="arena_opponent_hit">%1$s wird getroffen</string>
     <string name="arena_opponent_ko">%1$s ist k.o. und schwindelig</string>
+    <string name="arena_opponent_attack">%1$s greift an</string>
+    <string name="arena_opponent_guard">%1$s blockt</string>
     <string name="arena_opponent_locked">Gesperrter Gegner</string>
 
     <string name="arena_next_ticket_hint">Hak noch eine Routine ab, dann bekommst du ein Ticket</string>
@@ -36,7 +38,7 @@
     <string name="arena_fight">Kämpfen (kostet 1 🎟)</string>
     <string name="arena_fight_no_ticket">Heute kein Ticket mehr</string>
 
-    <string name="arena_round">Runde %1$d von %2$d</string>
+    <string name="arena_round">Zug %1$d von %2$d</string>
     <string name="arena_charge">%1$d von %2$d Ladungen</string>
     <string name="arena_strike">Schlag</string>
     <string name="arena_strike_hint">Normaler Treffer, man kann ausweichen</string>
@@ -46,6 +48,19 @@
     <string name="arena_special_hint">Ki-Strahl: doppelter Schaden, nicht blockbar</string>
     <string name="arena_special_locked">Braucht 3 Ladungen</string>
 
+    <!-- Best of three (2026-11-07) -->
+    <string name="arena_match_round">Runde %1$d</string>
+    <string name="arena_best_of_three">Best of three: 2 Runden gewinnen</string>
+    <string name="arena_rounds_won">%1$d von 2 Runden gewonnen</string>
+    <string name="arena_banner_round">RUNDE %1$d</string>
+    <string name="arena_banner_fight">KAMPF!</string>
+    <string name="arena_banner_round_won">RUNDE GEWONNEN!</string>
+    <string name="arena_banner_round_lost">RUNDE VERLOREN</string>
+    <string name="arena_banner_time_up">ZEIT UM!</string>
+    <string name="arena_turn_player">Du bist dran</string>
+    <string name="arena_turn_opponent">Gegner ist dran</string>
+    <string name="arena_float_blocked">GEBLOCKT -%1$d</string>
+
     <string name="arena_log_hit">%1$s trifft: %2$d Schaden</string>
     <string name="arena_log_crit">Krit! %1$s macht %2$d Schaden</string>
     <string name="arena_log_guarded">%1$s trifft den Block: %2$d Schaden</string>
@@ -53,7 +68,7 @@
     <string name="arena_log_guard">%1$s blockt</string>
     <string name="arena_log_special">Spezial! %1$s macht %2$d Schaden</string>
     <string name="arena_log_ko">%1$s ist k.o.!</string>
-    <string name="arena_log_time_up">Zeit um! 30 Runden sind vorbei</string>
+    <string name="arena_log_time_up">Zeit um! Die Runde geht an den Gegner</string>
     <string name="arena_float_crit">KRIT!</string>
     <string name="arena_float_dodge">DANEBEN!</string>
     <string name="arena_float_guard">BLOCK</string>

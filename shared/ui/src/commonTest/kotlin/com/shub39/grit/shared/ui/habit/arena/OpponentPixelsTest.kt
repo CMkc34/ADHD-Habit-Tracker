@@ -70,7 +70,8 @@ class OpponentPixelsTest {
                 val bottom = image.filled().maxOf { it / OpponentPixels.SIZE }
                 // the swarm floats a little while idle
                 val lowest =
-                    if (o == Opponent.DISTRACTION_SWARM && pose == OpponentPose.IDLE) 40 else 46
+                    if (o == Opponent.DISTRACTION_SWARM && pose == OpponentPose.IDLE) 50
+                    else OpponentPixels.SIZE - 2
                 assertTrue(bottom >= lowest, "$o $pose ends at row $bottom")
             }
         }
@@ -85,7 +86,7 @@ class OpponentPixelsTest {
     }
 
     @Test
-    fun `the three poses look different`() {
+    fun `all poses look different`() {
         for (o in Opponent.entries) {
             val images = OpponentPose.entries.map { OpponentPixels.render(o, it).argb.toList() }
             assertEquals(images.size, images.toSet().size, "$o")
@@ -136,6 +137,33 @@ class OpponentPixelsTest {
             val shape = OpponentPixels.render(o).filled().size
             assertNotEquals(0, shape)
             assertTrue(image.argb.count { it == fill } <= shape, "$o")
+        }
+    }
+
+    @Test
+    fun `opponents are drawn a fifth bigger than the fighter`() {
+        // the ogre fills its design grid, so its height shows the scale
+        val image = OpponentPixels.render(Opponent.OVERWHELM_OGRE)
+        val rows = image.filled().map { it / OpponentPixels.SIZE }
+        val height = rows.max() - rows.min() + 1
+        assertTrue(height > 48, "the ogre is only $height px tall")
+    }
+
+    @Test
+    fun `a guarding opponent shimmers`() {
+        val shimmer = PixelPainter.argb(0x8FD8FF)
+        for (o in Opponent.entries) {
+            val guard = OpponentPixels.render(o, OpponentPose.GUARD)
+            assertTrue(guard.argb.count { it == shimmer } >= 20, "$o has no guard shimmer")
+        }
+    }
+
+    @Test
+    fun `the attack leaves from inside the picture, on the fighter's side`() {
+        for (o in Opponent.entries) {
+            val at = OpponentPixels.launchPoint(o)
+            assertTrue(at.x in 0f..OpponentPixels.SIZE / 2f, "$o launches at $at")
+            assertTrue(at.y in 0f..OpponentPixels.SIZE.toFloat(), "$o launches at $at")
         }
     }
 }

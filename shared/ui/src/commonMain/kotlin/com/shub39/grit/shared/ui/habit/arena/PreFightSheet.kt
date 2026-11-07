@@ -45,6 +45,7 @@ import com.shub39.grit.shared.ui.habit.ui.component.ShakeText
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_attack
+import grit.shared.ui.generated.resources.arena_best_of_three
 import grit.shared.ui.generated.resources.arena_fight
 import grit.shared.ui.generated.resources.arena_fight_no_ticket
 import grit.shared.ui.generated.resources.arena_first_win_reward
@@ -118,6 +119,14 @@ fun PreFightSheet(
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+
+        Text(
+            text = stringResource(Res.string.arena_best_of_three),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Button(
             onClick = onFight,
