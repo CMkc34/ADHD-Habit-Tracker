@@ -45,6 +45,8 @@ enum class FighterPose {
     KICK,
     /** Arms crossed to block, with a short shimmer of ki around the body (#14). */
     GUARD,
+    /** Knocked back by a hit in the arena, eyes squeezed shut (2026-11-07). */
+    HURT,
 }
 
 /** A finished pixel picture, row by row; each pixel is an ARGB colour, 0 is transparent. */
@@ -106,12 +108,14 @@ object FighterPixels {
                 pose == FighterPose.PUNCH -> Skeleton.punch
                 pose == FighterPose.KICK -> Skeleton.kick
                 pose == FighterPose.GUARD -> Skeleton.guard
+                pose == FighterPose.HURT -> Skeleton.hurt
                 else -> Skeleton.stance
             }
         val bounce = !tired && pose == FighterPose.STANCE && f >= FRAMES / 2
         val s = base.bounced(if (bounce) 1f else 0f)
         val main = outfitColor(outfit) ?: colors.mainColor
-        val drawing = Drawing(character, colors, main, rank, gear, s, tired)
+        val hurt = !tired && pose == FighterPose.HURT
+        val drawing = Drawing(character, colors, main, rank, gear, s, tired, hurt)
         drawing.draw()
 
         val ki = kiColor(character, rank)
@@ -236,6 +240,8 @@ object FighterPixels {
         val gear: Set<String>,
         val s: Skeleton,
         val tired: Boolean,
+        /** Hit in the arena: eyes squeezed shut and the mouth open. */
+        val hurt: Boolean = false,
     ) {
         val painter = PixelPainter(SIZE)
         private val p = painter
@@ -313,9 +319,9 @@ object FighterPixels {
             val paint = pants()
             val (r1, r2, r3, r4) =
                 when (character) {
-                    FighterCharacter.WIND_MONK -> listOf(3.2f, 3.6f, 3.4f, 2.6f)
-                    FighterCharacter.KARATEKA -> listOf(2.9f, 2.7f, 2.6f, 2.4f)
-                    else -> listOf(2.6f, 2.4f, 2.2f, 2.0f)
+                    FighterCharacter.WIND_MONK -> listOf(2.8f, 3.1f, 2.9f, 2.3f)
+                    FighterCharacter.KARATEKA -> listOf(2.5f, 2.4f, 2.3f, 2.1f)
+                    else -> listOf(2.2f, 2.0f, 1.9f, 1.8f)
                 }
             for (leg in listOf(s.backLeg, s.frontLeg)) {
                 p.capsule(leg.root, leg.joint, r1, paint, r2)
@@ -348,10 +354,10 @@ object FighterPixels {
         private fun arm(limb: Limb, front: Boolean) {
             val sleeve = if (character == FighterCharacter.WIND_MONK) skin else main
             fun along(t: Float) = limb.joint.lerp(limb.end, t)
-            p.capsule(limb.root, limb.joint, if (karate) 2.5f else 2.3f, sleeve)
-            p.capsule(limb.joint, limb.end, 2.0f, if (karate) skin else sleeve)
+            p.capsule(limb.root, limb.joint, if (karate) 2.2f else 2.0f, sleeve)
+            p.capsule(limb.joint, limb.end, 1.8f, if (karate) skin else sleeve)
             // the karateka's rolled sleeves end just below the elbow
-            if (karate) p.capsule(limb.joint, along(0.22f), 2.4f, main)
+            if (karate) p.capsule(limb.joint, along(0.22f), 2.1f, main)
             when (character) {
                 FighterCharacter.WIND_MONK -> p.capsule(along(0.35f), limb.end, 2.1f, wrap)
                 FighterCharacter.SHADOW_RUNNER ->
@@ -402,8 +408,9 @@ object FighterPixels {
         }
 
         private fun belt() {
-            val l = s.beltLeft
-            val r = s.beltRight
+            // inset to the slim waist
+            val l = s.beltLeft + Pt(1.3f, 0f)
+            val r = s.beltRight + Pt(-1.3f, 0f)
             p.poly(listOf(l, r, r + Pt(-1f, 2.6f), l + Pt(1f, 2.6f)), belt)
             val knot = l.lerp(r, 0.55f)
             p.capsule(knot + Pt(0f, 2.5f), knot + Pt(-1f, 5.5f), 0.6f, belt)
@@ -494,6 +501,9 @@ object FighterPixels {
                     p.face(x, ey + 1, listOf("OOO"), ink)
                     p.face(x, ey - 2, listOf("OOO"), ink)
                 }
+            } else if (hurt) {
+                p.face(ex, ey, listOf("O..", ".OO", "O.."), ink)
+                p.face(ex + 6, ey, listOf("..O", "OO.", "..O"), ink)
             } else {
                 val eye =
                     if (character == FighterCharacter.SHADOW_RUNNER) listOf("OOO", "WII")
@@ -506,6 +516,7 @@ object FighterPixels {
             }
             if (character == FighterCharacter.SHADOW_RUNNER) return
             if (tired) p.face(ex + 4, ey + 5, listOf("O"), mapOf('O' to MOUTH))
+            else if (hurt) p.face(ex + 4, ey + 4, listOf("OO", "OO"), mapOf('O' to MOUTH))
             else p.face(ex + 3, ey + 4, listOf("O..O", ".OO."), mapOf('O' to MOUTH))
             p.face(ex - 1, ey + 4, listOf("R"), mapOf('R' to BLUSH))
             p.face(ex + 9, ey + 4, listOf("R"), mapOf('R' to BLUSH))

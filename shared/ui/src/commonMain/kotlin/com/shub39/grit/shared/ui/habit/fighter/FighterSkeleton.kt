@@ -75,7 +75,16 @@ internal class Skeleton(
         const val SIZE = 48
 
         private fun torsoAt(dx: Float, dy: Float = 0f) =
-            listOf(Pt(17, 22), Pt(31, 22), Pt(30, 30), Pt(28, 34), Pt(20, 34), Pt(18, 30)).map {
+            // a slim build (2026-11-07): narrower than the 14 px chest of the first design
+            listOf(
+                    Pt(18.5f, 22f),
+                    Pt(29.5f, 22f),
+                    Pt(28.8f, 30f),
+                    Pt(27, 34),
+                    Pt(21, 34),
+                    Pt(19.2f, 30f),
+                )
+                .map {
                 it + Pt(dx, dy)
             }
 
@@ -173,6 +182,21 @@ internal class Skeleton(
                 frontLeg = Limb(Pt(26, 34), Pt(33, 39), Pt(36, 44)),
                 backFoot = Pt(11f, 45.2f),
                 frontFoot = Pt(38f, 45.2f),
+            )
+
+        /** Hit: thrown back, the head snaps back and the arms fly up (2026-11-07). */
+        val hurt =
+            Skeleton(
+                head = Pt(17, 17),
+                torso = torsoAt(-5f, 2f),
+                beltLeft = Pt(13, 32),
+                beltRight = Pt(25, 32),
+                backArm = Limb(Pt(14, 26), Pt(9, 25), Pt(6, 20)),
+                frontArm = Limb(Pt(25, 26), Pt(30, 22), Pt(33f, 17f)),
+                backLeg = Limb(Pt(17, 35), Pt(13, 40), Pt(11, 44)),
+                frontLeg = Limb(Pt(23, 35), Pt(30, 39), Pt(35, 44)),
+                backFoot = Pt(10f, 45.2f),
+                frontFoot = Pt(37f, 45.2f),
             )
 
         /** Sitting cross-legged, the hands on the knees: a tired fighter takes a break. */

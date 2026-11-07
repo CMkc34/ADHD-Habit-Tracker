@@ -646,6 +646,14 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
   und leerer Ladung; wer zuerst 2 Runden gewinnt, gewinnt den Kampf. Ein Ticket gilt für das ganze
   Match. Kein Unentschieden mehr (`Outcome.DRAW` nur noch in alten Kampfeinträgen). `Match` in
   `core.arena`.
+- Kampfbildschirm (entschieden 2026-11-07, nach Test der Nutzerin): Schläge und Tritte laufen bis
+  zum Gegner und treffen sichtbar (kurzes Einfrieren, Funken, Wackeln, Vibration); jeder der 10
+  Gegner hat einen eigenen Angriff (`OpponentAttack`: Weckerwellen, Kissen, Push-Nachricht, Socke,
+  Brief, Schwarm-Ansturm, Taschenuhr an der Kette, Felsspitzen, Buch, Feuerball), das Spezial ist
+  derselbe Angriff doppelt so groß. Block bleibt sichtbar (blauer Schimmer) bis zum nächsten
+  eigenen Zug, Ausweichen ist ein Sprung mit Nachbild. Rundenbanner „Runde n / Kampf!“ und
+  „Runde gewonnen/verloren“, Siegpunkte neben den Namen. Kämpfer schlanker, Gegner 1,2-fach
+  größer (Bild 62 × 62).
 - CPU: Spezial, sobald bereit; unter 30 % HP mit 25 % Block; sonst Schlag.
 - Reine Funktion `Battle` in `core.arena`, Zufall injizierbar, alle Zahlen in `ArenaRules`.
 

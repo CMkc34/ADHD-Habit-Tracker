@@ -72,12 +72,17 @@ class ArenaViewModelTest {
     private val ArenaViewModel.fight: FightState?
         get() = state.value.fight
 
-    /** Reports every event as played, like the UI with animations off. */
+    /** Reports every banner and event as shown, like the UI with animations off. */
     private fun ArenaViewModel.playAll() {
         while (true) {
-            val index = fight?.playback?.playingIndex ?: return
-            if (index < 0) return
-            onAction(ArenaAction.EventPlayed(index))
+            val fight = fight ?: return
+            when {
+                fight.intro -> onAction(ArenaAction.IntroShown)
+                fight.playback.playingIndex >= 0 ->
+                    onAction(ArenaAction.EventPlayed(fight.playback.playingIndex))
+                fight.roundOver -> onAction(ArenaAction.NextRound)
+                else -> return
+            }
         }
     }
 
@@ -142,6 +147,56 @@ class ArenaViewModelTest {
             val result = assertNotNull(fight.result)
             assertEquals(result.outcome, repo.fights.value.single().outcome)
             assertFalse(fight.canAct)
+        }
+
+    @Test
+    fun `a fight is best of three rounds on one ticket`() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+            viewModel.start()
+
+            viewModel.fightWith(BattleAction.STRIKE)
+
+            val fight = viewModel.fight!!
+            val match = fight.match
+            assertTrue(match.round in 2..3)
+            assertEquals(2, maxOf(match.playerWins, match.opponentWins))
+            assertEquals(match.round, match.playerWins + match.opponentWins)
+            assertEquals(1, repo.fights.value.size)
+            assertEquals(2, viewModel.state.value.arena?.tickets?.available)
+        }
+
+    @Test
+    fun `a new round waits for its banner and starts with full hp`() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+            viewModel.onAction(ArenaAction.Select(Opponent.SNOOZE_BUTTON))
+            viewModel.onAction(ArenaAction.StartFight)
+            assertTrue(viewModel.fight!!.intro)
+            assertFalse(viewModel.fight!!.canAct)
+            viewModel.playAll()
+
+            // play round 1 to its end without starting round 2
+            while (!viewModel.fight!!.battle.isOver) {
+                viewModel.onAction(ArenaAction.Act(BattleAction.STRIKE))
+                while (viewModel.fight!!.playback.playingIndex >= 0) {
+                    viewModel.onAction(
+                        ArenaAction.EventPlayed(viewModel.fight!!.playback.playingIndex)
+                    )
+                }
+            }
+            val ended = viewModel.fight!!
+            assertTrue(ended.roundOver)
+            assertFalse(ended.canAct)
+            assertEquals(1, ended.wins(Side.PLAYER) + ended.wins(Side.OPPONENT))
+
+            viewModel.onAction(ArenaAction.NextRound)
+            val next = viewModel.fight!!
+            assertEquals(2, next.match.round)
+            assertTrue(next.intro)
+            val start = next.playback.before
+            assertEquals(start.player.combatant.maxHp, start.player.hp)
+            assertEquals(start.opponent.combatant.maxHp, start.opponent.hp)
         }
 
     @Test

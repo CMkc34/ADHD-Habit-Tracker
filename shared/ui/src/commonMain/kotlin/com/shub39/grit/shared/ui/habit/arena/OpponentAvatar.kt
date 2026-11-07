@@ -39,6 +39,8 @@ import com.shub39.grit.shared.ui.habit.fighter.PixelImage
 import com.shub39.grit.shared.ui.habit.fighter.drawPixels
 import com.shub39.grit.shared.ui.habit.fighter.rememberPixelFrame
 import grit.shared.ui.generated.resources.Res
+import grit.shared.ui.generated.resources.arena_opponent_attack
+import grit.shared.ui.generated.resources.arena_opponent_guard
 import grit.shared.ui.generated.resources.arena_opponent_hit
 import grit.shared.ui.generated.resources.arena_opponent_idle
 import grit.shared.ui.generated.resources.arena_opponent_ko
@@ -66,6 +68,9 @@ fun OpponentAvatar(
                 OpponentPose.IDLE -> Res.string.arena_opponent_idle
                 OpponentPose.HIT -> Res.string.arena_opponent_hit
                 OpponentPose.KO -> Res.string.arena_opponent_ko
+                OpponentPose.WINDUP,
+                OpponentPose.ATTACK -> Res.string.arena_opponent_attack
+                OpponentPose.GUARD -> Res.string.arena_opponent_guard
             },
             opponent.label(),
         )

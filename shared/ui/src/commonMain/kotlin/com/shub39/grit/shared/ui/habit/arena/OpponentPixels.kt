@@ -37,16 +37,28 @@ enum class OpponentPose {
     HIT,
     /** Knocked out: slumped, spiral eyes and little stars circling the head. Dizzy, not hurt. */
     KO,
+    /** Gathering for its own attack: leans back, the glowing eyes fixed on the fighter. */
+    WINDUP,
+    /** Its own attack leaves it (see [OpponentAttack]): leans in with the mouth wide open. */
+    ATTACK,
+    /** Braced behind a pale blue shimmer; the next strike only does half damage. */
+    GUARD,
 }
 
 /**
  * Builds the pixel art of the 10 ladder opponents (#13) in the fighter's style: simple shapes,
- * shaded and outlined by [PixelPainter], 48 x 48 pixels like the fighter. Every opponent has its
- * own fixed colours and faces left, towards the fighter. Small opponents stay small, the big ones
- * fill the canvas. Pure Kotlin, so it is unit tested and [OpponentAvatar] only paints the result.
+ * shaded and outlined by [PixelPainter]. Every opponent has its own fixed colours and faces left,
+ * towards the fighter. Small opponents stay small, the big ones fill the canvas. Pure Kotlin, so it
+ * is unit tested and [OpponentAvatar] only paints the result.
+ *
+ * The designs are made on a 48 x 48 grid like the fighter and drawn [SCALE] times larger (decided
+ * 2026-11-07: the enemies 20 % bigger than the fighter), on a [SIZE] x [SIZE] picture.
  */
 object OpponentPixels {
-    const val SIZE = 48
+    const val SIZE = 62
+
+    /** How much larger than the 48 px design grid the opponents are drawn. */
+    const val SCALE = 1.2f
 
     /** Animation frames in one loop, the same clock as the fighter (one every 100 ms). */
     const val FRAMES = 12
@@ -56,6 +68,20 @@ object OpponentPixels {
     private const val PAD = 8
     private const val CANVAS = SIZE + 2 * PAD
     private const val GROUND = 46.5f
+
+    /** Pale blue of the guard shimmer, like the fighter's "GUARD" text. */
+    private val GUARD_SHIMMER = argb(0x8FD8FF)
+
+    /**
+     * Where the opponent's own attack leaves it in the [OpponentPose.ATTACK] picture (its mouth,
+     * hand or front), in pixels of the picture.
+     */
+    internal fun launchPoint(opponent: Opponent): Pt {
+        val sketch = Sketch(opponent, OpponentPose.ATTACK, 0, plain = false)
+        sketch.draw()
+        sketch.finish()
+        return sketch.launchInPicture()
+    }
 
     fun render(
         opponent: Opponent,
@@ -107,6 +133,7 @@ object OpponentPixels {
         private val effects = !plain
         private val hit = pose == OpponentPose.HIT
         private val ko = pose == OpponentPose.KO
+        private val guard = pose == OpponentPose.GUARD
 
         /** Idle bob in pixels: the top of the figure goes down by one in the second half. */
         private val bob = if (idle && f >= FRAMES / 2) 1f else 0f
@@ -116,6 +143,13 @@ object OpponentPixels {
 
         /** Where the impact star of [OpponentPose.HIT] lands, in sketch coordinates. */
         private var impact = Pt(14, 30)
+
+        /** Where its own attack leaves it, in sketch coordinates; the front ([impact]) if unset. */
+        private var launch: Pt? = null
+
+        /** Top left of the finished picture on the canvas, set by [finish]. */
+        private var cropX = PAD
+        private var cropY = PAD
 
         /** Top of the head, the dizzy stars of [OpponentPose.KO] circle above it. */
         private var headTop = Pt(24, 18)
@@ -149,6 +183,15 @@ object OpponentPixels {
                         val up = (GROUND - q.y).coerceAtLeast(0f)
                         Pt(q.x + 1.5f + up * 0.13f, q.y + up * 0.04f)
                     }
+                    OpponentPose.WINDUP,
+                    OpponentPose.GUARD -> {
+                        val up = (GROUND - q.y).coerceAtLeast(0f)
+                        Pt(q.x + 0.8f + up * 0.07f, q.y)
+                    }
+                    OpponentPose.ATTACK -> {
+                        val up = (GROUND - q.y).coerceAtLeast(0f)
+                        Pt(q.x - 1.5f - up * 0.12f, q.y)
+                    }
                     OpponentPose.KO ->
                         if (grounded) q
                         else {
@@ -159,7 +202,10 @@ object OpponentPixels {
                             Pt(koPivot + rx * c - ry * s, GROUND + rx * s + ry * c)
                         }
                 }
-            return Pt(moved.x + PAD, moved.y + PAD)
+            // scaled up around the middle of the ground line, which ends on the picture's last row
+            val x = (moved.x - 24f) * SCALE + SIZE / 2f
+            val y = (moved.y - GROUND) * SCALE + GROUND + (SIZE - 48)
+            return Pt(x + PAD, y + PAD)
         }
 
         private fun pt(x: Number, y: Number) = Pt(x, y)
@@ -193,7 +239,7 @@ object OpponentPixels {
             poly(listOf(pt(x0, y0), pt(x1, y0), pt(x1, y1), pt(x0, y1)), paint)
 
         fun capsule(a: Pt, b: Pt, ra: Float, paint: Paint, rb: Float = ra) =
-            p.capsule(t(a), t(b), ra, paint, rb)
+            p.capsule(t(a), t(b), ra * SCALE, paint, rb * SCALE)
 
         /** Hand-placed pixels centred on [c]. */
         fun face(c: Pt, rows: List<String>, colors: Map<Char, Int>) {
@@ -222,7 +268,10 @@ object OpponentPixels {
                 if (lid != null) put('L', lid)
             }
             when (pose) {
-                OpponentPose.IDLE -> {
+                OpponentPose.IDLE,
+                OpponentPose.WINDUP,
+                OpponentPose.ATTACK,
+                OpponentPose.GUARD -> {
                     // mean look: narrow glowing eyes under lids that slant down to the middle
                     val glowing = colors + ('G' to EYE_GLOW)
                     val small = open.size <= 2
@@ -245,12 +294,24 @@ object OpponentPixels {
          * out.
          */
         fun mouth(c: Pt, open: List<String> = SMILE) {
-            val colors = mapOf('O' to if (eyeInk == INK) MOUTH else eyeInk, 'W' to CLAW)
+            val colors =
+                mapOf('O' to if (eyeInk == INK) MOUTH else eyeInk, 'W' to CLAW, 'M' to THROAT)
             when (pose) {
-                OpponentPose.IDLE -> face(c, snarl(open.first().length), colors)
+                OpponentPose.IDLE,
+                OpponentPose.GUARD,
+                OpponentPose.WINDUP -> face(c, snarl(open.first().length), colors)
+                OpponentPose.ATTACK -> face(c, roar(open.first().length), colors)
                 OpponentPose.HIT -> face(c, OOH, colors)
                 OpponentPose.KO -> face(c, WOBBLE, colors)
             }
+        }
+
+        /** The mouth torn wide open for the attack: fangs top and bottom around a dark throat. */
+        private fun roar(width: Int): List<String> {
+            val w = (width + 1).coerceAtLeast(4)
+            val fangs = CharArray(w) { if (it % 2 == 0) 'W' else 'O' }.concatToString()
+            val throat = "O" + "M".repeat(w - 2) + "O"
+            return listOf("O".repeat(w), fangs, throat, throat, fangs.reversed(), "O".repeat(w))
         }
 
         /** A wide grin of jagged teeth, at least [width] wide. */
@@ -546,14 +607,40 @@ object OpponentPixels {
             poly(listOf(pt(27, 13), pt(33, 10 + flutter), pt(30, 17)), hood)
             ellipse(pt(21.5, 20.5), 5.2f, 4.4f, skin)
             rect(16.5, 17.5, 27, 21, paint(MASK, "mask"))
-            capsule(pt(19, 27), pt(13, 30), 1.5f, cloak)
-            ellipse(pt(12.5, 31), 1.8f, 1.7f, skin)
-            capsule(pt(12.5, 31), pt(10, 31.5), 0.5f, gold)
-            circle(pt(9, 34.5), 3.8f, gold)
-            circle(pt(8.8, 34.3), 2.6f, paint(CREAM, "dial"))
-            val drip = if (idle) f / 4 else 1
-            capsule(pt(8, 37.5), pt(8, 39f + drip), 1.0f, gold)
-            face(pt(9, 33.5), listOf("O.", "O.", ".O"), mapOf('O' to INK_SOFT))
+            launch = pt(7, 25)
+            when (pose) {
+                // the pocket watch swings up behind the hood
+                OpponentPose.WINDUP -> {
+                    capsule(pt(25, 24), pt(30, 15), 1.5f, cloak)
+                    ellipse(pt(30.5, 14), 1.8f, 1.7f, skin)
+                    capsule(pt(30.5, 14), pt(33, 9), 0.5f, gold)
+                    circle(pt(34, 7), 3.8f, gold)
+                    circle(pt(33.8, 6.8), 2.6f, paint(CREAM, "dial"))
+                }
+                // thrown: the watch flies on its chain (OpponentAttack), the hand stays out
+                OpponentPose.ATTACK -> {
+                    capsule(pt(19, 26), pt(8, 25), 1.5f, cloak)
+                    ellipse(pt(7, 25), 1.8f, 1.7f, skin)
+                }
+                // the watch held up like a small shield
+                OpponentPose.GUARD -> {
+                    capsule(pt(19, 27), pt(14, 21), 1.5f, cloak)
+                    ellipse(pt(13.5, 20.5), 1.8f, 1.7f, skin)
+                    circle(pt(11, 24), 4.6f, gold)
+                    circle(pt(10.8, 23.8), 3.3f, paint(CREAM, "dial"))
+                    face(pt(11, 23), listOf("O.", "O.", ".O"), mapOf('O' to INK_SOFT))
+                }
+                else -> {
+                    capsule(pt(19, 27), pt(13, 30), 1.5f, cloak)
+                    ellipse(pt(12.5, 31), 1.8f, 1.7f, skin)
+                    capsule(pt(12.5, 31), pt(10, 31.5), 0.5f, gold)
+                    circle(pt(9, 34.5), 3.8f, gold)
+                    circle(pt(8.8, 34.3), 2.6f, paint(CREAM, "dial"))
+                    val drip = if (idle) f / 4 else 1
+                    capsule(pt(8, 37.5), pt(8, 39f + drip), 1.0f, gold)
+                    face(pt(9, 33.5), listOf("O.", "O.", ".O"), mapOf('O' to INK_SOFT))
+                }
+            }
             eyeInk = WHITE
             eyes(pt(19, 19), pt(24.5, 19), open = SNEAKY)
             eyeInk = INK
@@ -741,7 +828,10 @@ object OpponentPixels {
                     p.effect(x, y, STAR, mapOf('Y' to STAR_YELLOW, 'W' to WHITE))
                 }
             }
-            val big = p.render()
+            val big =
+                if (guard && effects)
+                    p.render(halo = GUARD_SHIMMER, haloLit = { x, y -> (x + y + f) % 3 != 0 })
+                else p.render()
             val filled = big.indices.filter { big[it] != 0 }
             val left = filled.minOf { it % CANVAS }
             val right = filled.maxOf { it % CANVAS }
@@ -749,9 +839,13 @@ object OpponentPixels {
             var x0 = PAD
             if (left < x0) x0 = left
             if (right > x0 + SIZE - 1) x0 = right - SIZE + 1
+            // keep a free column on the right where there is room, so the guard shimmer fits
+            if (right >= x0 + SIZE - 1 && left > x0) x0 = minOf(left, right - SIZE + 2)
             var y0 = PAD
             // knocked out opponents sink to the ground; a lean never pushes anyone below it
             if (ko || bottom > y0 + SIZE - 1) y0 = bottom - SIZE + 1
+            cropX = x0
+            cropY = y0
             val argb =
                 IntArray(SIZE * SIZE) { i ->
                     val x = i % SIZE + x0
@@ -759,6 +853,12 @@ object OpponentPixels {
                     if (x in 0 until CANVAS && y in 0 until CANVAS) big[y * CANVAS + x] else 0
                 }
             return PixelImage(SIZE, SIZE, argb)
+        }
+
+        /** [launch] in pixels of the finished picture; call after [finish]. */
+        fun launchInPicture(): Pt {
+            val at = t(launch ?: impact)
+            return Pt(at.x - cropX, at.y - cropY)
         }
     }
 
@@ -792,6 +892,7 @@ object OpponentPixels {
     private val METAL = argb(0x9AA3B5)
     private val INK_SOFT = argb(0x3A3248)
     private val MOUTH = argb(0x7A2E35)
+    private val THROAT = argb(0x3A1420)
     private val CLOCK_RED = argb(0xE8654F)
     private val BUTTON_PINK = argb(0xFF9EB8)
     private val GREMLIN = argb(0x8CC063)

@@ -19,10 +19,11 @@ package com.shub39.grit.shared.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shub39.grit.core.arena.ArenaRepo
-import com.shub39.grit.core.arena.Battle
 import com.shub39.grit.core.arena.BattleAction
 import com.shub39.grit.core.arena.BattleEvent
 import com.shub39.grit.core.arena.FightPlayback
+import com.shub39.grit.core.arena.Match
+import com.shub39.grit.core.arena.MatchState
 import com.shub39.grit.core.arena.Side
 import com.shub39.grit.core.avatar.AvatarRepo
 import com.shub39.grit.shared.ui.habit.arena.ArenaAction
@@ -46,10 +47,11 @@ import org.koin.core.annotation.KoinViewModel
 import org.koin.core.annotation.Provided
 
 /**
- * Owns the Arena tab and the running fight (#14). The fight itself is the pure [Battle] engine;
- * this class starts and stores fights through [ArenaRepo] and steps through the events of each
- * move, while the UI only animates the event that is playing and reports back with
- * [ArenaAction.EventPlayed]. With animations off, the UI reports at once and the fight runs at full
+ * Owns the Arena tab and the running fight (#14). The fight itself is the pure best-of-three
+ * [Match]; this class starts and stores fights through [ArenaRepo] and steps through the events of
+ * each move, while the UI only animates the event that is playing and reports back with
+ * [ArenaAction.EventPlayed]. The round banners report back with [ArenaAction.IntroShown] and
+ * [ArenaAction.NextRound]. With animations off, the UI reports at once and the fight runs at full
  * speed.
  */
 @KoinViewModel
@@ -94,9 +96,13 @@ class ArenaViewModel(
 
             is ArenaAction.EventPlayed ->
                 updateFight { fight ->
-                    if (fight.playback.playingIndex != action.index) fight
+                    if (fight.intro || fight.playback.playingIndex != action.index) fight
                     else fight.copy(playback = fight.playback.next())
                 }
+
+            ArenaAction.IntroShown -> updateFight { it.copy(intro = false) }
+
+            ArenaAction.NextRound -> nextRound()
 
             ArenaAction.AskGiveUp -> {
                 val fight = _state.value.fight ?: return
@@ -123,11 +129,12 @@ class ArenaViewModel(
         viewModelScope.launch {
             try {
                 val started = arenaRepo.startFight(opponent) ?: return@launch
-                val battle = Battle.start(started.player, opponent.combatant, random)
-                val playback = FightPlayback.opening(battle)
+                val match = Match.start(started.player, opponent.combatant, random)
+                val playback = FightPlayback.opening(match.battle)
                 val fight =
                     FightState(
                         started = started,
+                        match = match,
                         playback = playback,
                         wasNext = wasNext,
                         stage = ArenaStage.of(opponent),
@@ -135,7 +142,7 @@ class ArenaViewModel(
                         kicks = kicks(playback),
                     )
                 _state.update { it.copy(selected = null, fight = fight) }
-                battle.outcome?.let { arenaRepo.finishFight(started, it) }
+                match.outcome?.let { arenaRepo.finishFight(started, it) }
             } finally {
                 starting = false
             }
@@ -146,13 +153,45 @@ class ArenaViewModel(
         val fight = _state.value.fight ?: return
         if (!fight.canAct || (action == BattleAction.SPECIAL && !fight.canSpecial)) return
 
-        val after = Battle.act(fight.battle, action, random)
-        val playback = FightPlayback(fight.battle, after)
+        val match = Match.act(fight.match, action, random)
+        val playback = FightPlayback(fight.battle, match.battle)
         _state.update {
-            it.copy(fight = fight.copy(playback = playback, kicks = fight.kicks + kicks(playback)))
+            it.copy(
+                fight =
+                    fight.copy(
+                        match = match,
+                        playback = playback,
+                        kicks = fight.kicks + kicks(playback),
+                    )
+            )
         }
-        // stored right away, so leaving during the last animation keeps a win
-        after.outcome?.let { outcome ->
+        finishIfOver(fight, match)
+    }
+
+    /** Starts the next round once the end of the last one has been shown. */
+    private fun nextRound() {
+        val fight = _state.value.fight ?: return
+        if (!fight.roundOver || fight.askingGiveUp) return
+
+        val match = Match.nextRound(fight.match, random)
+        val playback = FightPlayback.opening(match.battle)
+        _state.update {
+            it.copy(
+                fight =
+                    fight.copy(
+                        match = match,
+                        playback = playback,
+                        kicks = kicks(playback),
+                        intro = true,
+                    )
+            )
+        }
+        finishIfOver(fight, match)
+    }
+
+    /** Stored right away, so leaving during the last animation keeps a win. */
+    private fun finishIfOver(fight: FightState, match: MatchState) {
+        match.outcome?.let { outcome ->
             viewModelScope.launch { arenaRepo.finishFight(fight.started, outcome) }
         }
     }

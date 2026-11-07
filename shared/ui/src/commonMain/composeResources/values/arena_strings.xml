@@ -18,6 +18,8 @@
     <string name="arena_opponent_idle">%1$s, ready to fight</string>
     <string name="arena_opponent_hit">%1$s takes a hit</string>
     <string name="arena_opponent_ko">%1$s is knocked out and dizzy</string>
+    <string name="arena_opponent_attack">%1$s attacks</string>
+    <string name="arena_opponent_guard">%1$s guards</string>
     <string name="arena_opponent_locked">Locked opponent</string>
 
     <string name="arena_next_ticket_hint">Check off one more routine for a ticket</string>
@@ -40,7 +42,7 @@
     <string name="arena_fight">Fight (uses 1 🎟)</string>
     <string name="arena_fight_no_ticket">No ticket left today</string>
 
-    <string name="arena_round">Round %1$d of %2$d</string>
+    <string name="arena_round">Turn %1$d of %2$d</string>
     <string name="arena_charge">%1$d of %2$d charge</string>
     <string name="arena_strike">Strike</string>
     <string name="arena_strike_hint">Normal hit, can be dodged</string>
@@ -50,6 +52,19 @@
     <string name="arena_special_hint">Ki blast: double damage, can\'t be blocked</string>
     <string name="arena_special_locked">Needs 3 charge</string>
 
+    <!-- Best of three (2026-11-07) -->
+    <string name="arena_match_round">Round %1$d</string>
+    <string name="arena_best_of_three">Best of three: win 2 rounds</string>
+    <string name="arena_rounds_won">%1$d of 2 rounds won</string>
+    <string name="arena_banner_round">ROUND %1$d</string>
+    <string name="arena_banner_fight">FIGHT!</string>
+    <string name="arena_banner_round_won">ROUND WON!</string>
+    <string name="arena_banner_round_lost">ROUND LOST</string>
+    <string name="arena_banner_time_up">TIME UP!</string>
+    <string name="arena_turn_player">Your turn</string>
+    <string name="arena_turn_opponent">Enemy\'s turn</string>
+    <string name="arena_float_blocked">BLOCKED -%1$d</string>
+
     <string name="arena_log_hit">%1$s hits: %2$d damage</string>
     <string name="arena_log_crit">Crit! %1$s deals %2$d damage</string>
     <string name="arena_log_guarded">%1$s hits the guard: %2$d damage</string>
@@ -57,7 +72,7 @@
     <string name="arena_log_guard">%1$s guards</string>
     <string name="arena_log_special">Special! %1$s deals %2$d damage</string>
     <string name="arena_log_ko">%1$s is knocked out!</string>
-    <string name="arena_log_time_up">Time\'s up! 30 rounds are over</string>
+    <string name="arena_log_time_up">Time\'s up! The round goes to the opponent</string>
     <string name="arena_float_crit">CRIT!</string>
     <string name="arena_float_dodge">DODGE!</string>
     <string name="arena_float_guard">GUARD</string>
