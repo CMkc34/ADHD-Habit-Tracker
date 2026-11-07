@@ -107,8 +107,7 @@ class FightSceneTest {
 
     @Test
     fun `idle fighters stand still`() {
-        val scene =
-            scene(fight(FightPlayback.opening(Battle.start(player, opponent.combatant))), 0)
+        val scene = scene(fight(FightPlayback.opening(Battle.start(player, opponent.combatant))), 0)
 
         assertEquals(FighterPose.STANCE, scene.playerPose)
         assertEquals(OpponentPose.IDLE, scene.opponentPose)
