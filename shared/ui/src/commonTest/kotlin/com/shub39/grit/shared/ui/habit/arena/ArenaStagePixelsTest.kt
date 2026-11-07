@@ -58,8 +58,6 @@ class ArenaStagePixelsTest {
         assertTrue(ArenaStagePixels.FOOT_Y - 48 >= 0)
         assertTrue(ArenaStagePixels.PLAYER_LEFT + 48 <= ArenaStagePixels.OPPONENT_LEFT)
         assertTrue(ArenaStagePixels.FOOT_Y - OpponentPixels.SIZE >= 0)
-        assertTrue(
-            ArenaStagePixels.OPPONENT_LEFT + OpponentPixels.SIZE <= ArenaStagePixels.WIDTH
-        )
+        assertTrue(ArenaStagePixels.OPPONENT_LEFT + OpponentPixels.SIZE <= ArenaStagePixels.WIDTH)
     }
 }

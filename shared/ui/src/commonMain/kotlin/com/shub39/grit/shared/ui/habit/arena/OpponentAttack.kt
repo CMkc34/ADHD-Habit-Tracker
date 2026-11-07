@@ -185,17 +185,9 @@ object OpponentAttack {
                     mapOf('O' to INK, 'S' to STONE, 'd' to if (f == 0) STONE_DARK else STONE)
             // a heavy book, tumbling
             Opponent.OVERWHELM_OGRE ->
-                (if (f == 0)
-                    listOf("OOOOOOOOO", "OBBBBBBPO", "OBBYYBBPO", "OBBBBBBPO", "OOOOOOOOO")
-                else
-                    listOf(
-                        "..OOO..",
-                        ".OBBBO.",
-                        "OBBYBBO",
-                        "OBBBBBO",
-                        "OPPPPPO",
-                        ".OOOOO.",
-                    )) to mapOf('O' to INK, 'B' to BOOK, 'Y' to RING, 'P' to PAGES)
+                (if (f == 0) listOf("OOOOOOOOO", "OBBBBBBPO", "OBBYYBBPO", "OBBBBBBPO", "OOOOOOOOO")
+                else listOf("..OOO..", ".OBBBO.", "OBBYBBO", "OBBBBBO", "OPPPPPO", ".OOOOO.")) to
+                    mapOf('O' to INK, 'B' to BOOK, 'Y' to RING, 'P' to PAGES)
             // a ball of purple-orange fire, flickering at the tail
             Opponent.PROCRASTINATION_DRAGON ->
                 listOf(
@@ -206,11 +198,7 @@ object OpponentAttack {
                     ".YYWWYFFF...",
                     "...YYFF.....",
                 ) to
-                    mapOf(
-                        'W' to WHITE,
-                        'Y' to FLAME_CORE,
-                        'F' to if (f == 0) FLAME else FLAME_EDGE,
-                    )
+                    mapOf('W' to WHITE, 'Y' to FLAME_CORE, 'F' to if (f == 0) FLAME else FLAME_EDGE)
         }
 
     private val WHITE = argb(0xFFFFFF)

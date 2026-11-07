@@ -359,8 +359,7 @@ private fun FloatingText(float: FloatText, age: Float, modifier: Modifier = Modi
             MaterialTheme.typography.titleLarge.copy(
                 fontFamily = flexFontEmphasis(),
                 fontWeight = FontWeight.Black,
-                shadow =
-                    Shadow(color = Color(0xFF231B2E), offset = Offset(2f, 2f), blurRadius = 2f),
+                shadow = Shadow(color = Color(0xFF231B2E), offset = Offset(2f, 2f), blurRadius = 2f),
             ),
         modifier =
             modifier.graphicsLayer {

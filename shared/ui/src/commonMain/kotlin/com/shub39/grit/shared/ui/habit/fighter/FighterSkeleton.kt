@@ -84,9 +84,7 @@ internal class Skeleton(
                     Pt(21, 34),
                     Pt(19.2f, 30f),
                 )
-                .map {
-                it + Pt(dx, dy)
-            }
+                .map { it + Pt(dx, dy) }
 
         /** Fighting stance, turned a little to the right, the front fist up beside the face. */
         val stance =
