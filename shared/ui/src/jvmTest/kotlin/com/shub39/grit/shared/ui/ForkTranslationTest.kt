@@ -42,6 +42,7 @@ class ForkTranslationTest {
             "label_strings.xml",
             "date_strings.xml",
             "branding_strings.xml",
+            "minigame_strings.xml",
         )
 
     private fun forkStrings(valuesDir: String): List<Document> =

@@ -32,8 +32,10 @@ import grit.shared.ui.generated.resources.Res.string
 import grit.shared.ui.generated.resources.alarm
 import grit.shared.ui.generated.resources.arena_tab
 import grit.shared.ui.generated.resources.fighter_tab
+import grit.shared.ui.generated.resources.games_tab
 import grit.shared.ui.generated.resources.habits
 import grit.shared.ui.generated.resources.settings
+import grit.shared.ui.generated.resources.sports_esports
 import grit.shared.ui.generated.resources.sports_martial_arts
 import grit.shared.ui.generated.resources.swords
 import org.jetbrains.compose.resources.DrawableResource
@@ -48,6 +50,7 @@ private val NAV_ITEMS =
         NavItem(Habits, string.habits, Res.drawable.alarm),
         NavItem(Avatar, string.fighter_tab, Res.drawable.sports_martial_arts),
         NavItem(Arena, string.arena_tab, Res.drawable.swords),
+        NavItem(Games, string.games_tab, Res.drawable.sports_esports),
         NavItem(Settings, string.settings, Res.drawable.settings),
     )
 
@@ -68,6 +71,7 @@ fun NavBar(modifier: Modifier = Modifier, currentRoute: Routes?, onNavigate: (Ro
                         Habits -> onNavigate(HabitsList)
                         Avatar -> onNavigate(Avatar)
                         Arena -> onNavigate(Arena)
+                        Games -> onNavigate(Games)
                         Settings -> onNavigate(SettingsHome)
                         else -> {}
                     }
@@ -98,6 +102,7 @@ fun NavRail(modifier: Modifier = Modifier, currentRoute: Routes?, onNavigate: (R
                         Habits -> onNavigate(HabitsList)
                         Avatar -> onNavigate(Avatar)
                         Arena -> onNavigate(Arena)
+                        Games -> onNavigate(Games)
                         Settings -> onNavigate(SettingsHome)
                         else -> {}
                     }

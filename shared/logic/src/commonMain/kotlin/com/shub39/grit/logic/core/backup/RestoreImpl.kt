@@ -26,6 +26,8 @@ import com.shub39.grit.core.fighter.RoutineStatStore
 import com.shub39.grit.core.habits.HabitRepo
 import com.shub39.grit.core.habits.style.RoutineStyleStore
 import com.shub39.grit.core.interfaces.AlarmScheduler
+import com.shub39.grit.core.minigame.MiniGameStore
+import com.shub39.grit.core.minigame.RunLog
 import com.shub39.grit.core.settings.backup.RestoreRepo
 import com.shub39.grit.core.settings.backup.RestoreResult
 import com.shub39.grit.core.settings.backup.SchemaMismatchException
@@ -51,6 +53,7 @@ class RestoreImpl(
     private val routineStyleStore: RoutineStyleStore,
     private val routineStatStore: RoutineStatStore,
     private val arenaStore: ArenaStore,
+    private val miniGameStore: MiniGameStore,
 ) : RestoreRepo {
     override suspend fun restoreData(): RestoreResult {
         return try {
@@ -109,6 +112,13 @@ class RestoreImpl(
             jsonDeserialized.arena?.let { backup ->
                 arenaStore.replaceAll(
                     FightLog.merge(arenaStore.getFights().first(), backup.toFightRecords())
+                )
+            }
+
+            // runs from both sides are kept, so the high scores are the best of both
+            jsonDeserialized.minigames?.let { backup ->
+                miniGameStore.replaceAll(
+                    RunLog.merge(miniGameStore.getRuns().first(), backup.toRunRecords())
                 )
             }
 

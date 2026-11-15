@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Mini-Spiele (Phase 7, SPEC 10, #41): der Spiele-Reiter. Die Spiel-Bildschirme bringen eigene Texte mit (#42-#44).
+  Eigene Datei des Forks, die strings.xml des Originals bleibt unverändert.
+-->
+<resources>
+    <string name="games_tab">Spiele</string>
+    <string name="games_intro">Jeden Tag Freispiele. Deine trainierten Werte machen jedes Spiel leichter.</string>
+    <string name="game_ki_barrage">Ki-Sperrfeuer</string>
+    <string name="game_ki_barrage_text">Zieh nach links und rechts, dein Ki feuert von selbst. Besiege die Wellen von Schergen und den Boss.</string>
+    <string name="game_clutter_smash">Kram-Crash</string>
+    <string name="game_clutter_smash_text">Tipp auf den fallenden Kram und zertrümmere ihn, bevor der Haufen die rote Linie erreicht.</string>
+    <string name="game_board_break">Bretter-Bruch</string>
+    <string name="game_board_break_text">Halten, um Ki zu sammeln, im grünen Bereich loslassen. Bretter, Ziegel, Eis.</string>
+    <string name="games_runs_left">▶ %1$d von %2$d heute übrig</string>
+    <string name="games_no_runs">Morgen gibt es %1$d neue Runden</string>
+    <string name="games_best">Rekord: %1$d</string>
+    <string name="games_no_best">Noch keine Punkte</string>
+    <string name="games_helped_by">Das hilft</string>
+    <string name="games_play">Spielen</string>
+    <string name="games_coming_soon">Kommt bald</string>
+</resources>

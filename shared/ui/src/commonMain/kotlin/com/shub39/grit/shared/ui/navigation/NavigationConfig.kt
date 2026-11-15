@@ -56,6 +56,7 @@ fun Routes.getTopLevelRoute(): Routes? =
         Habits,
         Avatar,
         Arena,
+        Games,
         Settings -> subType
         else -> null
     }

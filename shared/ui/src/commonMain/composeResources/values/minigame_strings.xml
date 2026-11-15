@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Mini-games (phase 7, SPEC 10, #41): the Games tab. The game screens add their own texts (#42-#44).
+  The fork's own file, the upstream strings.xml stays untouched.
+-->
+<resources>
+    <string name="games_tab">Games</string>
+    <string name="games_intro">Free runs every day. Your trained stats make every game easier.</string>
+    <string name="game_ki_barrage">Ki Barrage</string>
+    <string name="game_ki_barrage_text">Drag left and right, your ki fires by itself. Clear the minion waves and beat the boss.</string>
+    <string name="game_clutter_smash">Clutter Smash</string>
+    <string name="game_clutter_smash_text">Tap the falling junk to smash it before the pile reaches the red line.</string>
+    <string name="game_board_break">Board Break</string>
+    <string name="game_board_break_text">Hold to gather ki, let go in the green zone. Boards, bricks, ice.</string>
+    <string name="games_runs_left">▶ %1$d of %2$d left today</string>
+    <string name="games_no_runs">Back tomorrow with %1$d new runs</string>
+    <string name="games_best">Best: %1$d</string>
+    <string name="games_no_best">No score yet</string>
+    <string name="games_helped_by">Helped by</string>
+    <string name="games_play">Play</string>
+    <string name="games_coming_soon">Coming soon</string>
+</resources>
