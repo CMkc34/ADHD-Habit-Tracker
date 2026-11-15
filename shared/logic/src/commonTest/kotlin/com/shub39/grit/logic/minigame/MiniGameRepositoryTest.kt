@@ -16,6 +16,9 @@
  */
 package com.shub39.grit.logic.minigame
 
+import com.shub39.grit.core.arena.FightRecord
+import com.shub39.grit.core.arena.Opponent
+import com.shub39.grit.core.arena.Outcome
 import com.shub39.grit.core.avatar.AvatarData
 import com.shub39.grit.core.avatar.AvatarRepo
 import com.shub39.grit.core.avatar.AvatarState
@@ -26,9 +29,6 @@ import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.FighterState
-import com.shub39.grit.core.arena.FightRecord
-import com.shub39.grit.core.arena.Opponent
-import com.shub39.grit.core.arena.Outcome
 import com.shub39.grit.core.minigame.MiniGame
 import com.shub39.grit.core.minigame.MiniGameRules
 import com.shub39.grit.core.minigame.MiniGameStore

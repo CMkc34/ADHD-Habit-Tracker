@@ -138,7 +138,8 @@ fun MiniGamesPage(
                     onAction = onAction,
                 )
             // no screen yet, so no run can start (PLAYABLE_GAMES)
-            MiniGame.CLUTTER_SMASH, MiniGame.BOARD_BREAK -> Unit
+            MiniGame.CLUTTER_SMASH,
+            MiniGame.BOARD_BREAK -> Unit
         }
     }
 }

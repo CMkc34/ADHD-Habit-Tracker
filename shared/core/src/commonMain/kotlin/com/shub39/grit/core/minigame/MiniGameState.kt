@@ -34,7 +34,9 @@ data class MiniGameState(
     val games: List<MiniGameEntry>,
     val stats: GameStats,
     val today: LocalDate,
-    /** The arena opponents the fighter has unlocked; Ki Barrage takes its bosses from them (#42). */
+    /**
+     * The arena opponents the fighter has unlocked; Ki Barrage takes its bosses from them (#42).
+     */
     val opponents: List<Opponent> = listOf(Opponent.entries.first()),
 ) {
     fun entry(game: MiniGame): MiniGameEntry = games.first { it.game == game }
