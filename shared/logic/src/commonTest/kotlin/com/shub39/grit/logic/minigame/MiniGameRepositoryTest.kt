@@ -108,17 +108,16 @@ class MiniGameRepositoryTest {
     }
 
     @Test
-    fun `a run is stored with score zero at the start and gets its score at the end`() =
-        runTest {
-            val run = assertNotNull(repository.startRun(MiniGame.CLUTTER_SMASH))
-            assertEquals(0, store.runs.value.single().score)
-            assertEquals(3, run.stats.strength)
+    fun `a run is stored with score zero at the start and gets its score at the end`() = runTest {
+        val run = assertNotNull(repository.startRun(MiniGame.CLUTTER_SMASH))
+        assertEquals(0, store.runs.value.single().score)
+        assertEquals(3, run.stats.strength)
 
-            assertTrue(repository.finishRun(run, 420))
-            assertEquals(420, store.runs.value.single().score)
-            val state = repository.getMiniGameState().first()
-            assertEquals(420, state.entry(MiniGame.CLUTTER_SMASH).best)
-        }
+        assertTrue(repository.finishRun(run, 420))
+        assertEquals(420, store.runs.value.single().score)
+        val state = repository.getMiniGameState().first()
+        assertEquals(420, state.entry(MiniGame.CLUTTER_SMASH).best)
+    }
 
     @Test
     fun `only a better score is a new best`() = runTest {

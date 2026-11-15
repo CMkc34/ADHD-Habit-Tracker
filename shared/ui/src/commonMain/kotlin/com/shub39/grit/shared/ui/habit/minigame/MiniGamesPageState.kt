@@ -22,8 +22,8 @@ import com.shub39.grit.core.minigame.MiniGameState
 import com.shub39.grit.core.minigame.StartedRun
 
 /**
- * The games that have a screen already. The cards of the others say "Coming soon" and start no
- * run; each game issue (#42, #43, #44) adds its game here.
+ * The games that have a screen already. The cards of the others say "Coming soon" and start no run;
+ * each game issue (#42, #43, #44) adds its game here.
  */
 internal val PLAYABLE_GAMES: Set<MiniGame> = emptySet()
 
