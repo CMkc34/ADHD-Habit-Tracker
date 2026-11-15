@@ -19,4 +19,20 @@
     <string name="games_helped_by">Helped by</string>
     <string name="games_play">Play</string>
     <string name="games_coming_soon">Coming soon</string>
+    <!-- Ki Barrage (#42) -->
+    <string name="kibarrage_wave">WAVE %1$d</string>
+    <string name="kibarrage_boss">BOSS!</string>
+    <string name="kibarrage_ko">K.O.!</string>
+    <string name="kibarrage_best">BEST %1$d</string>
+    <string name="kibarrage_hearts">%1$d hearts left</string>
+    <string name="kibarrage_hint">Drag to move. Your ki fires by itself.</string>
+    <string name="kibarrage_over">Run over</string>
+    <string name="kibarrage_points">%1$d points</string>
+    <string name="kibarrage_wave_reached">You reached wave %1$d</string>
+    <string name="kibarrage_new_best">New best!</string>
+    <string name="kibarrage_back">Back to the games</string>
+    <string name="kibarrage_end_title">End this run?</string>
+    <string name="kibarrage_end_text">Your points so far count as the score of this run.</string>
+    <string name="kibarrage_end">End run</string>
+    <string name="kibarrage_keep_playing">Keep playing</string>
 </resources>

@@ -39,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -87,7 +88,7 @@ import org.jetbrains.compose.resources.stringResource
 /**
  * The Games tab (SPEC 10, #41): one card per mini-game with today's free runs, the best score and
  * the stats that help. All state comes from `MiniGamesViewModel`, every tap goes back to it as a
- * [MiniGamesAction]. A started run covers the whole screen (the game screens follow in #42 to #44).
+ * [MiniGamesAction]. A started run covers the whole screen with its game (Ki Barrage since #42).
  */
 @Composable
 fun MiniGamesPage(
@@ -123,6 +124,22 @@ fun MiniGamesPage(
                     onPlay = { onAction(MiniGamesAction.Start(entry.game)) },
                 )
             }
+        }
+    }
+
+    state.run?.let { run ->
+        when (run.game) {
+            MiniGame.KI_BARRAGE ->
+                KiBarrageScreen(
+                    run = run,
+                    avatar = avatar,
+                    // the best before this run, so the end card can tell a new one
+                    best = remember(run.started) { games.entry(MiniGame.KI_BARRAGE).best },
+                    onAction = onAction,
+                )
+            // no screen yet, so no run can start (PLAYABLE_GAMES)
+            MiniGame.CLUTTER_SMASH,
+            MiniGame.BOARD_BREAK -> Unit
         }
     }
 }

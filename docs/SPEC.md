@@ -903,6 +903,15 @@ Abgestimmt am 2026-11-07 und 2026-11-15. Epic #40, Label `phase-7`.
   selbst nach oben. Wellen von Schergen (Wecker, Benachrichtigungen, Socken …) fliegen in Kurven und
   Zickzack und werfen Geschosse; alle paar Wellen ein freigeschalteter Arena-Gegner als Boss. Tempo =
   Bewegung, Fokus = Feuerrate, Ausdauer = Herzen, Kraft = Schaden.
+  Umsetzung: reine Simulation `core.minigame.kibarrage.KiBarrage` (Feld 120 x 200, feste Schritte
+  von 1/60 s, Würfel injiziert, getestet), Zahlen aus `KiBarrageConfig.of(GameStats)`: Tempo 70 +
+  12 je Stufe, Feuerpause 0,34 s bis min. 0,15 s, Herzen 3 bis 6, Schaden 1 bis 4. Jede 3. Welle ist
+  eine Boss-Welle; die Bosse kommen der Reihe nach aus den freigeschalteten Leiter-Gegnern
+  (`MiniGameState.opponents`). Punkte: Scherge 10, Boss-Treffer 25, Boss-K.O. 500. Ein Treffer
+  kostet ein Herz, danach 1,5 s unverwundbar; ohne Herzen ist die Runde vorbei. Bildschirm
+  `KiBarrageScreen` (Vollbild, Ziehen irgendwo auf dem Feld), Bilder in `KiBarragePixels`.
+  Beenden über X/Zurück fragt nach; die Punkte bis dahin zählen.
+- *#43 und #44 ruhen vorerst (Wunsch vom 2026-11-15: „stop after Issue #42“).*
 - **Kram-Crash (#43):** Waschküche. Kram fällt in drei Spalten und stapelt sich; Tippen zertrümmert
   ihn mit einem Ki-Schlag, schnelle Treffer geben Combos. Volle Ki-Leiste: Ki-Welle räumt alles ab.
   Stapel über der roten Linie beendet die Runde, sonst nach 60 s. Kraft = weniger Treffer für großen

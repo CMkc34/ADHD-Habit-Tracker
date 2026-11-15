@@ -16,6 +16,8 @@
  */
 package com.shub39.grit.core.minigame
 
+import com.shub39.grit.core.arena.Ladder
+import com.shub39.grit.core.arena.Opponent
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.FighterState
 import kotlinx.coroutines.flow.Flow
@@ -32,13 +34,22 @@ data class MiniGameState(
     val games: List<MiniGameEntry>,
     val stats: GameStats,
     val today: LocalDate,
+    /**
+     * The arena opponents the fighter has unlocked; Ki Barrage takes its bosses from them (#42).
+     */
+    val opponents: List<Opponent> = listOf(Opponent.entries.first()),
 ) {
     fun entry(game: MiniGame): MiniGameEntry = games.first { it.game == game }
 
     fun canStart(game: MiniGame): Boolean = entry(game).canStart
 
     companion object {
-        fun of(runs: List<RunRecord>, fighter: FighterState, today: LocalDate): MiniGameState =
+        fun of(
+            runs: List<RunRecord>,
+            fighter: FighterState,
+            today: LocalDate,
+            beaten: Set<Opponent> = emptySet(),
+        ): MiniGameState =
             MiniGameState(
                 games =
                     MiniGame.entries.map {
@@ -50,6 +61,7 @@ data class MiniGameState(
                     },
                 stats = GameStats.of(fighter),
                 today = today,
+                opponents = Ladder.unlocked(beaten),
             )
     }
 }
@@ -84,7 +96,11 @@ data class GameStats(
 }
 
 /** A run that has started and used one of the day's runs. */
-data class StartedRun(val record: RunRecord, val stats: GameStats) {
+data class StartedRun(
+    val record: RunRecord,
+    val stats: GameStats,
+    val opponents: List<Opponent> = listOf(Opponent.entries.first()),
+) {
     val game: MiniGame
         get() = requireNotNull(record.game)
 }
