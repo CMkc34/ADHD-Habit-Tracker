@@ -16,12 +16,17 @@
  */
 package com.shub39.grit.logic.minigame
 
+import com.shub39.grit.core.arena.ArenaStore
+import com.shub39.grit.core.arena.FightLog
+import com.shub39.grit.core.arena.FightRecord
 import com.shub39.grit.core.avatar.AvatarRepo
+import com.shub39.grit.core.avatar.AvatarState
 import com.shub39.grit.core.minigame.MiniGame
 import com.shub39.grit.core.minigame.MiniGameRepo
 import com.shub39.grit.core.minigame.MiniGameState
 import com.shub39.grit.core.minigame.MiniGameStore
 import com.shub39.grit.core.minigame.RunLog
+import com.shub39.grit.core.minigame.RunRecord
 import com.shub39.grit.core.minigame.StartedRun
 import com.shub39.grit.core.now
 import kotlin.time.Clock
@@ -33,18 +38,30 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.datetime.LocalDate
 import org.koin.core.annotation.Single
 
-/** Combines the run log and the fighter into the [MiniGameState] of the Games tab (SPEC 10). */
+/**
+ * Combines the run log, the fighter and the arena progress into the [MiniGameState] of the Games
+ * tab (SPEC 10).
+ */
 @Single(binds = [MiniGameRepo::class])
-class MiniGameRepository(private val store: MiniGameStore, private val avatarRepo: AvatarRepo) :
-    MiniGameRepo {
+class MiniGameRepository(
+    private val store: MiniGameStore,
+    private val avatarRepo: AvatarRepo,
+    private val arenaStore: ArenaStore,
+) : MiniGameRepo {
 
     // two quick taps must not start two runs
     private val startLock = Mutex()
 
     override fun getMiniGameState(): Flow<MiniGameState> =
-        combine(store.getRuns(), avatarRepo.getAvatarState()) { runs, avatar ->
-            MiniGameState.of(runs = runs, fighter = avatar.fighter, today = LocalDate.now())
-        }
+        combine(store.getRuns(), avatarRepo.getAvatarState(), arenaStore.getFights(), ::state)
+
+    private fun state(runs: List<RunRecord>, avatar: AvatarState, fights: List<FightRecord>) =
+        MiniGameState.of(
+            runs = runs,
+            fighter = avatar.fighter,
+            today = LocalDate.now(),
+            beaten = FightLog.beaten(fights),
+        )
 
     override suspend fun startRun(game: MiniGame): StartedRun? =
         startLock.withLock {
@@ -59,7 +76,7 @@ class MiniGameRepository(private val store: MiniGameStore, private val avatarRep
                     records = store.getRuns().first(),
                 )
             store.addRun(record)
-            StartedRun(record, state.stats)
+            StartedRun(record, state.stats, state.opponents)
         }
 
     override suspend fun finishRun(run: StartedRun, score: Int): Boolean {

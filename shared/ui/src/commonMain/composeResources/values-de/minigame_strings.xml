@@ -19,4 +19,20 @@
     <string name="games_helped_by">Das hilft</string>
     <string name="games_play">Spielen</string>
     <string name="games_coming_soon">Kommt bald</string>
+    <!-- Ki-Sperrfeuer (#42) -->
+    <string name="kibarrage_wave">WELLE %1$d</string>
+    <string name="kibarrage_boss">BOSS!</string>
+    <string name="kibarrage_ko">K.O.!</string>
+    <string name="kibarrage_best">REKORD %1$d</string>
+    <string name="kibarrage_hearts">Noch %1$d Herzen</string>
+    <string name="kibarrage_hint">Ziehen zum Bewegen. Dein Ki feuert von selbst.</string>
+    <string name="kibarrage_over">Runde vorbei</string>
+    <string name="kibarrage_points">%1$d Punkte</string>
+    <string name="kibarrage_wave_reached">Du hast Welle %1$d erreicht</string>
+    <string name="kibarrage_new_best">Neuer Rekord!</string>
+    <string name="kibarrage_back">Zurück zu den Spielen</string>
+    <string name="kibarrage_end_title">Runde beenden?</string>
+    <string name="kibarrage_end_text">Deine Punkte bis jetzt zählen als Ergebnis dieser Runde.</string>
+    <string name="kibarrage_end">Beenden</string>
+    <string name="kibarrage_keep_playing">Weiterspielen</string>
 </resources>

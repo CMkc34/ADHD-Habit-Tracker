@@ -26,10 +26,14 @@ import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.core.fighter.FighterStat
 import com.shub39.grit.core.fighter.FighterState
+import com.shub39.grit.core.arena.FightRecord
+import com.shub39.grit.core.arena.Opponent
+import com.shub39.grit.core.arena.Outcome
 import com.shub39.grit.core.minigame.MiniGame
 import com.shub39.grit.core.minigame.MiniGameRules
 import com.shub39.grit.core.minigame.MiniGameStore
 import com.shub39.grit.core.minigame.RunRecord
+import com.shub39.grit.logic.arena.FakeArenaStore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -42,6 +46,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 
 class FakeMiniGameStore(runs: List<RunRecord> = emptyList()) : MiniGameStore {
     val runs = MutableStateFlow(runs)
@@ -91,7 +96,8 @@ private class FakeAvatarRepo : AvatarRepo {
 class MiniGameRepositoryTest {
 
     private val store = FakeMiniGameStore()
-    private val repository = MiniGameRepository(store, FakeAvatarRepo())
+    private val arena = FakeArenaStore()
+    private val repository = MiniGameRepository(store, FakeAvatarRepo(), arena)
 
     @Test
     fun `three free runs per game, then none`() = runTest {
@@ -128,5 +134,16 @@ class MiniGameRepositoryTest {
         val third = assertNotNull(repository.startRun(MiniGame.BOARD_BREAK))
         assertTrue(repository.finishRun(third, 13))
         assertEquals(3, store.runs.value.map { it.startedAt }.distinct().size)
+    }
+
+    @Test
+    fun `the bosses are the unlocked arena opponents`() = runTest {
+        val first = assertNotNull(repository.startRun(MiniGame.KI_BARRAGE))
+        assertEquals(listOf(Opponent.SNOOZE_BUTTON), first.opponents)
+
+        val day = LocalDate(2026, 11, 1)
+        arena.fights.value = listOf(FightRecord(day, Opponent.SNOOZE_BUTTON.id, Outcome.WIN, 1))
+        val run = assertNotNull(repository.startRun(MiniGame.KI_BARRAGE))
+        assertEquals(listOf(Opponent.SNOOZE_BUTTON, Opponent.COUCH_GREMLIN), run.opponents)
     }
 }
