@@ -911,12 +911,17 @@ Abgestimmt am 2026-11-07 und 2026-11-15. Epic #40, Label `phase-7`.
   kostet ein Herz, danach 1,5 s unverwundbar; ohne Herzen ist die Runde vorbei. Bildschirm
   `KiBarrageScreen` (Vollbild, Ziehen irgendwo auf dem Feld), Bilder in `KiBarragePixels`.
   Beenden über X/Zurück fragt nach; die Punkte bis dahin zählen.
-- *#43 und #44 ruhen vorerst (Wunsch vom 2026-11-15: „stop after Issue #42“).*
 - **Kram-Crash (#43):** Waschküche. Kram fällt in drei Spalten und stapelt sich; Tippen zertrümmert
   ihn mit einem Ki-Schlag, schnelle Treffer geben Combos. Volle Ki-Leiste: Ki-Welle räumt alles ab.
   Stapel über der roten Linie beendet die Runde, sonst nach 60 s. Kraft = weniger Treffer für großen
   Kram, Fokus = Ki füllt sich schneller, Tempo = kürzere Pause zwischen Schlägen, Ausdauer = etwas
   mehr Platz unter der Linie.
+  Umsetzung: reine Simulation `core.minigame.clutter.ClutterSmash` (Feld 160 x 128, feste Schritte
+  von 1/60 s, Würfel injiziert, getestet), Zahlen aus `ClutterSmashConfig.of(GameStats)`: Schaden
+  1 bis 3, Ki pro Treffer 15 bis 30 (von 100), Schlagpause 0,28 s bis min. 0,10 s, rote Linie bei
+  y = 38 bis 26. Sechs Kram-Arten (`JunkKind`: Shirt, Brief, Handy, Pizzakarton, Tasse, Socke).
+  Punkte: 10 × Combo (bis ×8), Ki-Welle 25 je Teil. Bildschirm `ClutterSmashScreen`, Bilder in
+  `ClutterSmashPixels`.
 - **Bretter-Bruch (#44):** Trainingsplatz. 3 Schläge je Runde: Bretter, Ziegel, Eis. Halten lädt Ki,
   eine Nadel läuft über die Leiste; Loslassen bewertet PERFEKT/SUPER/GUT/DANEBEN, so viele Lagen
   brechen. Punkte = gebrochene Lagen. Fokus = breiterer grüner Bereich, Kraft = mehr Lagen pro

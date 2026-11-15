@@ -137,8 +137,14 @@ fun MiniGamesPage(
                     best = remember(run.started) { games.entry(MiniGame.KI_BARRAGE).best },
                     onAction = onAction,
                 )
+            MiniGame.CLUTTER_SMASH ->
+                ClutterSmashScreen(
+                    run = run,
+                    avatar = avatar,
+                    best = remember(run.started) { games.entry(MiniGame.CLUTTER_SMASH).best },
+                    onAction = onAction,
+                )
             // no screen yet, so no run can start (PLAYABLE_GAMES)
-            MiniGame.CLUTTER_SMASH,
             MiniGame.BOARD_BREAK -> Unit
         }
     }

@@ -35,4 +35,15 @@
     <string name="kibarrage_end_text">Deine Punkte bis jetzt zählen als Ergebnis dieser Runde.</string>
     <string name="kibarrage_end">Beenden</string>
     <string name="kibarrage_keep_playing">Weiterspielen</string>
+    <!-- Kram-Crash (#43) -->
+    <string name="cluttersmash_time">%1$d s</string>
+    <string name="cluttersmash_combo">COMBO ×%1$d</string>
+    <string name="cluttersmash_ki">KI</string>
+    <string name="cluttersmash_ki_bar">Ki-Leiste %1$d Prozent</string>
+    <string name="cluttersmash_tap_me">TIPP MICH!</string>
+    <string name="cluttersmash_ki_wave">KI-WELLE!</string>
+    <string name="cluttersmash_too_high">ZU HOCH!</string>
+    <string name="cluttersmash_time_up">ZEIT UM!</string>
+    <string name="cluttersmash_hint">Tipp auf den fallenden Kram, um ihn zu zertrümmern. Ist die Ki-Leiste voll, tipp auf deinen Kämpfer für eine Ki-Welle.</string>
+    <string name="cluttersmash_smashed">%1$d Teile zertrümmert</string>
 </resources>

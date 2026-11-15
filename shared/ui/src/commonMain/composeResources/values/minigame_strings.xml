@@ -35,4 +35,15 @@
     <string name="kibarrage_end_text">Your points so far count as the score of this run.</string>
     <string name="kibarrage_end">End run</string>
     <string name="kibarrage_keep_playing">Keep playing</string>
+    <!-- Clutter Smash (#43) -->
+    <string name="cluttersmash_time">%1$ds</string>
+    <string name="cluttersmash_combo">COMBO ×%1$d</string>
+    <string name="cluttersmash_ki">KI</string>
+    <string name="cluttersmash_ki_bar">Ki bar %1$d percent</string>
+    <string name="cluttersmash_tap_me">TAP ME!</string>
+    <string name="cluttersmash_ki_wave">KI WAVE!</string>
+    <string name="cluttersmash_too_high">TOO HIGH!</string>
+    <string name="cluttersmash_time_up">TIME!</string>
+    <string name="cluttersmash_hint">Tap the falling junk to smash it. When the ki bar is full, tap your fighter for a Ki Wave.</string>
+    <string name="cluttersmash_smashed">%1$d pieces smashed</string>
 </resources>
