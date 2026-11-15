@@ -40,6 +40,7 @@ import com.shub39.grit.shared.ui.habit.arena.ArenaPage
 import com.shub39.grit.shared.ui.habit.avatar.AvatarPage
 import com.shub39.grit.shared.ui.habit.avatar.AvatarShopPage
 import com.shub39.grit.shared.ui.habit.avatar.FighterNoticeHost
+import com.shub39.grit.shared.ui.habit.minigame.MiniGamesPage
 import com.shub39.grit.shared.ui.habit.motivation.BonusPopupHost
 import com.shub39.grit.shared.ui.habit.motivation.DailyGreetingHost
 import com.shub39.grit.shared.ui.habit.motivation.MotivationPopupHost
@@ -60,6 +61,7 @@ import com.shub39.grit.shared.ui.theme.paperBackground
 import com.shub39.grit.shared.ui.viewmodel.ArenaViewModel
 import com.shub39.grit.shared.ui.viewmodel.HabitViewModel
 import com.shub39.grit.shared.ui.viewmodel.MainViewModel
+import com.shub39.grit.shared.ui.viewmodel.MiniGamesViewModel
 import com.shub39.grit.shared.ui.viewmodel.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -259,6 +261,17 @@ private fun EntryProviderScope<Routes>.habitsScreens(
             state = state,
             onAction = viewModel::onAction,
             onOpenRoutines = { topLevelBackStack.add(HabitsList) },
+            modifier = Modifier.paperBackground(),
+        )
+    }
+
+    entry<Games>(metadata = fadeTransitionMetadata()) {
+        val viewModel = koinViewModel<MiniGamesViewModel>()
+        val state by viewModel.state.collectAsStateWithLifecycle()
+
+        MiniGamesPage(
+            state = state,
+            onAction = viewModel::onAction,
             modifier = Modifier.paperBackground(),
         )
     }

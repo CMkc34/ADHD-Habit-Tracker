@@ -867,7 +867,54 @@ Abgestimmt am 2026-11-04. Epic #1, Label `phase-6` (Repo `CMkc34/ADHD-Habit-Trac
 
 ---
 
-## 10. Offene Fragen
+## 10. Phase 7 – Mini-Spiele
+
+Abgestimmt am 2026-11-07 und 2026-11-15. Epic #40, Label `phase-7`.
+
+### 10.1 Grundidee
+- Neben der Arena drei Arcade-Spiele mit dem eigenen Kämpfer: **Ki-Sperrfeuer** (Ki Barrage, #42),
+  **Kram-Crash** (Clutter Smash, #43) und **Bretter-Bruch** (Board Break, #44).
+- Alles eigene Designs in Pixel-Art mit echtem Kämpfer, echten Gegnern und den Arena-Bühnen; nichts
+  sieht aus wie ein bekanntes Spiel (kein Gitter aus marschierenden Gegnern). Vorlage sind die
+  abgenommenen Vorschau-GIFs (`minigames/*-preview.gif` in den Projektdateien), Stil bleibt so.
+- **Kosten:** je Spiel **3 Freispiele pro Tag** (zusammen 9), unabhängig von den Arena-Tickets. Nicht
+  genutzte verfallen um Mitternacht.
+- **Belohnung:** nur ein **Rekord** je Spiel. Keine Shakes, keine Kosmetik, keine XP.
+- **Werte helfen:** Kraft, Tempo, Ausdauer und Fokus machen jedes Spiel leichter (immer gedeckelt).
+  Die Spiele erhöhen nie Werte, es bleibt bei „nur Gewohnheiten machen stärker“.
+
+### 10.2 Spiele-Reiter (#41)
+- Fünfter Reiter **Spiele** (Routinen | Kämpfer | Arena | Spiele | Einstellungen), Symbol
+  `sports_esports`. Eigenes `MiniGamesViewModel` (`MiniGamesPageState`, `MiniGamesAction`).
+- Je Spiel eine Karte: Kämpfer in passender Pose, Name, Kurzbeschreibung, „▶ 2 von 3 heute übrig“
+  bzw. „Morgen gibt es 3 neue Runden“, Rekord, welche Werte helfen, Knopf „Spielen“. Spiele ohne
+  fertigen Bildschirm zeigen „Kommt bald“ und starten keine Runde (`PLAYABLE_GAMES`).
+- `core.minigame`: `MiniGame` (feste `id`), `MiniGameRules.RUNS_PER_DAY = 3`, `RunRecord`, `RunLog`
+  (übrige Runden, Rekord, neuer Rekord, Zusammenführen), `MiniGameState`, `GameStats` (die vier
+  Stufen, jedes Spiel rechnet daraus seine eigenen Zahlen).
+- Eine Runde wird beim Start mit 0 Punkten gespeichert (Verlassen kostet die Runde) und am Ende mit
+  den echten Punkten aktualisiert.
+- Speicher: Preferences-Schlüssel `minigame_runs` (`datum|spielId|punkte|startzeit`).
+- Backup: optionales Feld `minigames` (Liste der Runden); Import vereinigt beide Logs, dieselbe Runde
+  behält die höhere Punktzahl. Ältere Backups bleiben importierbar.
+
+### 10.3 Spiele
+- **Ki-Sperrfeuer (#42):** Bühne Bildschirmwelt. Ziehen bewegt den Kämpfer unten, Ki feuert von
+  selbst nach oben. Wellen von Schergen (Wecker, Benachrichtigungen, Socken …) fliegen in Kurven und
+  Zickzack und werfen Geschosse; alle paar Wellen ein freigeschalteter Arena-Gegner als Boss. Tempo =
+  Bewegung, Fokus = Feuerrate, Ausdauer = Herzen, Kraft = Schaden.
+- **Kram-Crash (#43):** Waschküche. Kram fällt in drei Spalten und stapelt sich; Tippen zertrümmert
+  ihn mit einem Ki-Schlag, schnelle Treffer geben Combos. Volle Ki-Leiste: Ki-Welle räumt alles ab.
+  Stapel über der roten Linie beendet die Runde, sonst nach 60 s. Kraft = weniger Treffer für großen
+  Kram, Fokus = Ki füllt sich schneller, Tempo = kürzere Pause zwischen Schlägen, Ausdauer = etwas
+  mehr Platz unter der Linie.
+- **Bretter-Bruch (#44):** Trainingsplatz. 3 Schläge je Runde: Bretter, Ziegel, Eis. Halten lädt Ki,
+  eine Nadel läuft über die Leiste; Loslassen bewertet PERFEKT/SUPER/GUT/DANEBEN, so viele Lagen
+  brechen. Punkte = gebrochene Lagen. Fokus = breiterer grüner Bereich, Kraft = mehr Lagen pro
+  Schlag, Tempo = langsamere Nadel.
+
+
+## 11. Offene Fragen
 
 - ~~Soll das Pop-up per Einstellung abschaltbar sein?~~ Umgesetzt in #9 (siehe 3.3).
 - ~~Pop-up beim Abhaken eines vergangenen Tages ohne laufende Serie?~~ Entschieden: kein Pop-up bei

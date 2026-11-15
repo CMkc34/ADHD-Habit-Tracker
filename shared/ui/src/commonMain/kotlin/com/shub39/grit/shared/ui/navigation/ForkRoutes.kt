@@ -25,5 +25,8 @@ data object Avatar : Routes
 /** Own tab for the turn-based fights (fork-specific, #14): tickets, ladder and the fight screen. */
 data object Arena : Routes
 
+/** Own tab for the arcade mini-games (fork-specific, #41): free runs per day and high scores. */
+data object Games : Routes
+
 /** The shop of the fighter, opened from the Fighter tab (fork-specific, #138). */
 data object PlantShop : Routes

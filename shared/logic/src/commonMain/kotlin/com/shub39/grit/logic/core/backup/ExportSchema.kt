@@ -38,6 +38,7 @@ data class ExportSchema(
     val routineStyles: List<RoutineStyleSchema>? = null,
     val routineStats: List<RoutineStatSchema>? = null,
     val arena: ArenaSchema? = null,
+    val minigames: MiniGameSchema? = null,
 )
 
 @Serializable
