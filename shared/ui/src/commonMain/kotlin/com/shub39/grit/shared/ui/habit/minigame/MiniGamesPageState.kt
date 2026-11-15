@@ -25,7 +25,8 @@ import com.shub39.grit.core.minigame.StartedRun
  * The games that have a screen already. The cards of the others say "Coming soon" and start no run;
  * each game issue (#42, #43, #44) adds its game here.
  */
-internal val PLAYABLE_GAMES: Set<MiniGame> = setOf(MiniGame.KI_BARRAGE, MiniGame.CLUTTER_SMASH)
+internal val PLAYABLE_GAMES: Set<MiniGame> =
+    setOf(MiniGame.KI_BARRAGE, MiniGame.CLUTTER_SMASH, MiniGame.BOARD_BREAK)
 
 /** Everything the Games tab shows (SPEC 10, #41); owned by `MiniGamesViewModel`. */
 data class MiniGamesPageState(

@@ -46,4 +46,19 @@
     <string name="cluttersmash_time_up">TIME!</string>
     <string name="cluttersmash_hint">Tap the falling junk to smash it. When the ki bar is full, tap your fighter for a Ki Wave.</string>
     <string name="cluttersmash_smashed">%1$d pieces smashed</string>
+    <!-- Board Break (#44) -->
+    <string name="boardbreak_strike">STRIKE %1$d / %2$d</string>
+    <string name="boardbreak_boards">BOARDS</string>
+    <string name="boardbreak_bricks">BRICKS</string>
+    <string name="boardbreak_ice">ICE</string>
+    <string name="boardbreak_perfect">PERFECT!</string>
+    <string name="boardbreak_great">GREAT!</string>
+    <string name="boardbreak_good">GOOD!</string>
+    <string name="boardbreak_miss">MISS!</string>
+    <string name="boardbreak_broken">%1$d / %2$d broken</string>
+    <string name="boardbreak_total_broken">%1$d of %2$d layers broken</string>
+    <string name="boardbreak_hold">HOLD TO CHARGE</string>
+    <string name="boardbreak_release">RELEASE IN GREEN!</string>
+    <string name="boardbreak_hint">Hold anywhere to gather ki, then release when the needle is in the green zone.</string>
+    <string name="boardbreak_meter">Timing meter, needle at %1$d percent</string>
 </resources>

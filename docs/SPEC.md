@@ -926,6 +926,11 @@ Abgestimmt am 2026-11-07 und 2026-11-15. Epic #40, Label `phase-7`.
   eine Nadel läuft über die Leiste; Loslassen bewertet PERFEKT/SUPER/GUT/DANEBEN, so viele Lagen
   brechen. Punkte = gebrochene Lagen. Fokus = breiterer grüner Bereich, Kraft = mehr Lagen pro
   Schlag, Tempo = langsamere Nadel.
+  Umsetzung: reine Simulation `core.minigame.boardbreak.BoardBreak` (Feld 160 x 128 auf
+  `TrainingGroundPixels`, feste Schritte von 1/60 s, getestet), Zahlen aus
+  `BoardBreakConfig.of(GameStats)`: grüner Halbbereich 0,12 bis 0,20 (helles Zentrum 0,04 bis 0,07),
+  Extra-Lagen 0 bis +5 auf die Grundlagen (Bretter 4, Ziegel 6, Eis 8), Nadeltempo 1,55 bis min.
+  0,75 Leistenbreiten pro Sekunde. Bildschirm `BoardBreakScreen`, Bilder in `BoardBreakPixels`.
 
 
 ## 11. Offene Fragen
