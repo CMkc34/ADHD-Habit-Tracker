@@ -46,4 +46,19 @@
     <string name="cluttersmash_time_up">ZEIT UM!</string>
     <string name="cluttersmash_hint">Tipp auf den fallenden Kram, um ihn zu zertrümmern. Ist die Ki-Leiste voll, tipp auf deinen Kämpfer für eine Ki-Welle.</string>
     <string name="cluttersmash_smashed">%1$d Teile zertrümmert</string>
+    <!-- Bretter-Bruch (#44) -->
+    <string name="boardbreak_strike">SCHLAG %1$d / %2$d</string>
+    <string name="boardbreak_boards">BRETTER</string>
+    <string name="boardbreak_bricks">ZIEGEL</string>
+    <string name="boardbreak_ice">EIS</string>
+    <string name="boardbreak_perfect">PERFEKT!</string>
+    <string name="boardbreak_great">SUPER!</string>
+    <string name="boardbreak_good">GUT!</string>
+    <string name="boardbreak_miss">DANEBEN!</string>
+    <string name="boardbreak_broken">%1$d / %2$d gebrochen</string>
+    <string name="boardbreak_total_broken">%1$d von %2$d Lagen gebrochen</string>
+    <string name="boardbreak_hold">HALTEN ZUM LADEN</string>
+    <string name="boardbreak_release">IM GRÜNEN LOSLASSEN!</string>
+    <string name="boardbreak_hint">Überall halten, um Ki zu sammeln, und loslassen, wenn die Nadel im grünen Bereich ist.</string>
+    <string name="boardbreak_meter">Timing-Leiste, Nadel bei %1$d Prozent</string>
 </resources>

@@ -144,8 +144,13 @@ fun MiniGamesPage(
                     best = remember(run.started) { games.entry(MiniGame.CLUTTER_SMASH).best },
                     onAction = onAction,
                 )
-            // no screen yet, so no run can start (PLAYABLE_GAMES)
-            MiniGame.BOARD_BREAK -> Unit
+            MiniGame.BOARD_BREAK ->
+                BoardBreakScreen(
+                    run = run,
+                    avatar = avatar,
+                    best = remember(run.started) { games.entry(MiniGame.BOARD_BREAK).best },
+                    onAction = onAction,
+                )
         }
     }
 }
