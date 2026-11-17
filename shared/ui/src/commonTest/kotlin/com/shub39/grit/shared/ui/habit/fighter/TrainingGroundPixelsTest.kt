@@ -129,6 +129,25 @@ class TrainingGroundPixelsTest {
     }
 
     @Test
+    fun `backdrop has layered landscape and dims when tired`() {
+        val awake = TrainingGroundPixels.renderBackdrop(Weather.SUNNY)
+        assertEquals(WIDTH, awake.width)
+        assertEquals(TrainingGroundPixels.BACKDROP_HEIGHT, awake.height)
+        assertTrue(awake.argb.any { it != 0 })
+        // top row above the mountain peaks stays transparent so the sky shows through
+        assertEquals(0, awake[0, 0])
+        val tired = TrainingGroundPixels.renderBackdrop(Weather.SUNNY, tired = true)
+        fun saturation(image: PixelImage) =
+            image.argb
+                .filter { it != 0 }
+                .sumOf { c ->
+                    val ch = listOf(16, 8, 0).map { (c shr it) and 0xFF }
+                    ch.max() - ch.min()
+                }
+        assertTrue(saturation(tired) < saturation(awake))
+    }
+
+    @Test
     fun `no prop overlaps any fighter at any size`() {
         val ground = TrainingGroundPixels.renderGround(all)
         val bare = TrainingGroundPixels.renderGround(setOf(FighterItems.MAT))

@@ -108,6 +108,14 @@ object KiBarragePixels {
             val y = random.nextInt(height - 50)
             argb[y * width + x] = if (i % 3 == 0) STAR_GOLD else STAR
         }
+        // subtle horizon glow and cyber-dojo skyline silhouette above the floor
+        for (y in (FLOOR_Y - 14) until FLOOR_Y) {
+            val t = (y - (FLOOR_Y - 14)) / 14f
+            val band = (t * 4).toInt() / 4f
+            val glow = mix(SKY_LOW, HORIZON_GLOW, band)
+            for (x in 0 until width) argb[y * width + x] = glow
+        }
+        drawSkyline(argb, width)
         val stage = ArenaStagePixels.render(ArenaStage.SCREEN_WORLD, ArenaLighting.NIGHT)
         for (y in FLOOR_FROM until stage.height) for (x in 0 until width) {
             val c = stage[FLOOR_LEFT + x, y]
@@ -115,6 +123,48 @@ object KiBarragePixels {
             if (c != 0 && fy < height) argb[fy * width + x] = c
         }
         return PixelImage(width, height, argb)
+    }
+
+    /** Draws a distant cyber-dojo skyline silhouette just above [FLOOR_Y]. */
+    private fun drawSkyline(argb: IntArray, width: Int) {
+        // (startX, width, heightAboveFloor, pagodaEaves)
+        val towers =
+            listOf(
+                listOf(2, 12, 16, 0),
+                listOf(15, 16, 22, 1),
+                listOf(33, 10, 12, 0),
+                listOf(45, 18, 18, 0),
+                listOf(66, 14, 24, 1),
+                listOf(82, 12, 14, 0),
+                listOf(96, 15, 20, 1),
+                listOf(112, 8, 13, 0),
+            )
+        for ((sx, tw, th, pagoda) in towers) {
+            val top = FLOOR_Y - th
+            for (y in top until FLOOR_Y) {
+                for (x in sx until (sx + tw).coerceAtMost(width)) {
+                    val isEdge = y == top || x == sx || x == sx + tw - 1
+                    argb[y * width + x] = if (isEdge) SKYLINE_EDGE else SKYLINE
+                }
+            }
+            if (pagoda == 1) {
+                val roofY = top - 2
+                for (x in (sx - 1).coerceAtLeast(0) until (sx + tw + 1).coerceAtMost(width)) {
+                    argb[(roofY + 1) * width + x] = SKYLINE_EDGE
+                }
+                for (x in (sx + 2) until (sx + tw - 2).coerceAtMost(width)) {
+                    argb[roofY * width + x] = SKYLINE_EDGE
+                }
+            }
+            // subtle distant cyber-lantern / window pixels
+            for (wy in (top + 4) until (FLOOR_Y - 3) step 5) {
+                for (wx in (sx + 3) until (sx + tw - 2) step 4) {
+                    if ((wx + wy) % 3 == 0 && wx < width) {
+                        argb[wy * width + wx] = if (pagoda == 1) WINDOW_GOLD else WINDOW_CYAN
+                    }
+                }
+            }
+        }
     }
 
     /** A sprite from rows of letters ('.' is empty) with an ink outline around the filled ones. */
@@ -147,6 +197,11 @@ object KiBarragePixels {
     private val HEART_EMPTY = argb(0x5A5064)
     private val SKY_TOP = argb(0x171638)
     private val SKY_LOW = argb(0x2B1E56)
+    private val HORIZON_GLOW = argb(0x46286E)
+    private val SKYLINE = argb(0x161230)
+    private val SKYLINE_EDGE = argb(0x261F4D)
+    private val WINDOW_CYAN = argb(0x4895B8)
+    private val WINDOW_GOLD = argb(0xB89248)
     private val STAR = argb(0xC8C8FF)
     private val STAR_GOLD = argb(0xFFDC78)
 

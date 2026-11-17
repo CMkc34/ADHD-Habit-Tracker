@@ -90,6 +90,7 @@ fun TrainingGroundScene(
     val skyTopPx = (skyTop * GROUND_HEIGHT).roundToInt()
     val tired = mood == FighterMood.TIRED
     val frame = if (animate && !tired) rememberSkyFrame() else null
+    val backdrop = remember(weather, tired) { TrainingGroundPixels.renderBackdrop(weather, tired) }
     val ground =
         remember(data.decorations, tired) {
             TrainingGroundPixels.renderGround(data.decorations, tired)
@@ -103,6 +104,10 @@ fun TrainingGroundScene(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val px = size.width / WIDTH
             drawPixels(sky[frame?.value ?: SkyFrame.STILL], Offset.Zero, px)
+            val backdropY =
+                height - GROUND_HEIGHT + TrainingGroundPixels.HORIZON_Y -
+                    TrainingGroundPixels.BACKDROP_HEIGHT
+            drawPixels(backdrop, Offset(0f, backdropY * px), px)
             drawPixels(ground, Offset(0f, (height - GROUND_HEIGHT) * px), px)
         }
         val px = maxWidth / WIDTH
