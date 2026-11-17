@@ -78,5 +78,11 @@
     <string name="daily">Täglich</string>
     <string name="weekly">Wöchentlich</string>
     <string name="quarterly">Vierteljährlich</string>
+    <string name="habit_type">Routinentyp</string>
+    <string name="target_value">Zielwert</string>
+    <string name="target_unit">Zieleinheit</string>
+    <string name="yes_or_no">Ja oder Nein</string>
+    <string name="measure_able">Messbar</string>
+    <string name="add_status">Status hinzufügen</string>
     <string name="targets">Ziele</string>
 </resources>

@@ -20,8 +20,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -58,9 +61,9 @@ import org.jetbrains.compose.resources.vectorResource
 private const val CHIPS_PER_ROW = 2
 
 /**
- * Chooses the stat a routine trains (#4): four chips with icon, name and a one-line hint, two per
- * row so the hints stay readable on a phone. [showXpHint] adds the note that past check-ins move
- * with the stat, for an edited routine whose stat changed.
+ * Chooses the stat a routine trains (#4): four chips with icon, name and a short hint, two per row
+ * so the hints stay readable on a phone. [showXpHint] adds the note that past check-ins move with
+ * the stat, for an edited routine whose stat changed.
  */
 @Composable
 fun RoutineStatPicker(
@@ -77,13 +80,16 @@ fun RoutineStatPicker(
             modifier = Modifier.selectableGroup(),
         ) {
             FighterStat.entries.chunked(CHIPS_PER_ROW).forEach { row ->
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.height(IntrinsicSize.Max),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     row.forEach { stat ->
                         StatChip(
                             stat = stat,
                             selected = stat == selected,
                             onClick = { onSelect(stat) },
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                         )
                     }
                 }
@@ -115,7 +121,7 @@ private fun StatChip(
         border = if (selected) BorderStroke(2.dp, colors.secondary) else null,
         modifier =
             modifier
-                .heightIn(min = 56.dp)
+                .heightIn(min = 64.dp)
                 .selectable(selected = selected, onClick = onClick, role = Role.RadioButton),
     ) {
         Row(
@@ -138,7 +144,7 @@ private fun StatChip(
                 Text(
                     text = stat.hint(),
                     style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
