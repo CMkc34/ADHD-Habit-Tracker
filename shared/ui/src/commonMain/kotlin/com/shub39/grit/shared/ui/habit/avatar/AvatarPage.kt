@@ -178,6 +178,7 @@ fun AvatarPage(
                 Surface(
                     shape = RoundedCornerShape(16.dp),
                     color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
+                    contentColor = MaterialTheme.colorScheme.onSurface,
                 ) {
                     Text(
                         text = stringResource(Res.string.fighter_tired, avatar.name),
@@ -236,6 +237,7 @@ private fun AvatarTopBar(avatar: AvatarState, onRenameClick: () -> Unit, onOpenS
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(16.dp),
             color = paper,
+            contentColor = MaterialTheme.colorScheme.onSurface,
         ) {
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
@@ -291,6 +293,7 @@ internal fun ShakeChip(energy: Int, modifier: Modifier = Modifier) {
         modifier = modifier,
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.9f),
+        contentColor = MaterialTheme.colorScheme.onSurface,
     ) {
         ShakeText(
             text = "$SHAKE_MARK $energy",
