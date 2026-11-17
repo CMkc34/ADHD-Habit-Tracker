@@ -26,4 +26,5 @@
     <string name="label_earlier">Früher</string>
     <string name="label_later">Später</string>
     <string name="label_expand">Vergrößern</string>
+    <string name="label_fighter_slot_main">Basis</string>
 </resources>
