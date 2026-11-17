@@ -17,14 +17,19 @@
 package com.shub39.grit.shared.ui.habit.motivation
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,6 +45,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewWrapper
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.shub39.grit.core.avatar.UserName
 import com.shub39.grit.core.fighter.FighterCharacter
@@ -80,6 +90,16 @@ import grit.shared.ui.generated.resources.setup_name_text
 import grit.shared.ui.generated.resources.setup_name_title
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+
+private val DojoIndigoTop = Color(0xFF121828)
+private val DojoIndigoMid = Color(0xFF1C263E)
+private val DojoIndigoBottom = Color(0xFF253250)
+private val DojoGlow = Color(0x22FFD45C)
+private val DojoLattice = Color(0x14FFFFFF)
+private val DojoWoodTrim = Color(0xFF7B4E2E)
+private val DojoWoodTop = Color(0xFF54331D)
+private val DojoWoodBottom = Color(0xFF351F11)
+private val DojoWoodSeam = Color(0xFF231309)
 
 /**
  * Shows the first start setup (#139, #26) app-wide like the [DailyGreetingHost]. The greeting is
@@ -121,38 +141,43 @@ fun NameSetupStage(
     var colorsCode by rememberSaveable { mutableStateOf(character.defaultColors.encode()) }
     val colors = FighterColors.decode(colorsCode, character.defaultColors)
 
-    CelebrationStage(
-        colors = CheckInStageColors,
-        onDismiss = { if (picked) onFinish("") },
-        tapToDismiss = false,
-        modifier = modifier,
+    Dialog(
+        onDismissRequest = { if (picked) onFinish("") },
+        properties =
+            stageDialogProperties(dismissOnBackPress = picked, dismissOnClickOutside = false),
     ) {
-        Column(
-            modifier = Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            if (picked) {
-                NameStep(
-                    character = character,
-                    colors = colors,
-                    name = name,
-                    onNameChange = { name = it.take(UserName.MAX_LENGTH) },
-                    onNext = { onFinish(name) },
-                    onSkip = { onFinish("") },
-                )
-            } else {
-                FighterStep(
-                    character = character,
-                    colors = colors,
-                    onCharacterChange = {
-                        // a new fighter starts in its own colours
-                        characterId = it.id
-                        colorsCode = it.defaultColors.encode()
-                    },
-                    onColorsChange = { colorsCode = it.encode() },
-                    onChoose = { confirming = true },
-                )
+        Box(modifier = modifier.fillMaxSize().dojoBackdrop()) {
+            Column(
+                modifier =
+                    Modifier.fillMaxSize()
+                        .safeDrawingPadding()
+                        .imePadding()
+                        .padding(horizontal = 20.dp, vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                if (picked) {
+                    NameStep(
+                        character = character,
+                        colors = colors,
+                        name = name,
+                        onNameChange = { name = it.take(UserName.MAX_LENGTH) },
+                        onNext = { onFinish(name) },
+                        onSkip = { onFinish("") },
+                    )
+                } else {
+                    FighterStep(
+                        character = character,
+                        colors = colors,
+                        onCharacterChange = {
+                            // a new fighter starts in its own colours
+                            characterId = it.id
+                            colorsCode = it.defaultColors.encode()
+                        },
+                        onColorsChange = { colorsCode = it.encode() },
+                        onChoose = { confirming = true },
+                    )
+                }
             }
         }
     }
@@ -184,15 +209,103 @@ fun NameSetupStage(
     }
 }
 
+/**
+ * Dojo-themed dark-indigo and pixel wood-plank backdrop matching the pixel-art fighter aesthetic.
+ */
+private fun Modifier.dojoBackdrop(): Modifier = drawWithCache {
+    val floorTop = size.height * 0.78f
+    val wallBrush =
+        Brush.verticalGradient(
+            0f to DojoIndigoTop,
+            0.55f to DojoIndigoMid,
+            1f to DojoIndigoBottom,
+            startY = 0f,
+            endY = floorTop,
+        )
+    val lanternGlow =
+        Brush.radialGradient(
+            0f to DojoGlow,
+            1f to Color.Transparent,
+            center = Offset(size.width * 0.5f, size.height * 0.34f),
+            radius = size.minDimension * 0.65f,
+        )
+    val woodBrush =
+        Brush.verticalGradient(
+            0f to DojoWoodTop,
+            1f to DojoWoodBottom,
+            startY = floorTop,
+            endY = size.height,
+        )
+    val pixelStep = 24.dp.toPx()
+    val trimHeight = 4.dp.toPx()
+    val seamThickness = 2.dp.toPx()
+
+    onDrawBehind {
+        drawRect(brush = wallBrush, size = Size(size.width, floorTop))
+        drawRect(brush = lanternGlow, size = Size(size.width, floorTop))
+
+        // subtle shoji-like pixel grid lines on the dojo wall
+        var x = pixelStep
+        while (x < size.width) {
+            drawLine(
+                color = DojoLattice,
+                start = Offset(x, 0f),
+                end = Offset(x, floorTop),
+                strokeWidth = 1f,
+            )
+            x += pixelStep
+        }
+        var y = pixelStep
+        while (y < floorTop) {
+            drawLine(
+                color = DojoLattice,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = 1f,
+            )
+            y += pixelStep
+        }
+
+        // wooden dojo floor + plank seams
+        drawRect(
+            brush = woodBrush,
+            topLeft = Offset(0f, floorTop),
+            size = Size(size.width, size.height - floorTop),
+        )
+        drawRect(
+            color = DojoWoodTrim,
+            topLeft = Offset(0f, floorTop),
+            size = Size(size.width, trimHeight),
+        )
+        drawRect(
+            color = DojoWoodSeam,
+            topLeft = Offset(0f, floorTop + trimHeight),
+            size = Size(size.width, seamThickness),
+        )
+        val floorHeight = size.height - floorTop
+        val plankRows = 3
+        for (row in 1 until plankRows) {
+            val rowY = floorTop + floorHeight * row / plankRows
+            drawLine(
+                color = DojoWoodSeam,
+                start = Offset(0f, rowY),
+                end = Offset(size.width, rowY),
+                strokeWidth = seamThickness,
+            )
+        }
+    }
+}
+
 /** The first step: "Who trains with you?", the picker and a note that the choice is final. */
 @Composable
-private fun FighterStep(
+private fun ColumnScope.FighterStep(
     character: FighterCharacter,
     colors: FighterColors,
     onCharacterChange: (FighterCharacter) -> Unit,
     onColorsChange: (FighterColors) -> Unit,
     onChoose: () -> Unit,
 ) {
+    Spacer(Modifier.weight(0.5f))
     Text(
         text = stringResource(Res.string.greeting_header_welcome).uppercase(),
         style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 3.sp),
@@ -202,7 +315,7 @@ private fun FighterStep(
     Text(
         text = stringResource(Res.string.setup_fighter_title),
         style =
-            MaterialTheme.typography.headlineMedium.copy(
+            MaterialTheme.typography.headlineSmall.copy(
                 fontFamily = flexFontEmphasis(),
                 fontWeight = FontWeight.Black,
             ),
@@ -220,7 +333,7 @@ private fun FighterStep(
     )
     Text(
         text = stringResource(Res.string.setup_fighter_final),
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.bodySmall,
         color = Color.White.copy(alpha = 0.85f),
         textAlign = TextAlign.Center,
         modifier = Modifier.widthIn(max = 360.dp),
@@ -228,19 +341,20 @@ private fun FighterStep(
     Button(
         onClick = onChoose,
         colors = ButtonDefaults.buttonColors(containerColor = StageYellow, contentColor = StageInk),
-        modifier = Modifier.padding(top = 4.dp),
+        modifier = Modifier.padding(top = 2.dp),
     ) {
         Text(
             text = stringResource(Res.string.setup_fighter_choose, character.defaultName),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 2.dp),
         )
     }
+    Spacer(Modifier.weight(0.5f))
 }
 
 /** The second step: the picked fighter asks for the user's name. */
 @Composable
-private fun NameStep(
+private fun ColumnScope.NameStep(
     character: FighterCharacter,
     colors: FighterColors,
     name: String,
@@ -248,6 +362,7 @@ private fun NameStep(
     onNext: () -> Unit,
     onSkip: () -> Unit,
 ) {
+    Spacer(Modifier.weight(0.5f))
     Text(
         text = stringResource(Res.string.greeting_header_welcome).uppercase(),
         style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 3.sp),
@@ -263,16 +378,18 @@ private fun NameStep(
         colors = colors,
         pose = FighterPose.CHARGE,
         modifier =
-            Modifier.widthIn(max = 160.dp).fillMaxWidth().graphicsLayer {
-                scaleX = fighterScale
-                scaleY = fighterScale
-            },
+            Modifier.weight(1f, fill = false)
+                .sizeIn(minWidth = 72.dp, minHeight = 72.dp, maxWidth = 152.dp, maxHeight = 152.dp)
+                .graphicsLayer {
+                    scaleX = fighterScale
+                    scaleY = fighterScale
+                },
     )
 
     Text(
         text = stringResource(Res.string.setup_name_title),
         style =
-            MaterialTheme.typography.headlineMedium.copy(
+            MaterialTheme.typography.headlineSmall.copy(
                 fontFamily = flexFontEmphasis(),
                 fontWeight = FontWeight.Black,
             ),
@@ -281,9 +398,10 @@ private fun NameStep(
     )
     Text(
         text = stringResource(Res.string.setup_name_text, character.defaultName),
-        style = MaterialTheme.typography.titleMedium,
+        style = MaterialTheme.typography.bodyMedium,
         color = Color.White.copy(alpha = 0.9f),
         textAlign = TextAlign.Center,
+        modifier = Modifier.widthIn(max = 360.dp),
     )
 
     OutlinedTextField(
@@ -310,23 +428,24 @@ private fun NameStep(
                 focusedSupportingTextColor = Color.White.copy(alpha = 0.8f),
                 unfocusedSupportingTextColor = Color.White.copy(alpha = 0.8f),
             ),
-        modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth().padding(top = 8.dp),
+        modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth().padding(top = 4.dp),
     )
 
     Button(
         onClick = onNext,
         colors = ButtonDefaults.buttonColors(containerColor = StageYellow, contentColor = StageInk),
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = Modifier.padding(top = 4.dp),
     ) {
         Text(
             text = stringResource(Res.string.setup_name_next),
             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Black),
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 2.dp),
         )
     }
     TextButton(onClick = onSkip) {
         Text(text = stringResource(Res.string.setup_name_skip), color = Color.White)
     }
+    Spacer(Modifier.weight(0.5f))
 }
 
 @PreviewWrapper(GritPreviewWrapper::class)

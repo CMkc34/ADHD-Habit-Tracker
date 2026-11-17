@@ -26,4 +26,5 @@
     <string name="label_earlier">Earlier</string>
     <string name="label_later">Later</string>
     <string name="label_expand">Expand</string>
+    <string name="label_fighter_slot_main">Main</string>
 </resources>
