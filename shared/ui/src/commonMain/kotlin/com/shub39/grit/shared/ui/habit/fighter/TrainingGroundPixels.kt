@@ -40,6 +40,8 @@ import kotlin.math.sin
 object TrainingGroundPixels {
     const val WIDTH = 160
     const val GROUND_HEIGHT = 80
+    const val BACKDROP_HEIGHT = 72
+    const val HORIZON_Y = 49
 
     /** Row of the ground where the fighter's feet stand (the bottom edge of its picture). */
     const val FOOT_Y = 67
@@ -148,12 +150,28 @@ object TrainingGroundPixels {
             val drift = if (i % 2 == 0) frame.drift else (-0.6f * frame.drift).roundToInt()
             cloud(canvas, x * GROUND_HEIGHT + drift, y * GROUND_HEIGHT + skyTop, width, color)
         }
+        if (weather <= Weather.HAZY) {
+            val birdColor = mix(sky, INK, 0.35f)
+            val birdDrift = (frame.drift * 0.5f).roundToInt()
+            val birdCount = if (weather == Weather.HAZY) 2 else 3
+            val spots = listOf(52 to 42, 58 to 39, 63 to 44)
+            for (i in 0 until birdCount) {
+                val (bx, by) = spots[i]
+                bird(canvas, bx + birdDrift, by + skyTop, birdColor)
+            }
+        }
         return canvas.image()
     }
 
     /** Clouds as (x, y, width) in ground heights; later ones cover earlier ones and the sun. */
     private fun cloudsFor(weather: Weather): List<Triple<Float, Float, Float>> {
-        val few = listOf(Triple(0.24f, 0.2f, 0.11f), Triple(1.0f, 0.08f, 0.06f))
+        val few =
+            listOf(
+                Triple(0.24f, 0.2f, 0.11f),
+                Triple(1.0f, 0.08f, 0.06f),
+                Triple(1.32f, 0.68f, 0.06f),
+                Triple(0.18f, 0.78f, 0.055f),
+            )
         val some = few + listOf(Triple(0.5f, 0.5f, 0.05f), Triple(1.93f, 0.44f, 0.05f))
         val many =
             listOf(
@@ -164,9 +182,17 @@ object TrainingGroundPixels {
                 Triple(1.74f, 0.24f, 0.12f),
                 Triple(0.5f, 0.5f, 0.06f),
                 Triple(1.92f, 0.46f, 0.07f),
+                Triple(1.15f, 0.72f, 0.08f),
+                Triple(0.35f, 0.82f, 0.07f),
             )
         return when (weather) {
-            Weather.SUNNY -> listOf(Triple(0.24f, 0.18f, 0.08f), Triple(1.0f, 0.08f, 0.05f))
+            Weather.SUNNY ->
+                listOf(
+                    Triple(0.24f, 0.18f, 0.08f),
+                    Triple(1.0f, 0.08f, 0.05f),
+                    Triple(0.68f, 0.62f, 0.055f),
+                    Triple(1.55f, 0.72f, 0.05f),
+                )
             Weather.FAIR -> some
             // one cloud half in front of the sun
             Weather.HAZY -> some + Triple(1.66f, 0.29f, 0.08f)
@@ -179,6 +205,163 @@ object TrainingGroundPixels {
                     Triple(1.2f, 0.26f, 0.1f),
                 ) + many
         }
+    }
+
+    /** A tiny 3x2 V-shaped distant bird silhouette. */
+    private fun bird(canvas: Canvas, x: Int, y: Int, color: Int) {
+        canvas[x - 1, y] = color
+        canvas[x + 1, y] = color
+        canvas[x, y + 1] = color
+    }
+
+    /**
+     * Distant layered mountains, pine silhouettes, and a dojo roof peeking behind the training
+     * ground fence, [WIDTH] x [BACKDROP_HEIGHT]. Drawn above/behind [renderGround] so tall scenes
+     * have depth above the fence.
+     */
+    fun renderBackdrop(weather: Weather, tired: Boolean = false): PixelImage {
+        val canvas = Canvas(WIDTH, BACKDROP_HEIGHT)
+        val gray =
+            when (weather) {
+                Weather.CLOUDY -> 0.3f
+                Weather.OVERCAST -> 0.55f
+                else -> 0f
+            }
+        val skyTint = mix(SKY, TIRED_GRAY, gray)
+        val farBase = mix(mix(MOUNTAIN_FAR, skyTint, 0.25f), TIRED_GRAY, gray * 0.6f)
+        val farLit = mix(farBase, WHITE, 0.18f)
+        val snow = mix(WHITE, skyTint, 0.2f)
+
+        mountain(canvas, peakX = 28, peakY = 12, halfWidth = 48, farBase, farLit, snow)
+        mountain(canvas, peakX = 88, peakY = 6, halfWidth = 56, farBase, farLit, snow)
+        mountain(canvas, peakX = 142, peakY = 16, halfWidth = 44, farBase, farLit, snow)
+
+        val midHill = mix(mix(HILL_FAR, skyTint, 0.2f), TIRED_GRAY, gray * 0.5f)
+        val midShade = mix(midHill, INK, 0.15f)
+        for (x in 0 until WIDTH) {
+            val ridge = 38 + (4f * sin(x * 0.045f) + 3f * cos(x * 0.09f)).roundToInt()
+            for (y in ridge until BACKDROP_HEIGHT) {
+                canvas[x, y] = if (y == ridge) midShade else midHill
+            }
+        }
+
+        val pineDark = mix(PINE_DARK, TIRED_GRAY, gray * 0.5f)
+        val pineLit = mix(PINE_LIGHT, TIRED_GRAY, gray * 0.5f)
+        val pineSpots =
+            listOf(
+                6 to 41,
+                14 to 38,
+                21 to 40,
+                100 to 39,
+                109 to 36,
+                118 to 38,
+                128 to 40,
+                137 to 37,
+                148 to 41,
+            )
+        for ((px, py) in pineSpots) {
+            pine(canvas, px, py, pineDark, pineLit)
+        }
+
+        dojoRoof(canvas, x = 36, baseY = 66, gray = gray)
+
+        val out = canvas.argb
+        if (tired) {
+            for (i in out.indices) if (out[i] != 0) out[i] = mix(out[i], TIRED_GRAY, 0.4f)
+        }
+        return PixelImage(WIDTH, BACKDROP_HEIGHT, out)
+    }
+
+    private fun mountain(
+        canvas: Canvas,
+        peakX: Int,
+        peakY: Int,
+        halfWidth: Int,
+        baseColor: Int,
+        litColor: Int,
+        snowColor: Int,
+    ) {
+        val h = BACKDROP_HEIGHT - peakY
+        if (h <= 0) return
+        for (y in peakY until BACKDROP_HEIGHT) {
+            val dy = y - peakY
+            val span = (dy * halfWidth) / h
+            for (x in (peakX - span)..(peakX + span)) {
+                val color =
+                    when {
+                        dy < 9 && (x - peakX) + dy / 2 >= -1 -> snowColor
+                        x >= peakX -> litColor
+                        else -> baseColor
+                    }
+                canvas[x, y] = color
+            }
+        }
+    }
+
+    private fun pine(canvas: Canvas, cx: Int, baseY: Int, dark: Int, lit: Int) {
+        val tiers = listOf(0 to 4, 3 to 5, 6 to 6)
+        for ((offsetY, height) in tiers) {
+            val topY = baseY - 12 + offsetY
+            for (dy in 0 until height) {
+                val half = dy / 2 + 1
+                for (x in (cx - half)..(cx + half)) {
+                    canvas[x, topY + dy] = if (x > cx) lit else dark
+                }
+            }
+        }
+        for (y in (baseY - 2)..(baseY + 4)) canvas[cx, y] = FENCE
+    }
+
+    private fun dojoRoof(canvas: Canvas, x: Int, baseY: Int, gray: Float) {
+        val roof = mix(DOJO_ROOF, TIRED_GRAY, gray * 0.4f)
+        val roofShade = mix(DOJO_ROOF_SHADE, TIRED_GRAY, gray * 0.4f)
+        val trim = mix(DOJO_TRIM, TIRED_GRAY, gray * 0.4f)
+        val wall = mix(DOJO_WALL, TIRED_GRAY, gray * 0.4f)
+        val post = mix(FENCE, TIRED_GRAY, gray * 0.4f)
+        val lantern = mix(SUN_YELLOW, TIRED_GRAY, gray * 0.4f)
+
+        val width = 34
+        val cx = x + width / 2
+        // upper gable / tier
+        for (dy in 0 until 7) {
+            val half = 4 + dy * 2
+            for (px in (cx - half)..(cx + half)) {
+                canvas[px, baseY - 26 + dy] = if (dy == 6) trim else roof
+            }
+        }
+        // ridge ornament
+        for (px in (cx - 4)..(cx + 4)) canvas[px, baseY - 27] = trim
+        canvas[cx - 5, baseY - 28] = trim
+        canvas[cx + 5, baseY - 28] = trim
+
+        // main eaves
+        for (dy in 0 until 8) {
+            val half = 10 + dy + (if (dy >= 6) 2 else 0)
+            for (px in (cx - half)..(cx + half)) {
+                canvas[px, baseY - 19 + dy] =
+                    when {
+                        dy == 7 -> trim
+                        dy % 2 == 1 -> roofShade
+                        else -> roof
+                    }
+            }
+        }
+        // plaster wall and timber posts
+        for (py in (baseY - 11) until baseY) {
+            for (px in (cx - 12)..(cx + 12)) {
+                canvas[px, py] =
+                    when {
+                        px == cx - 12 || px == cx + 12 || px == cx -> post
+                        py == baseY - 11 -> roofShade
+                        else -> wall
+                    }
+            }
+        }
+        // warm lantern glow under the eaves
+        canvas[cx - 6, baseY - 9] = lantern
+        canvas[cx - 6, baseY - 8] = lantern
+        canvas[cx + 6, baseY - 9] = lantern
+        canvas[cx + 6, baseY - 8] = lantern
     }
 
     /** A friendly round sun with an ink outline and a face; [rays] turned by [angle] degrees. */
@@ -408,6 +591,14 @@ object TrainingGroundPixels {
     private val SUN_RAY = argb(0xFFB938)
     private val PINK = argb(0xFF8FA0)
     private val HILL = argb(0x8CCB72)
+    private val HILL_FAR = argb(0x6FA868)
+    private val MOUNTAIN_FAR = argb(0x6C89AE)
+    private val PINE_DARK = argb(0x36684A)
+    private val PINE_LIGHT = argb(0x4B825B)
+    private val DOJO_ROOF = argb(0x3A4660)
+    private val DOJO_ROOF_SHADE = argb(0x2B354A)
+    private val DOJO_TRIM = argb(0xC48850)
+    private val DOJO_WALL = argb(0xE8DFCE)
     private val FENCE = argb(0x9A6438)
     private val FENCE_RAIL = argb(0xB07846)
     private val PLANK = argb(0xD9A066)

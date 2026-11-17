@@ -133,6 +133,9 @@ private const val POP_SECONDS = 0.9f
 /** How long the fighter shows the hurt pose after a hit. */
 private const val HURT_SECONDS = 0.4f
 
+/** Visual scale of the fighter sprite relative to its 48x48 pixel art, for arcade proportions. */
+private const val FIGHTER_DRAW_SCALE = 2f / 3f
+
 /** Night blue around the field, so the pixel picture has no hard edge on tall phones. */
 private val FIELD_EDGE = Color(0xFF110F24)
 
@@ -420,8 +423,10 @@ private fun Field(
             if (!blink) {
                 val pose =
                     if (time - game.hurtAt < HURT_SECONDS) FighterPose.HURT else FighterPose.CHARGE
-                val left = game.fighterX - KiBarrage.FIGHTER_SIZE / 2
-                drawPixels(sprites.fighter(pose, frame), at(left, KiBarrage.FIGHTER_TOP), px)
+                val drawnSize = KiBarrage.FIGHTER_SIZE * FIGHTER_DRAW_SCALE
+                val left = game.fighterX - drawnSize / 2f
+                val top = KiBarrage.FIGHTER_TOP + (KiBarrage.FIGHTER_SIZE - drawnSize) - 2f
+                drawPixels(sprites.fighter(pose, frame), at(left, top), px * FIGHTER_DRAW_SCALE)
             }
 
             for (pop in pops) {
