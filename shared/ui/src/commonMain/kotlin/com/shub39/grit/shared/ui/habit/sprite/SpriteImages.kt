@@ -34,27 +34,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import com.shub39.grit.shared.ui.habit.fighter.FighterPixels
 import com.shub39.grit.shared.ui.habit.fighter.rememberPixelFrame
-import grit.shared.ui.generated.resources.Res
-import grit.shared.ui.generated.resources.sprite_nyx_hurt
-import grit.shared.ui.generated.resources.sprite_nyx_kick
-import grit.shared.ui.generated.resources.sprite_nyx_punch
-import grit.shared.ui.generated.resources.sprite_nyx_stance
-import grit.shared.ui.generated.resources.sprite_snooze_button_idle
-import grit.shared.ui.generated.resources.stage_screen_world
 import kotlin.math.roundToInt
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.imageResource
-
-/** The drawable of every name in [SpriteArt.allNames]. */
-internal val SPRITE_RESOURCES: Map<String, DrawableResource> =
-    mapOf(
-        "nyx_stance" to Res.drawable.sprite_nyx_stance,
-        "nyx_punch" to Res.drawable.sprite_nyx_punch,
-        "nyx_kick" to Res.drawable.sprite_nyx_kick,
-        "nyx_hurt" to Res.drawable.sprite_nyx_hurt,
-        "snooze_button_idle" to Res.drawable.sprite_snooze_button_idle,
-        "stage_screen_world" to Res.drawable.stage_screen_world,
-    )
 
 /** Loads the pictures [names] (`null`s skipped), keyed by name. */
 @Composable
