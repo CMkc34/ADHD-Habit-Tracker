@@ -38,6 +38,8 @@ import com.shub39.grit.shared.ui.GritPreviewWrapper
 import com.shub39.grit.shared.ui.habit.fighter.PixelImage
 import com.shub39.grit.shared.ui.habit.fighter.drawPixels
 import com.shub39.grit.shared.ui.habit.fighter.rememberPixelFrame
+import com.shub39.grit.shared.ui.habit.sprite.SpriteArt
+import com.shub39.grit.shared.ui.habit.sprite.SpriteAvatar
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_opponent_attack
 import grit.shared.ui.generated.resources.arena_opponent_guard
@@ -75,6 +77,16 @@ fun OpponentAvatar(
             opponent.label(),
         )
 
+    SpriteArt.opponent(opponent, pose)?.let { name ->
+        SpriteAvatar(
+            name,
+            boxPixels = OpponentPixels.SIZE,
+            modifier = modifier,
+            bounce = frame != null,
+            description = description,
+        )
+        return
+    }
     Canvas(modifier = modifier.aspectRatio(1f).semantics { contentDescription = description }) {
         val f = frame?.value ?: 0
         val image = frames[f] ?: OpponentPixels.render(opponent, pose, f).also { frames[f] = it }
