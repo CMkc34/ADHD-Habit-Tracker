@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
@@ -57,6 +58,10 @@ import com.shub39.grit.shared.ui.habit.fighter.PixelImage
 import com.shub39.grit.shared.ui.habit.fighter.PixelPainter
 import com.shub39.grit.shared.ui.habit.fighter.drawPixels
 import com.shub39.grit.shared.ui.habit.fighter.rememberPixelFrame
+import com.shub39.grit.shared.ui.habit.sprite.SpriteArt
+import com.shub39.grit.shared.ui.habit.sprite.drawImageSprite
+import com.shub39.grit.shared.ui.habit.sprite.drawStage
+import com.shub39.grit.shared.ui.habit.sprite.rememberSprites
 import com.shub39.grit.shared.ui.theme.flexFontEmphasis
 import grit.shared.ui.generated.resources.Res
 import grit.shared.ui.generated.resources.arena_float_blocked
@@ -77,12 +82,12 @@ data class StageBanner(val text: String, val small: String? = null)
  * [geometry] measured from them.
  */
 internal class FightSprites(
-    private val character: FighterCharacter,
+    internal val character: FighterCharacter,
     private val rank: FighterRank,
     private val colors: FighterColors,
     private val outfit: String?,
     private val gear: Set<String>,
-    private val opponent: Opponent,
+    internal val opponent: Opponent,
 ) {
     private val fighters = HashMap<Triple<FighterPose, FighterMood, Int>, PixelImage>()
     private val opponents = HashMap<Pair<OpponentPose, Int>, PixelImage>()
@@ -146,6 +151,16 @@ internal fun FightStage(
         remember(fight.stage, fight.lighting) {
             ArenaStagePixels.render(fight.stage, fight.lighting)
         }
+    // generated image art where it exists (SpriteArt), the pixel art everywhere else
+    val images =
+        rememberSprites(
+            FighterPose.entries.flatMap { pose ->
+                FighterMood.entries.map { SpriteArt.fighter(sprites.character, pose, it) }
+            } +
+                OpponentPose.entries.map { SpriteArt.opponent(sprites.opponent, it) } +
+                SpriteArt.stage(fight.stage)
+        )
+    val stageImage = SpriteArt.stage(fight.stage)?.let { images[it] }
     val frame = rememberPixelFrame()
     val ratio = ArenaStagePixels.WIDTH.toFloat() / ArenaStagePixels.HEIGHT
     val shakeX = (scene.shake * sin(millis * 0.09f)).roundToInt()
@@ -164,8 +179,9 @@ internal fun FightStage(
         ) {
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val p = size.width / ArenaStagePixels.WIDTH
-                drawPixels(backdrop, Offset.Zero, p)
-                drawFighters(scene, sprites, frame.value, p)
+                if (stageImage != null) drawStage(stageImage, Offset.Zero, size)
+                else drawPixels(backdrop, Offset.Zero, p)
+                drawFighters(scene, sprites, images, frame.value, p)
                 drawEffects(scene, sprites, frame.value, p)
                 if (scene.flash > 0f) drawRect(Color.White.copy(alpha = scene.flash * 0.6f))
             }
@@ -203,32 +219,87 @@ internal fun FightStage(
     }
 }
 
-private fun DrawScope.drawFighters(scene: FightScene, sprites: FightSprites, frame: Int, p: Float) {
+private fun DrawScope.drawFighters(
+    scene: FightScene,
+    sprites: FightSprites,
+    images: Map<String, ImageBitmap>,
+    frame: Int,
+    p: Float,
+) {
     val opponentTop = FightGeometry.OPPONENT_TOP
     val playerTop = FightGeometry.PLAYER_TOP
+    val opponentBox = OpponentPixels.SIZE.toFloat()
+    fun opponentImage(pose: OpponentPose) =
+        SpriteArt.opponent(sprites.opponent, pose)?.let(images::get)
+    fun fighterImage(pose: FighterPose, mood: FighterMood) =
+        SpriteArt.fighter(sprites.character, pose, mood)?.let(images::get)
+
     scene.opponentGhost?.let { dx ->
-        val ghost = sprites.opponent(OpponentPose.IDLE, 0)
-        drawSprite(ghost, ArenaStagePixels.OPPONENT_LEFT + dx, opponentTop.toFloat(), p, 0.35f)
+        val left = ArenaStagePixels.OPPONENT_LEFT + dx
+        val image = opponentImage(OpponentPose.IDLE)
+        if (image != null) drawImageSprite(image, left * p, opponentTop * p, opponentBox * p, 0.35f)
+        else
+            drawSprite(
+                sprites.opponent(OpponentPose.IDLE, 0),
+                left,
+                opponentTop.toFloat(),
+                p,
+                0.35f,
+            )
     }
-    val opponent = sprites.opponent(scene.opponentPose, frame)
-    drawSprite(
-        if (scene.opponentFlash) sprites.white(opponent) else opponent,
-        ArenaStagePixels.OPPONENT_LEFT + scene.opponentDx,
-        opponentTop + scene.opponentDy,
-        p,
-    )
+    val opponentLeft = ArenaStagePixels.OPPONENT_LEFT + scene.opponentDx
+    val opponentY = opponentTop + scene.opponentDy
+    val opponentArt = opponentImage(scene.opponentPose)
+    if (opponentArt != null) {
+        drawImageSprite(
+            opponentArt,
+            opponentLeft * p,
+            opponentY * p,
+            opponentBox * p,
+            flash = scene.opponentFlash,
+        )
+    } else {
+        val opponent = sprites.opponent(scene.opponentPose, frame)
+        drawSprite(
+            if (scene.opponentFlash) sprites.white(opponent) else opponent,
+            opponentLeft,
+            opponentY,
+            p,
+        )
+    }
     scene.playerGhost?.let { dx ->
-        val ghost = sprites.fighter(FighterPose.STANCE, FighterMood.READY, 0)
-        drawSprite(ghost, ArenaStagePixels.PLAYER_LEFT + dx, playerTop.toFloat(), p, 0.35f)
+        val left = ArenaStagePixels.PLAYER_LEFT + dx
+        val image = fighterImage(FighterPose.STANCE, FighterMood.READY)
+        if (image != null) drawImageSprite(image, left * p, playerTop * p, FIGHTER_BOX * p, 0.35f)
+        else {
+            val ghost = sprites.fighter(FighterPose.STANCE, FighterMood.READY, 0)
+            drawSprite(ghost, left, playerTop.toFloat(), p, 0.35f)
+        }
     }
-    val fighter = sprites.fighter(scene.playerPose, scene.playerMood, frame)
-    drawSprite(
-        if (scene.playerFlash) sprites.white(fighter) else fighter,
-        ArenaStagePixels.PLAYER_LEFT + scene.playerDx,
-        playerTop + scene.playerDy,
-        p,
-    )
+    val playerLeft = ArenaStagePixels.PLAYER_LEFT + scene.playerDx
+    val playerY = playerTop + scene.playerDy
+    val fighterArt = fighterImage(scene.playerPose, scene.playerMood)
+    if (fighterArt != null) {
+        drawImageSprite(
+            fighterArt,
+            playerLeft * p,
+            playerY * p,
+            FIGHTER_BOX * p,
+            flash = scene.playerFlash,
+        )
+    } else {
+        val fighter = sprites.fighter(scene.playerPose, scene.playerMood, frame)
+        drawSprite(
+            if (scene.playerFlash) sprites.white(fighter) else fighter,
+            playerLeft,
+            playerY,
+            p,
+        )
+    }
 }
+
+/** The fighter's box on the stage, in stage pixels. */
+private const val FIGHTER_BOX = 48f
 
 private fun DrawScope.drawEffects(scene: FightScene, sprites: FightSprites, frame: Int, p: Float) {
     val g = sprites.geometry

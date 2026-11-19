@@ -45,6 +45,8 @@ import com.shub39.grit.core.fighter.FighterItems
 import com.shub39.grit.core.fighter.FighterMood
 import com.shub39.grit.core.fighter.FighterRank
 import com.shub39.grit.shared.ui.GritPreviewWrapper
+import com.shub39.grit.shared.ui.habit.sprite.SpriteArt
+import com.shub39.grit.shared.ui.habit.sprite.SpriteAvatar
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -68,6 +70,11 @@ fun FighterAvatar(
     pose: FighterPose = FighterPose.STANCE,
     animate: Boolean = true,
 ) {
+    SpriteArt.fighter(character, pose, mood)?.let { name ->
+        val bounce = animate && pose == FighterPose.STANCE && mood != FighterMood.TIRED
+        SpriteAvatar(name, boxPixels = FighterPixels.SIZE, modifier = modifier, bounce = bounce)
+        return
+    }
     val frame = if (animate) rememberPixelFrame() else null
     // each frame is built once and then only painted
     val frames =
